@@ -162,14 +162,6 @@
                 <version>${stormpath.sdk.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>com.stormpath.sdk</groupId>
-                <artifactId>stormpath-sdk-ext-httpclient</artifactId>
-                <version>${stormpath.sdk.version}</version>
-                <!-- SDK Impl should be opaque to clients - only used at runtime: -->
-                <scope>runtime</scope>
-            </dependency>
-
             <!-- Logging: -->
             <dependency>
                 <groupId>org.slf4j</groupId>
