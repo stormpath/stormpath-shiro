@@ -48,7 +48,7 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/stormpath/stormpath-shiro.git</connection>
+        <connection>scm:git:git@github.com:stormpath/stormpath-shiro.git</connection>
         <developerConnection>scm:git:git@github.com:stormpath/stormpath-shiro.git</developerConnection>
         <url>http://github.com/stormpath/stormpath-shiro</url>
     </scm>
@@ -76,6 +76,8 @@
             <email>les@stormpath.com</email>
             <url>http://www.leshazlewood.com</url>
             <timezone>-8</timezone>
+            <organization>Stormpath</organization>
+            <organizationUrl>http://www.stormpath.com</organizationUrl>
         </developer>
     </developers>
 
@@ -84,6 +86,8 @@
     </modules>
 
     <properties>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <stormpath-shiro.repository.releases.url>https://repository.stormpath.com/content/repositories/releases</stormpath-shiro.repository.releases.url>
         <stormpath-shiro.repository.snapshots.url>https://repository.stormpath.com/content/repositories/snapshots</stormpath-shiro.repository.snapshots.url>
@@ -208,7 +212,7 @@
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
-                    <encoding>UTF-8</encoding>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
             <plugin>
