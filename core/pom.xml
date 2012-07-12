@@ -39,12 +39,12 @@
             <artifactId>shiro-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.stormpath.sdk.java</groupId>
+            <groupId>com.stormpath.sdk</groupId>
             <artifactId>stormpath-sdk-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.stormpath.sdk.java</groupId>
-            <artifactId>stormpath-sdk-impl-httpclient</artifactId>
+            <groupId>com.stormpath.sdk</groupId>
+            <artifactId>stormpath-sdk-ext-httpclient</artifactId>
         </dependency>
     </dependencies>
 
