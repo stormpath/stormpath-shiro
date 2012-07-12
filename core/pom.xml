@@ -34,10 +34,18 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-        <!-- <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency> -->
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.stormpath.sdk.java</groupId>
+            <artifactId>stormpath-sdk-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.stormpath.sdk.java</groupId>
+            <artifactId>stormpath-sdk-impl-httpclient</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

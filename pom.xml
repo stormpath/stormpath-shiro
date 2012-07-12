@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~ Copyright 2012 Stormpath, Inc.
   ~
@@ -84,13 +85,15 @@
 
     <properties>
 
-        <stormpath-shiro.repository.releases.url>http://repository.stormpath.com/content/repositories/releases</stormpath-shiro.repository.releases.url>
-        <stormpath-shiro.repository.snapshots.url>http://repository.stormpath.com/content/repositories/snapshots</stormpath-shiro.repository.snapshots.url>
+        <stormpath-shiro.repository.releases.url>https://repository.stormpath.com/content/repositories/releases</stormpath-shiro.repository.releases.url>
+        <stormpath-shiro.repository.snapshots.url>https://repository.stormpath.com/content/repositories/snapshots</stormpath-shiro.repository.snapshots.url>
 
         <!-- Standard Dependencies: -->
         <guava.version>r09</guava.version>
-        <slf4j.version>1.6.1</slf4j.version>
+        <shiro.version>1.2.0</shiro.version>
+        <slf4j.version>1.6.6</slf4j.version>
         <spring.version>3.1.0.M2</spring.version>
+        <stormpath.sdk.version>0.3.0-SNAPSHOT</stormpath.sdk.version>
 
         <!-- Test Dependencies: -->
         <easymock.version>3.0</easymock.version>
@@ -134,11 +137,33 @@
 
         <dependencies>
 
-            <!-- Direct libs: -->
+            <!-- Intraproject libs: -->
             <dependency>
                 <groupId>com.stormpath.shiro</groupId>
                 <artifactId>stormpath-shiro-core</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <!-- 3rd party dependencies: -->
+
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-core</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.stormpath.sdk.java</groupId>
+                <artifactId>stormpath-sdk-api</artifactId>
+                <version>${stormpath.sdk.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.stormpath.sdk.java</groupId>
+                <artifactId>stormpath-sdk-impl-httpclient</artifactId>
+                <version>${stormpath.sdk.version}</version>
+                <!-- SDK Impl should be opaque to clients - only used at runtime: -->
+                <scope>runtime</scope>
             </dependency>
 
             <!-- Logging: -->
