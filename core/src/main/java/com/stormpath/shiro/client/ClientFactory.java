@@ -37,6 +37,7 @@ import org.apache.shiro.util.AbstractFactory;
  *
  * stormpathRealm = com.stormpath.shiro.realm.ApplicationRealm
  * stormpathRealm.client = $stormpathClient
+ * stormpathRealm.applicationRestUrl = https://api.stormpath.com/v1/applications/someExampleIdHere
  *
  * securityManager.realm = $stormpathRealm
  *

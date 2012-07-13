@@ -41,8 +41,9 @@ import java.util.Map;
  * A {@code Realm} implementation that uses the <a href="http://www.stormpath.com">Stormpath</a> Cloud Identity
  * Management service for authentication and authorization operations for a single Application.
  * <p/>
- * The Stormpath-registered Application's Stormpath REST URL must be configured as the
- * {@code applicationRestUrl} property.
+ * The Stormpath-registered
+ * <a href="https://www.stormpath.com/docs/libraries/application-rest-url">Application's Stormpath REST URL</a>
+ * must be configured as the {@code applicationRestUrl} property.
  *
  * @since 0.1
  */
