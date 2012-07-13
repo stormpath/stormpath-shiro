@@ -12,7 +12,6 @@ with little to no coding on your part.
 
 1. Add the stormpath-shiro .jars to your application using Maven, Ant+Ivy, Grails, SBT or whatever
    maven-compatible tool you prefer:
-
     <dependency>
         <groupId>com.stormpath.shiro</groupId>
         <artifactId>stormpath-shiro-core</artifactId>
@@ -24,14 +23,10 @@ with little to no coding on your part.
         <version>0.3.0</version>
         <scope>runtime</scope>
     </dependency>
-
 2. Ensure you [have an API Key](http://www.stormpath.com/docs/quickstart/connect) so your application can communicate
    with Stormpath.  Store your API Key file somewhere secure (readable only by you), for example:
-
     /home/myhomedir/.stormpath/apiKey.properties
-
 3. Configure `shiro.ini` with the Stormpath `ApplicationRealm`:
-
     [main]
     ...
     stormpathClient = com.stormpath.shiro.client.ClientFactory
@@ -43,7 +38,6 @@ with little to no coding on your part.
     stormpathRealm.applicationRestUrl = REPLACE_ME_WITH_YOUR_STORMPATH_APP_REST_URL
 
     securityManager.realm = $stormpathRealm
-
 4. Replace the `stormpathRealm.applicationRestUrl` value above with your
    [Application's Stormpath-specific REST URL](http://www.stormpath.com/docs/libraries/application-rest-url), for
    example:
