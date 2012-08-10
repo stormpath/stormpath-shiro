@@ -17,6 +17,7 @@ package com.stormpath.shiro.realm;
 
 import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.application.Application;
+import com.stormpath.sdk.authc.AuthenticationRequest;
 import com.stormpath.sdk.authc.UsernamePasswordRequest;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.group.Group;
@@ -25,6 +26,7 @@ import com.stormpath.sdk.resource.ResourceException;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -32,10 +34,7 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A {@code Realm} implementation that uses the <a href="http://www.stormpath.com">Stormpath</a> Cloud Identity
@@ -49,14 +48,17 @@ import java.util.Map;
  */
 public class ApplicationRealm extends AuthorizingRealm {
 
-    private String applicationRestUrl;
     private Client client;
+    private String applicationRestUrl;
+    private GroupRoleResolver groupRoleResolver;
+    private GroupPermissionResolver groupPermissionResolver;
 
-    private Application application; //acquired via the client at runtime
+    private Application application; //acquired via the client at runtime, not configurable by the Realm user
 
     public ApplicationRealm() {
-        //Stormpath authenticates user accounts directly, no need to perform that here:
+        //Stormpath authenticates user accounts directly, no need to perform that here in Shiro:
         setCredentialsMatcher(new AllowAllCredentialsMatcher());
+        setGroupRoleResolver(new DefaultGroupRoleResolver());
     }
 
     /**
@@ -105,6 +107,52 @@ public class ApplicationRealm extends AuthorizingRealm {
         this.applicationRestUrl = applicationRestUrl;
     }
 
+    /**
+     * Returns the {@link GroupRoleResolver} used to translate Stormpath Groups into Shiro role names.
+     * Unless overridden via {@link #setGroupRoleResolver(GroupRoleResolver) setGroupRoleResolver},
+     * the default instance is a {@link DefaultGroupRoleResolver}.
+     *
+     * @return the {@link GroupRoleResolver} used to translate Stormpath Groups into Shiro role names.
+     * @since 0.2
+     */
+    public GroupRoleResolver getGroupRoleResolver() {
+        return groupRoleResolver;
+    }
+
+    /**
+     * Sets the {@link GroupRoleResolver} used to translate Stormpath Groups into Shiro role names.
+     * Unless overridden, the default instance is a {@link DefaultGroupRoleResolver}.
+     *
+     * @param groupRoleResolver the {@link GroupRoleResolver} used to translate Stormpath Groups into Shiro role names.
+     * @since 0.2
+     */
+    public void setGroupRoleResolver(GroupRoleResolver groupRoleResolver) {
+        this.groupRoleResolver = groupRoleResolver;
+    }
+
+    /**
+     * Returns the {@link GroupPermissionResolver} used to discover a Stormpath Groups' assigned permissions.  This
+     * is {@code null} by default and must be configured based on your application's needs.
+     *
+     * @return the {@link GroupPermissionResolver} used to discover a Stormpath Groups' assigned permissions
+     * @since 0.2
+     */
+    public GroupPermissionResolver getGroupPermissionResolver() {
+        return groupPermissionResolver;
+    }
+
+    /**
+     * Sets the {@link GroupPermissionResolver} used to discover a Stormpath Groups' assigned permissions.  This
+     * is {@code null} by default and must be configured based on your application's needs.
+     *
+     * @param groupPermissionResolver the {@link GroupPermissionResolver} used to discover a Stormpath Groups' assigned
+     *                                permissions
+     * @since 0.2
+     */
+    public void setGroupPermissionResolver(GroupPermissionResolver groupPermissionResolver) {
+        this.groupPermissionResolver = groupPermissionResolver;
+    }
+
     @Override
     protected void onInit() {
         super.onInit();
@@ -142,11 +190,7 @@ public class ApplicationRealm extends AuthorizingRealm {
 
         UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
 
-        String username = token.getUsername();
-        char[] password = token.getPassword();
-        String host = token.getHost();
-
-        UsernamePasswordRequest request = new UsernamePasswordRequest(username, password, host);
+        AuthenticationRequest request = createAuthenticationRequest(token);
 
         Application application = ensureApplicationReference();
 
@@ -175,6 +219,13 @@ public class ApplicationRealm extends AuthorizingRealm {
         }
 
         return new SimpleAuthenticationInfo(principals, null);
+    }
+
+    protected AuthenticationRequest createAuthenticationRequest(UsernamePasswordToken token) {
+        String username = token.getUsername();
+        char[] password = token.getPassword();
+        String host = token.getHost();
+        return new UsernamePasswordRequest(username, password, host);
     }
 
     protected PrincipalCollection createPrincipals(Account account) {
@@ -211,9 +262,12 @@ public class ApplicationRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 
+        assertState();
+
         String href = getAccountHref(principals);
 
-        Account account = getClient().getDataStore().getResource(href, Account.class); //TODO resource expansion (account + groups in one request)
+        //TODO resource expansion (account + groups in one request instead of two):
+        Account account = getClient().getDataStore().getResource(href, Account.class);
 
         GroupList groups = account.getGroups();
 
@@ -221,50 +275,41 @@ public class ApplicationRealm extends AuthorizingRealm {
             return null;
         }
 
-        //translate Stormpath Groups into Shiro Roles:
-
-        //we use a heuristic:
-        //For convenience, we allow a 'role' to be any of the following:
-        // 1. A Group's fully qualified href
-        // 2. A Group's ID (last token in the href)
-        // 3. A Group's name (not so safe if the group name changes, HREF/ID will never change)
-
-        //So a Stormpath Group can translate into 3 separate roles.  The developer can choose which he wants to check.
-
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 
         for (Group group : groups) {
-            String groupHref = group.getHref();
-
-            if (groupHref != null) {
-                info.addRole(groupHref);
-                String instanceId = getInstanceId(groupHref);
-                if (instanceId != null) {
-                    info.addRole(instanceId);
-                }
+            Set<String> groupRoles = resolveRoles(group);
+            for (String roleName : groupRoles) {
+                info.addRole(roleName);
             }
 
-            String name = group.getName();
-            if (name != null) {
-                info.addRole(name);
+            Set<Permission> permissions = resolvePermissions(group);
+            for (Permission permission : permissions) {
+                info.addObjectPermission(permission);
             }
         }
 
-        if (CollectionUtils.isEmpty(info.getRoles())) {
-            //no groups associated with the Account
+        if (CollectionUtils.isEmpty(info.getRoles()) &&
+                CollectionUtils.isEmpty(info.getObjectPermissions()) &&
+                CollectionUtils.isEmpty(info.getStringPermissions())) {
+            //no authorization data associated with the Account
             return null;
         }
 
         return info;
     }
 
-    private String getInstanceId(String href) {
-        if (href != null) {
-            int i = href.lastIndexOf('/');
-            if (i >= 0) {
-                return href.substring(i);
-            }
+    private Set<Permission> resolvePermissions(Group group) {
+        if (groupPermissionResolver != null) {
+            return groupPermissionResolver.resolvePermissions(group);
         }
-        return null;
+        return Collections.emptySet();
+    }
+
+    private Set<String> resolveRoles(Group group) {
+        if (groupRoleResolver != null) {
+            return groupRoleResolver.resolveRoles(group);
+        }
+        return Collections.emptySet();
     }
 }
