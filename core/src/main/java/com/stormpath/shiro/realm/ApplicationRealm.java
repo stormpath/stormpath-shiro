@@ -174,7 +174,7 @@ public class ApplicationRealm extends AuthorizingRealm {
 
     //this is not thread safe, but the Client is, and this is only executed during initial Application
     //acquisition, so it is negligible if this executes a few times instead of just once.
-    private Application ensureApplicationReference() {
+    protected final Application ensureApplicationReference() {
         if (this.application == null) {
             assertState();
             String href = getApplicationRestUrl();
@@ -197,7 +197,7 @@ public class ApplicationRealm extends AuthorizingRealm {
         Account account;
 
         try {
-            account = application.authenticate(request);
+            account = application.authenticateAccount(request).getAccount();
         } catch (ResourceException e) {
             //todo error code translation to throw more detailed exceptions
             String msg = StringUtils.clean(e.getMessage());
