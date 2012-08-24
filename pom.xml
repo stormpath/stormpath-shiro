@@ -27,7 +27,7 @@
 
     <groupId>com.stormpath.shiro</groupId>
     <artifactId>stormpath-shiro-root</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Stormpath Shiro</name>
@@ -55,7 +55,6 @@
         <connection>scm:git:git@github.com:stormpath/stormpath-shiro.git</connection>
         <developerConnection>scm:git:git@github.com:stormpath/stormpath-shiro.git</developerConnection>
         <url>http://github.com/stormpath/stormpath-shiro</url>
-      <tag>stormpath-shiro-root-0.2.0</tag>
   </scm>
     <issueManagement>
         <system>GitHub</system>
