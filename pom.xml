@@ -55,7 +55,11 @@
         <connection>scm:git:git@github.com:stormpath/stormpath-shiro.git</connection>
         <developerConnection>scm:git:git@github.com:stormpath/stormpath-shiro.git</developerConnection>
         <url>http://github.com/stormpath/stormpath-shiro</url>
+<<<<<<< HEAD
       <tag>HEAD</tag>
+=======
+    <tag>HEAD</tag>
+>>>>>>> 0.2.x
   </scm>
     <issueManagement>
         <system>GitHub</system>
@@ -83,7 +87,7 @@
         <!-- Standard Dependencies: -->
         <shiro.version>1.2.1</shiro.version>
         <slf4j.version>1.6.6</slf4j.version>
-        <stormpath.sdk.version>0.4.0</stormpath.sdk.version>
+        <stormpath.sdk.version>0.4.1</stormpath.sdk.version>
 
         <!-- Test Dependencies: -->
         <easymock.version>3.0</easymock.version>
