@@ -1,4 +1,4 @@
-# Stormpath Java SDK #
+# Stormpath plugin for Apache Shiro #
 
 Copyright &copy; 2012 Stormpath, Inc. and contributors.
 
@@ -8,7 +8,7 @@ Project Documentation [is in the wiki](https://github.com/stormpath/stormpath-sh
 
 ### Build Instructions ###
 
-This project requires Maven 3.0.3 to build.  Run the following:
+This project requires Maven 3.0.3 (or later) to build.  Run the following:
 
 `> mvn install`
 
