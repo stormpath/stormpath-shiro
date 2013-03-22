@@ -23,7 +23,11 @@ import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.group.Group;
 import com.stormpath.sdk.group.GroupList;
 import com.stormpath.sdk.resource.ResourceException;
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.Permission;
@@ -34,7 +38,12 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A {@code Realm} implementation that uses the <a href="http://www.stormpath.com">Stormpath</a> Cloud Identity
@@ -43,7 +52,28 @@ import java.util.*;
  * The Stormpath-registered
  * <a href="https://www.stormpath.com/docs/libraries/application-rest-url">Application's Stormpath REST URL</a>
  * must be configured as the {@code applicationRestUrl} property.
+ * <h3>Authentication</h3>
+ * Once your application's REST URL is configured, this realm implementation automatically executes authentication
+ * attempts without any need of further configuration by interacting with the Application's
+ * <a href="http://www.stormpath.com/docs/rest/api#ApplicationLoginAttempts">loginAttempts endpoint</a>.
+ * <h3>Authorization</h3>
+ * Stormpath Accounts and Groups can be translated to Shiro roles and permissions via the following components.  You
+ * can implement implementations of these interfaces and plug them into this realm for custom translation behavior:
+ * <ul>
+ * <li>{@link AccountPermissionResolver AccountPermissionResolver}</li>
+ * <li>{@link GroupPermissionResolver GroupPermissionResolver}</li>
+ * <li>{@link GroupRoleResolver GroupRoleResolver}</li>
+ * <li>{@link AccountRoleResolver AccountRoleResolver}</li>
+ * </ul>
+ * <p/>
+ * This realm implementation pre-configures the {@code groupRoleResolver} to be a {@link DefaultGroupRoleResolver}
+ * instance (which can be also be configured).  The other interfaces, if used, must be implemented as they are
+ * specific to your application's data model.
  *
+ * @see AccountPermissionResolver
+ * @see GroupPermissionResolver
+ * @see GroupRoleResolver
+ * @see AccountRoleResolver
  * @since 0.1
  */
 public class ApplicationRealm extends AuthorizingRealm {
@@ -52,6 +82,8 @@ public class ApplicationRealm extends AuthorizingRealm {
     private String applicationRestUrl;
     private GroupRoleResolver groupRoleResolver;
     private GroupPermissionResolver groupPermissionResolver;
+    private AccountPermissionResolver accountPermissionResolver;
+    private AccountRoleResolver accountRoleResolver;
 
     private Application application; //acquired via the client at runtime, not configurable by the Realm user
 
@@ -153,6 +185,64 @@ public class ApplicationRealm extends AuthorizingRealm {
         this.groupPermissionResolver = groupPermissionResolver;
     }
 
+    /**
+     * Returns the {@link AccountPermissionResolver} used to discover a Stormpath Account's assigned permissions.  This
+     * is {@code null} by default and must be configured based on your application's needs.
+     *
+     * @return the {@link AccountPermissionResolver} used to discover a Stormpath Account's assigned permissions.
+     * @since 0.3
+     */
+    public AccountPermissionResolver getAccountPermissionResolver() {
+        return accountPermissionResolver;
+    }
+
+    /**
+     * Sets the {@link AccountPermissionResolver} used to discover a Stormpath Account's assigned permissions.  This
+     * is {@code null} by default and must be configured based on your application's needs.
+     *
+     * @param accountPermissionResolver the {@link AccountPermissionResolver} used to discover a Stormpath Account's
+     *                                  assigned permissions
+     * @since 0.3
+     */
+    public void setAccountPermissionResolver(AccountPermissionResolver accountPermissionResolver) {
+        this.accountPermissionResolver = accountPermissionResolver;
+    }
+
+    /**
+     * Returns the {@link AccountRoleResolver} used to resolve a Stormpath Account into Shiro role names.  This is
+     * {@code null} by default.
+     * <p/>
+     * <b>You only need to configure this property if you are <em>not</em> using Stormpath Groups as Shiro Roles.</b><br/>
+     * Stormpath Account resources are usually associated with one or more Stormpath Groups and those Groups can be
+     * represented as Shiro roles by using the {@link #getGroupRoleResolver() groupRoleResolver}.  You only need this
+     * component to represent Account Roles that are not already represented as Stormpath Groups via the
+     * {@code groupRoleResolver}.
+     *
+     * @return the {@link AccountRoleResolver} used to resolve a Stormpath Account into Shiro role names.
+     * @since 0.2
+     */
+    public AccountRoleResolver getAccountRoleResolver() {
+        return accountRoleResolver;
+    }
+
+    /**
+     * Sets the {@link AccountRoleResolver} used to resolve a Stormpath Account into Shiro role names.  This is
+     * {@code null} by default.
+     * <p/>
+     * <b>You only need to configure this property if you are <em>not</em> using Stormpath Groups as Shiro Roles.</b><br/>
+     * Stormpath Account resources are usually associated with one or more Stormpath Groups and those Groups can be
+     * represented as Shiro roles by using the {@link #getGroupRoleResolver() groupRoleResolver}.  You only need this
+     * component to represent Account Roles that are not already represented as Stormpath Groups via the
+     * {@code groupRoleResolver}.
+     *
+     * @param accountRoleResolver the {@link AccountRoleResolver} used to resolve a Stormpath Account into Shiro
+     *                            role names.
+     * @since 0.2
+     */
+    public void setAccountRoleResolver(AccountRoleResolver accountRoleResolver) {
+        this.accountRoleResolver = accountRoleResolver;
+    }
+
     @Override
     protected void onInit() {
         super.onInit();
@@ -165,9 +255,8 @@ public class ApplicationRealm extends AuthorizingRealm {
         }
         if (this.applicationRestUrl == null) {
             throw new IllegalStateException("\n\nThis application's Stormpath REST URL must be configured.\n\n  " +
-                    "You may get your application's Stormpath REST URL by logging in to the Stormpath web console " +
-                    "and viewing the application's details as shown in step 1.b. here:\n\n " +
-                    "http://www.stormpath.com/docs/quickstart/authenticate-account\n\n" +
+                    "You may get your application's Stormpath REST URL as shown here:\n\n " +
+                    "http://www.stormpath.com/docs/application-rest-url\n\n" +
                     "Copy and paste the 'REST URL' value as the 'applicationRestUrl' property of this class.");
         }
     }
@@ -289,6 +378,18 @@ public class ApplicationRealm extends AuthorizingRealm {
             }
         }
 
+        //since 0.3:
+        Set<String> accountRoles = resolveRoles(account);
+        for (String roleName : accountRoles) {
+            info.addRole(roleName);
+        }
+
+        //since 0.3:
+        Set<Permission> accountPermissions = resolvePermissions(account);
+        for (Permission permission : accountPermissions) {
+            info.addObjectPermission(permission);
+        }
+
         if (CollectionUtils.isEmpty(info.getRoles()) &&
                 CollectionUtils.isEmpty(info.getObjectPermissions()) &&
                 CollectionUtils.isEmpty(info.getStringPermissions())) {
@@ -297,6 +398,14 @@ public class ApplicationRealm extends AuthorizingRealm {
         }
 
         return info;
+    }
+
+    //since 0.3
+    private Set<Permission> resolvePermissions(Account account) {
+        if (accountPermissionResolver != null) {
+            return accountPermissionResolver.resolvePermissions(account);
+        }
+        return Collections.emptySet();
     }
 
     private Set<Permission> resolvePermissions(Group group) {
@@ -309,6 +418,14 @@ public class ApplicationRealm extends AuthorizingRealm {
     private Set<String> resolveRoles(Group group) {
         if (groupRoleResolver != null) {
             return groupRoleResolver.resolveRoles(group);
+        }
+        return Collections.emptySet();
+    }
+
+    //since 0.3
+    private Set<String> resolveRoles(Account account) {
+        if (accountRoleResolver != null) {
+            return accountRoleResolver.resolveRoles(account);
         }
         return Collections.emptySet();
     }

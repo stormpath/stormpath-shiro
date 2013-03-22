@@ -32,6 +32,8 @@ import java.util.Set;
  * Shiro uses the resulting role names to support role-based access control via a
  * {@code subject}'s {@link org.apache.shiro.subject.Subject#hasRole(String) hasRole(String roleName)} checks.
  *
+ * @see GroupPermissionResolver
+ * @see AccountPermissionResolver
  * @since 0.2
  */
 public interface GroupRoleResolver {
@@ -43,6 +45,8 @@ public interface GroupRoleResolver {
      *
      * @param group the {@code Stormpath} group to translate into Shiro role names.
      * @return a set role names attributed to the group, to be used by Shiro for runtime role checks.
+     * @see GroupPermissionResolver
+     * @see AccountPermissionResolver
      */
     Set<String> resolveRoles(Group group);
 

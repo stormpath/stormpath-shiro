@@ -28,6 +28,7 @@ import java.util.Set;
  * associated with the {@code Group}
  * {@link org.apache.shiro.subject.Subject#isPermitted(Permission) isPermitted} to do something.
  *
+ * @see AccountPermissionResolver
  * @since 0.2
  */
 public interface GroupPermissionResolver {
@@ -39,9 +40,10 @@ public interface GroupPermissionResolver {
      * associated with the {@code Group} {@link org.apache.shiro.subject.Subject#isPermitted(Permission) isPermitted}
      * to do something.
      *
-     * @param group the {@code Stormpath} group to inspect to return its assigned Shiro Permissions.
+     * @param group the Strompath {@code Group} to inspect to return its assigned Shiro Permissions.
      * @return a set of Shiro {@link Permission Permission}s assigned to the group, to be used by Shiro for runtime
      *         permission checks.
+     * @see AccountPermissionResolver
      */
     Set<Permission> resolvePermissions(Group group);
 }

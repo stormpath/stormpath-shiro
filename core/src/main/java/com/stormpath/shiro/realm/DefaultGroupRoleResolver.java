@@ -39,17 +39,17 @@ import java.util.Set;
  *     <tbody>
  *         <tr>
  *             <td>HREF</td>
- *             <td>Returns the Group's fully qualified HREF as a role name</td>
+ *             <td>Returns the Group's fully qualified HREF as the role name</td>
  *             <td>{@code https://api.stormpath.com/v1/groups/upXiExAmPlEfA5L1G5ZaSQ}</td>
  *         </tr>
  *         <tr>
  *             <td>ID</td>
- *             <td>Returns Group's globally unique identifier as a role name</td>
+ *             <td>Returns Group's globally unique identifier as the role name</td>
  *             <td>{@code upXiExAmPlEfA5L1G5ZaSQ}</td>
  *         </tr>
  *         <tr>
  *             <td>NAME</td>
- *             <td>Returns Group's name a role name</td>
+ *             <td>Returns Group's name as the role name</td>
  *             <td>{@code administrators}</td>
  *         </tr>
  *     </tbody>
@@ -77,7 +77,7 @@ import java.util.Set;
  * <p/>
  * <b>WARNING:</b> Group Names, while easier to read in code, can change at any time via a REST API call or by using
  * the Stormpath UI Console.  It is <em>strongly</em> recommended to use only the HREF or ID modes as these values
- * will never change.  Acquiring group names might also incur a performance penalty beyond the HREF which is guaranteed
+ * will never change.  Acquiring group names might also incur a REST server call, whereas the the HREF is guaranteed
  * to be present.
  *
  * @since 0.2
@@ -95,13 +95,13 @@ public class DefaultGroupRoleResolver implements GroupRoleResolver {
     }
 
     public void setModes(Set<Mode> modes) {
+        if (modes == null || modes.isEmpty()) {
+            throw new IllegalArgumentException("modes property cannot be null or empty.");
+        }
         this.modes = modes;
     }
 
     public Set<String> getModeNames() {
-        if (CollectionUtils.isEmpty(modes)) {
-            return Collections.emptySet();
-        }
         Set<String> names = new HashSet<String>(modes.size());
         for (Mode mode : modes) {
             names.add(mode.name());
@@ -110,13 +110,14 @@ public class DefaultGroupRoleResolver implements GroupRoleResolver {
     }
 
     public void setModeNames(Set<String> modeNames) {
-        Set<Mode> modes = new HashSet<Mode>(CollectionUtils.size(modeNames));
-        if (modeNames != null) {
-            for (String name : modeNames) {
-                modes.add(Mode.fromString(name));
-            }
+        if (modeNames == null || modeNames.isEmpty()) {
+            throw new IllegalArgumentException("modeNames cannot be null or empty");
         }
-        this.modes = modes;
+        Set<Mode> modes = new HashSet<Mode>(CollectionUtils.size(modeNames));
+        for (String name : modeNames) {
+            modes.add(Mode.fromString(name));
+        }
+        setModes(modes);
     }
 
     @Override
@@ -128,18 +129,20 @@ public class DefaultGroupRoleResolver implements GroupRoleResolver {
 
         String groupHref = group.getHref();
 
-        if (groupHref != null) {
-            if (modes.contains(Mode.HREF)) {
-                set.add(groupHref);
-            }
-            if (modes.contains(Mode.ID)) {
-                String instanceId = getInstanceId(groupHref);
-                if (instanceId != null) {
-                    set.add(instanceId);
-                }
-            }
+        //REST resource hrefs should never ever be null:
+        if (groupHref == null) {
+            throw new IllegalStateException("Group does not have an href property.  This should never happen.");
         }
 
+        if (modes.contains(Mode.HREF)) {
+            set.add(groupHref);
+        }
+        if (modes.contains(Mode.ID)) {
+            String instanceId = getInstanceId(groupHref);
+            if (instanceId != null) {
+                set.add(instanceId);
+            }
+        }
         if (modes.contains(Mode.NAME)) {
             String name = group.getName();
             if (name != null) {
@@ -152,11 +155,9 @@ public class DefaultGroupRoleResolver implements GroupRoleResolver {
     }
 
     private String getInstanceId(String href) {
-        if (href != null) {
-            int i = href.lastIndexOf('/');
-            if (i >= 0) {
-                return href.substring(i);
-            }
+        int i = href.lastIndexOf('/');
+        if (i >= 0) {
+            return href.substring(i + 1);
         }
         return null;
     }
