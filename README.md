@@ -1,3 +1,5 @@
+[![Build Status](https://api.travis-ci.org/stormpath/stormpath-shiro.png?branch=master)](https://travis-ci.org/stormpath/stormpath-shiro)
+
 # Stormpath plugin for Apache Shiro #
 
 Copyright &copy; 2013 Stormpath, Inc. and contributors.
