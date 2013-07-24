@@ -18,7 +18,6 @@ package com.stormpath.shiro.realm;
 import com.stormpath.sdk.group.Group;
 import org.apache.shiro.util.CollectionUtils;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
