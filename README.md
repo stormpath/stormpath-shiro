@@ -25,13 +25,6 @@ This project requires Maven 3 to build.  Run the following from a command prompt
 
 0.3.1 is a minor dependency fix: the Stormpath Java SDK dependency has been upgraded to reflect its latest 0.8.0 release.  This is the only change - no additional features/changes have been made otherwise.
 
-
-## Change Log
-
-### 0.3.1
-
-0.3.1 is a minor dependency fix: the Stormpath Java SDK dependency has been upgraded to reflect its latest 0.8.0 release.  This is the only change - no additional features/changes have been made otherwise.
-
 ### 0.4.0
 
 - Upgraded Stormpath SDK dependency to latest stable release of 0.8.1
@@ -45,17 +38,16 @@ securityManager.cacheManager = $cacheManager
 
 # Stormpath integration:
 stormpathClient = com.stormpath.shiro.client.ClientFactory
-...
+# etc...
 stormpathClient.cacheManager = $cacheManager
 ```
 
 If for some reason you *don't* want the Stormpath SDK to use Shiro's caching mechanism, you can configure the `stormpathCacheManager` property (instead of the expected Shiro-specific `cacheManager` property), which accepts a `com.stormpath.sdk.cache.CacheManager` instance instead:
 
-```
-...
+```ini
+# ...
 stormpathCacheManager = my.com.stormpath.sdk.cache.CacheManagerImplementation
-
-...
+# etc...
 stormpathClient.stormpathCacheManager = $stormpathCacheManager
 ```
 But note this approach requires you to set-up/configure two separate caching mechanisms.
