@@ -16,7 +16,11 @@ This project requires Maven 3.0.3 (or later) to build.  Run the following:
 
 ## Change Log
 
-### 0.4.0 ###
+### 0.3.1
+
+0.3.1 is a minor dependency fix: the Stormpath Java SDK dependency has been upgraded to reflect its latest 0.8.0 release.  This is the only change - no additional features/changes have been made otherwise.
+
+### 0.4.0
 
 - Upgraded Stormpath SDK dependency to latest stable release of 0.8.1
 - Added CacheManager/Cache bridging support.  This allows the Stormpath SDK to use the same caching mechanism that you're already using for Shiro, simplifying cache configuration/setup.  For example:
