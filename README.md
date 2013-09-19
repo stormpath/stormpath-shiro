@@ -21,10 +21,6 @@ This project requires Maven 3 to build.  Run the following from a command prompt
 
 ## Change Log
 
-### 0.3.1
-
-0.3.1 is a minor dependency fix: the Stormpath Java SDK dependency has been upgraded to reflect its latest 0.8.0 release.  This is the only change - no additional features/changes have been made otherwise.
-
 ### 0.4.0
 
 - Upgraded Stormpath SDK dependency to latest stable release of 0.8.1
@@ -53,6 +49,10 @@ stormpathClient.stormpathCacheManager = $stormpathCacheManager
 But note this approach requires you to set-up/configure two separate caching mechanisms.
 
 See ClientFactory `setCacheManager` and `setStormpathCacheManager` JavaDoc for more.
+
+### 0.3.1
+
+0.3.1 is a minor dependency fix: the Stormpath Java SDK dependency has been upgraded to reflect its latest 0.8.0 release.  This is the only change - no additional features/changes have been made otherwise.
 
 
 
