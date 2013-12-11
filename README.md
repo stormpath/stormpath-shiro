@@ -53,7 +53,7 @@ The `CustomDataPermissionsEditor` will save the permissions as a JSON list in th
         "perm1",
         "perm2",
         ...,
-        "permN"j
+        "permN"
     ]
 }
 ```
@@ -63,14 +63,14 @@ If you would like to change the default field name, you can call the `setFieldNa
 new CustomDataPermissionsEditor(account.getCustomData())
     .setFieldName("whateverYouWantHere")
     .append("user:1234:edit")
-    .append("document:*)
-    .remove("printer:*:print);
+    .append("document:*")
+    .remove("printer:*:print");
 ```
 
 But you'll also need to update your `ApplicationRealm`'s configuration to reflect the new name so it can function - the realm reads the same `CustomData` field, so they must be identical to ensure both read and write scenarios access the same field.  For example, if using `shiro.ini`:
 
-    stormpathRealm.groupPermissionResolver.customDataFieldName = myApplicationPermissions
-    stormpathRealm.accountPermissionResolver.customDataFieldName = myApplicationPermissions
+    stormpathRealm.groupPermissionResolver.customDataFieldName = whateverYouWantHere
+    stormpathRealm.accountPermissionResolver.customDataFieldName = whateverYouWantHere
 
 - The `ApplicationRealm` implementation now has a default `groupPermissionResolver` and `accountPermissionResolver` properties that leverage respective group or account `CustomData` to support permissions as described above.  Prior to this 0.5.0 release, there were no default implementations of these properties - you had to implement the interfaces yourself to support permissions.  Now Permissions are built in by default (although you could still provide your own custom implementations if you have custom needs of course).
 
