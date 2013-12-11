@@ -25,7 +25,7 @@ import java.util.Set;
  * Default implementation of the {@code GroupRoleResolver} interface that allows a Stormpath
  * {@link Group} to be translated into Shiro role names based on custom preferences.
  * <h2>Overview</h2>
- * This implementation converts a Group into one or more role names based on one or more configured
+ * This implementation converts a Stormpath Group into one or more role names based on one or more configured
  * {@link Mode Mode}s:
  * <table>
  *     <thead>

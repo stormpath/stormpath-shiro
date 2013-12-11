@@ -23,7 +23,7 @@ import com.stormpath.sdk.lang.Assert;
  * This allows the Stormpath SDK to use your existing Shiro caching mechanism so you only need to configure one
  * caching implementation.
  * <p/>
- * This implementation effectively acts as an adapter or bridge from the Stormpath cache API to the Shiro cache API.
+ * This implementation effectively acts as an adapter or bridge from the Stormpath SDK cache API to the Shiro cache API.
  *
  * @since 0.4.0
  */

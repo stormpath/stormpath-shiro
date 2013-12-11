@@ -24,7 +24,7 @@ import com.stormpath.sdk.lang.Assert;
  * {@link org.apache.shiro.cache.CacheManager CacheManager} instance.  This allows the Stormpath SDK to use your
  * existing Shiro caching mechanism so you only need to configure one caching implementation.
  * <p/>
- * This implementation effectively acts as an adapter or bridge from the Stormpath cacheManager API to the Shiro
+ * This implementation effectively acts as an adapter or bridge from the Stormpath SDK cacheManager API to the Shiro
  * cacheManager API.
  *
  * @since 0.4.0

@@ -49,16 +49,15 @@ import java.util.Set;
  * A {@code Realm} implementation that uses the <a href="http://www.stormpath.com">Stormpath</a> Cloud Identity
  * Management service for authentication and authorization operations for a single Application.
  * <p/>
- * The Stormpath-registered
- * <a href="https://www.stormpath.com/docs/libraries/application-rest-url">Application's Stormpath REST URL</a>
+ * Your
+ * <a href="http://docs.stormpath.com/rest/product-guide/#application-url">application's Stormpath REST URL</a>
  * must be configured as the {@code applicationRestUrl} property.
  * <h3>Authentication</h3>
  * Once your application's REST URL is configured, this realm implementation automatically executes authentication
  * attempts without any need of further configuration by interacting with the Application's
- * <a href="http://www.stormpath.com/docs/rest/api#ApplicationLoginAttempts">loginAttempts endpoint</a>.
+ * <a href="http://docs.stormpath.com/rest/product-guide/#application-account-authc">loginAttempts endpoint</a>.
  * <h3>Authorization</h3>
- * Stormpath Accounts and Groups can be translated to Shiro roles and permissions via the following components.  You
- * can implement implementations of these interfaces and plug them into this realm for custom translation behavior:
+ * Stormpath Accounts and Groups can be translated to Shiro roles and permissions via the following components:
  * <ul>
  * <li>{@link AccountPermissionResolver AccountPermissionResolver}</li>
  * <li>{@link GroupPermissionResolver GroupPermissionResolver}</li>
@@ -66,9 +65,72 @@ import java.util.Set;
  * <li>{@link AccountRoleResolver AccountRoleResolver}</li>
  * </ul>
  * <p/>
- * This realm implementation pre-configures the {@code groupRoleResolver} to be a {@link DefaultGroupRoleResolver}
- * instance (which can be also be configured).  The other interfaces, if used, must be implemented as they are
- * specific to your application's data model.
+ * This realm implementation comes pre-configured with the following default implementations, which should suit most
+ * Shiro+Stormpath use cases:
+ *
+ * <table>
+ *     <tr>
+ *         <th>Property</th>
+ *         <th>Pre-configured Implementation</th>
+ *         <th>Notes</th>
+ *     </tr>
+ *     <tr>
+ *         <td>{@link #getGroupRoleResolver() groupRoleResolver}</td>
+ *         <td>{@link DefaultGroupRoleResolver}</td>
+ *         <td>Each Stormpath Group can be represented as up to three possible Shiro roles (with 1-to-1 being the
+ *         default).  See the {@link DefaultGroupRoleResolver} JavaDoc for more info.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@link #getAccountRoleResolver() accountRoleResolver}</td>
+ *         <td>None</td>
+ *         <td>Most Shiro+Stormpath applications should only need the above {@code DefaultGroupRoleResolver} when using
+ *             Stormpath Groups as Shiro roles.  This realm implementation already acquires the
+ *             {@link com.stormpath.sdk.account.Account#getGroups() account's assigned groups} and resolves the group
+ *             roles via the above {@code groupRoleResolver}.  <b>You only need to configure this property
+ *             if you need an additional way to represent an account's assigned roles that cannot already be
+ *             represented via Stormpath account &lt;--&gt; group associations.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@link #getGroupPermissionResolver() groupPermissionResolver}</td>
+ *         <td>{@link GroupCustomDataPermissionResolver}</td>
+ *         <td>The {@code GroupCustomDataPermissionResolver} assumes the convention that a Group's assigned permissions
+ *         are stored as a nested {@code Set&lt;String&gt;} field in the
+ *         {@link com.stormpath.sdk.group.Group#getCustomData() group's CustomData resource}.  See the
+ *         {@link GroupCustomDataPermissionResolver} JavaDoc for more information.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@link #getAccountPermissionResolver() accountPermissionResolver}</td>
+ *         <td>{@link AccountCustomDataPermissionResolver}</td>
+ *         <td>The {@code AccountCustomDataPermissionResolver} assumes the convention that an Account's directly
+ *         assigned permissions are stored as a nested {@code Set&lt;String&gt;} field in the
+ *         {@link com.stormpath.sdk.account.Account#getCustomData() account's CustomData resource}.  See the
+ *         {@link AccountCustomDataPermissionResolver} JavaDoc for more information.</td>
+ *     </tr>
+ * </table>
+ * <h4>Transitive Permissions</h4>
+ * This implementation represents an Account's granted permissions as all permissions that:
+ * <ol>
+ *     <li>Are assigned directly to the Account itself</li>
+ *     <li>Are assigned to any of the Account's assigned Groups</li>
+ * </ol>
+ * <h4>Assigning Permissions</h4>
+ * A Shiro Realm is a read-only component - they typically do not support account/group/permission updates directly.
+ * Therefore, you make modifications to these components by interacting with the datastore (e.g. Stormpath) directly.
+ * <p/>
+ * The {@link com.stormpath.shiro.authz.CustomDataPermissionsEditor CustomDataPermissionsEditor} has been provided for
+ * this purpose.  For example, assuming the convention of storing permissions in an account or group's CustomData
+ * resource:
+ * <pre>
+ * Account account = getAccount();
+ * new CustomDataPermissionsEditor(account.getCustomData())
+ *     .append("someResourceType:anIdentifier:anAction")
+ *     .append("anotherResourceType:anIdentifier:*")
+ *     .remove("oldPermission");
+ * account.save();
+ * </pre>
+ * Again, the default {@link #getGroupPermissionResolver() groupPermissionResolver} and
+ * {@link #getAccountPermissionResolver() accountPermissionResolver} instances assume this CustomData storage strategy,
+ * so if you use them, the above {@code CustomDataPermissionsEditor} will work easily.
  *
  * @see AccountPermissionResolver
  * @see GroupPermissionResolver
@@ -91,6 +153,8 @@ public class ApplicationRealm extends AuthorizingRealm {
         //Stormpath authenticates user accounts directly, no need to perform that here in Shiro:
         setCredentialsMatcher(new AllowAllCredentialsMatcher());
         setGroupRoleResolver(new DefaultGroupRoleResolver());
+        setGroupPermissionResolver(new GroupCustomDataPermissionResolver());
+        setAccountPermissionResolver(new AccountCustomDataPermissionResolver());
     }
 
     /**
@@ -163,8 +227,9 @@ public class ApplicationRealm extends AuthorizingRealm {
     }
 
     /**
-     * Returns the {@link GroupPermissionResolver} used to discover a Stormpath Groups' assigned permissions.  This
-     * is {@code null} by default and must be configured based on your application's needs.
+     * Returns the {@link GroupPermissionResolver} used to discover a Stormpath Groups' assigned permissions.  Unless
+     * overridden via {@link #setGroupPermissionResolver(GroupPermissionResolver) setGroupPermissionResolver}, the
+     * default instance is a {@link GroupCustomDataPermissionResolver}.
      *
      * @return the {@link GroupPermissionResolver} used to discover a Stormpath Groups' assigned permissions
      * @since 0.2
@@ -174,8 +239,8 @@ public class ApplicationRealm extends AuthorizingRealm {
     }
 
     /**
-     * Sets the {@link GroupPermissionResolver} used to discover a Stormpath Groups' assigned permissions.  This
-     * is {@code null} by default and must be configured based on your application's needs.
+     * Sets the {@link GroupPermissionResolver} used to discover a Stormpath Groups' assigned permissions.  Unless
+     * overridden, the default instance is a {@link GroupCustomDataPermissionResolver}.
      *
      * @param groupPermissionResolver the {@link GroupPermissionResolver} used to discover a Stormpath Groups' assigned
      *                                permissions
@@ -186,8 +251,10 @@ public class ApplicationRealm extends AuthorizingRealm {
     }
 
     /**
-     * Returns the {@link AccountPermissionResolver} used to discover a Stormpath Account's assigned permissions.  This
-     * is {@code null} by default and must be configured based on your application's needs.
+     * Returns the {@link AccountPermissionResolver} used to discover a Stormpath Account's directly-assigned
+     * permissions.  Unless overridden via
+     * {@link #setAccountPermissionResolver(AccountPermissionResolver) setAccountPermissionResolver}, the default
+     * instance is a {@link AccountCustomDataPermissionResolver}.
      *
      * @return the {@link AccountPermissionResolver} used to discover a Stormpath Account's assigned permissions.
      * @since 0.3
@@ -197,8 +264,8 @@ public class ApplicationRealm extends AuthorizingRealm {
     }
 
     /**
-     * Sets the {@link AccountPermissionResolver} used to discover a Stormpath Account's assigned permissions.  This
-     * is {@code null} by default and must be configured based on your application's needs.
+     * Sets the {@link AccountPermissionResolver} used to discover a Stormpath Account's assigned permissions.  Unless
+     * overridden, the default instance is a {@link AccountCustomDataPermissionResolver}.
      *
      * @param accountPermissionResolver the {@link AccountPermissionResolver} used to discover a Stormpath Account's
      *                                  assigned permissions

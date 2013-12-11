@@ -43,7 +43,7 @@ public interface AccountPermissionResolver {
      * <p/>
      * Note that method is for resolving permissions that are directly assigned to an Account.  Permissions
      * that are assigned to an account's groups (and therefore implicitly associated with an Account), would be resolved
-     * instead by a {@link GroupPermissionResolver} instance instead.
+     * instead by a {@link GroupPermissionResolver} instance.
      * <p/>
      * Shiro checks these permissions to determine whether or not a {@link org.apache.shiro.subject.Subject Subject}
      * representing the {@code Account}

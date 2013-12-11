@@ -27,7 +27,7 @@
 
     <groupId>com.stormpath.shiro</groupId>
     <artifactId>stormpath-shiro-root</artifactId>
-    <version>0.4.1-SNAPSHOT</version>
+    <version>0.5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Stormpath Shiro</name>
@@ -81,15 +81,16 @@
     <properties>
 
         <!-- Standard Dependencies: -->
-        <shiro.version>1.2.1</shiro.version>
+        <shiro.version>1.2.2</shiro.version>
         <slf4j.version>1.6.6</slf4j.version>
-        <stormpath.sdk.version>0.8.1</stormpath.sdk.version>
+        <stormpath.sdk.version>0.9.0</stormpath.sdk.version>
 
         <!-- Test Dependencies: -->
         <easymock.version>3.0</easymock.version>
         <groovy.version>2.1.6</groovy.version>
         <junit.version>4.8.2</junit.version>
         <logback.version>0.9.29</logback.version>
+        <jackson.version>1.9.13</jackson.version>
 
     </properties>
 
@@ -118,6 +119,12 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>${jackson.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -264,7 +271,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.8.1</version>
+                        <version>2.9.1</version>
                         <executions>
                             <execution>
                                 <id>attach-api-docs</id>
@@ -274,6 +281,43 @@
                             </execution>
                         </executions>
                         <inherited>true</inherited>
+                        <configuration>
+                            <top><![CDATA[
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-29159574-1']);
+  _gaq.push(['_setDomainName', 'stormpath.com']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+<!-- kissmetrics -->
+<script type="text/javascript">
+  var _kmq = _kmq || [];
+  var _kmk = _kmk || '684b854336bd3a6523260ebd991eec06b18b929a';
+  function _kms(u){
+    setTimeout(function(){
+      var d = document, f = d.getElementsByTagName('script')[0],
+      s = d.createElement('script');
+      s.type = 'text/javascript'; s.async = true; s.src = u;
+      f.parentNode.insertBefore(s, f);
+    }, 1);
+  }
+  _kms('//i.kissmetrics.com/i.js');
+  _kms('//doug1izaerwt3.cloudfront.net/' + _kmk + '.1.js');
+</script>
+
+<!-- Optimizely -->
+<script src="//cdn.optimizely.com/js/225847041.js"></script>
+                                ]]></top>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
