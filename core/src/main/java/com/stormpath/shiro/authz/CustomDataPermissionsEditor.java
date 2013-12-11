@@ -161,8 +161,8 @@ public class CustomDataPermissionsEditor implements PermissionsEditor {
      * </pre>
      * <h3>Usage Warning</h3>
      * If you change this value, you will also need to adjust your {@code ApplicationRealm} instance's configuration
-     * to reflect this name so it can continue to function - the realm reads the same {@code CustomData} property, so
-     * they must be identical to ensure both read and write scenarios access the same data.
+     * to reflect this name so it can continue to function - the realm reads the same {@code CustomData} field, so
+     * they must be identical to ensure both read and write scenarios access the same field.
      * <p/>
      * For example, if using {@code shiro.ini}:
      * <pre>

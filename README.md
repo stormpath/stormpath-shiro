@@ -24,7 +24,7 @@ This project requires Maven 3 to build.  Run the following from a command prompt
 ### 0.5.0
 
 - Upgraded Stormpath SDK dependency to latest stable release of 0.9.0
-- Added Permission support!  It is now possible to manage Shiro permissions assigned to Stormpath Accounts or Groups by using Stormpath's newly released [CustomData](http://docs.stormpath.com/rest/product-guide/#custom-data) functionality.  You can add and remove permission to an Account or Group by modifying that account or group's CustomData resource.  For example:
+- Added Permission support!  It is now possible to assign Shiro permissions to Stormpath Accounts or Groups by leveraging Stormpath's newly released [CustomData](http://docs.stormpath.com/rest/product-guide/#custom-data) feature.  You can add and remove permission to an Account or Group by modifying that account or group's CustomData resource.  For example:
 
 ```java
 Account account = getAccount(); //lookup account
@@ -61,12 +61,18 @@ If you would like to change the default field name, you can call the `setFieldNa
 
 ```java
 new CustomDataPermissionsEditor(account.getCustomData())
-    .setFieldName("whateverIWantHere")
+    .setFieldName("whateverYouWantHere")
     .append("user:1234:edit")
     .append("document:*)
     .remove("printer:*:print);
 ```
 
+But you'll also need to update your `ApplicationRealm`'s configuration to reflect the new name so it can function - the realm reads the same `CustomData` field, so they must be identical to ensure both read and write scenarios access the same field.  For example, if using `shiro.ini`:
+
+    stormpathRealm.groupPermissionResolver.customDataFieldName = myApplicationPermissions
+    stormpathRealm.accountPermissionResolver.customDataFieldName = myApplicationPermissions
+
+- The `ApplicationRealm` implementation now has a default `groupPermissionResolver` and `accountPermissionResolver` properties that leverage respective group or account `CustomData` to support permissions as described above.  Prior to this 0.5.0 release, there were no default implementations of these properties - you had to implement the interfaces yourself to support permissions.  Now Permissions are built in by default (although you could still provide your own custom implementations if you have custom needs of course).
 
 ### 0.4.0
 
