@@ -21,6 +21,11 @@ This project requires Maven 3 to build.  Run the following from a command prompt
 
 ## Change Log
 
+### 0.5.0
+
+- Upgraded Stormpath SDK dependency to latest stable release of 0.9.0
+- Added Permission support!  It is now possible to manage Shiro permissions assigned to Stormpath Accounts or Groups by using Stormpath's newly released [CustomData](http://docs.stormpath.com/rest/product-guide/#custom-data) functionality.
+
 ### 0.4.0
 
 - Upgraded Stormpath SDK dependency to latest stable release of 0.8.1

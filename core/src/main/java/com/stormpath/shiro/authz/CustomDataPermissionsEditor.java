@@ -42,8 +42,8 @@ import java.util.Set;
  *     CustomData data = account.getCustomData();
  *     new CustomDataPermissionsEditor(customData)
  *         .append("user:1234:edit")
- *         .append("document:*)
- *         .remove("printer:*:print);
+ *         .append("document:*")
+ *         .remove("printer:*:print");
  *     data.save();
  * </pre>
  * Invoking this code would remove the first two permissions and remove the 3rd.
