@@ -24,7 +24,49 @@ This project requires Maven 3 to build.  Run the following from a command prompt
 ### 0.5.0
 
 - Upgraded Stormpath SDK dependency to latest stable release of 0.9.0
-- Added Permission support!  It is now possible to manage Shiro permissions assigned to Stormpath Accounts or Groups by using Stormpath's newly released [CustomData](http://docs.stormpath.com/rest/product-guide/#custom-data) functionality.
+- Added Permission support!  It is now possible to manage Shiro permissions assigned to Stormpath Accounts or Groups by using Stormpath's newly released [CustomData](http://docs.stormpath.com/rest/product-guide/#custom-data) functionality.  You can add and remove permission to an Account or Group by modifying that account or group's CustomData resource.  For example:
+
+```java
+Account account = getAccount(); //lookup account
+
+//edit the permisssions assigned to the Account:
+new CustomDataPermissionsEditor(account.getCustomData())
+    .append("user:1234:edit")
+    .append("document:*)
+    .remove("printer:*:print);
+    
+//persist the account's permission changes:
+account.save();
+```
+
+The same `CustomDataPermissionsEditor` can be used to assign permissions to Groups as well, and assumes 'transitive association': any permissions assigned to a Group are also 'inherited' to the Accounts in the Group.
+
+In other words, an account's total assigned permissions are any permissions assigned directly to the account, plus, all of the permissions assigned to any Group that contains the account.
+
+The `CustomDataPermissionsEditor` will save the permissions as a JSON list in the CustomData resource, under the default `apacheShiroPermissions` field name, for example:
+
+```json
+{
+    ... any other of your own custom data properties ...,
+
+    "apacheShiroPermissions": [
+        "perm1",
+        "perm2",
+        ...,
+        "permN"j
+    ]
+}
+```
+If you would like to change the default field name, you can call the `setFieldName` method:
+
+```java
+new CustomDataPermissionsEditor(account.getCustomData())
+    .setFieldName("whateverIWantHere")
+    .append("user:1234:edit")
+    .append("document:*)
+    .remove("printer:*:print);
+```
+
 
 ### 0.4.0
 
