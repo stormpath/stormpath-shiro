@@ -32,8 +32,8 @@ Account account = getAccount(); //lookup account
 //edit the permisssions assigned to the Account:
 new CustomDataPermissionsEditor(account.getCustomData())
     .append("user:1234:edit")
-    .append("document:*)
-    .remove("printer:*:print);
+    .append("document:*")
+    .remove("printer:*:print");
     
 //persist the account's permission changes:
 account.save();
