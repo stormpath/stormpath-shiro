@@ -114,8 +114,8 @@ import java.util.Set;
  *     <li>Are assigned to any of the Account's assigned Groups</li>
  * </ol>
  * <h4>Assigning Permissions</h4>
- * A Shiro Realm is a read-only component - they typically do not support account/group/permission updates directly.
- * Therefore, you make modifications to these components by interacting with the datastore (e.g. Stormpath) directly.
+ * A Shiro Realm is a read-only component - it typically does not support account/group/permission updates directly.
+ * Therefore, you make modifications to these components by interacting with the data store (e.g. Stormpath) directly.
  * <p/>
  * The {@link com.stormpath.shiro.authz.CustomDataPermissionsEditor CustomDataPermissionsEditor} has been provided for
  * this purpose.  For example, assuming the convention of storing permissions in an account or group's CustomData
@@ -420,18 +420,14 @@ public class ApplicationRealm extends AuthorizingRealm {
 
         assertState();
 
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+
         String href = getAccountHref(principals);
 
         //TODO resource expansion (account + groups in one request instead of two):
         Account account = getClient().getDataStore().getResource(href, Account.class);
 
         GroupList groups = account.getGroups();
-
-        if (groups == null) {
-            return null;
-        }
-
-        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 
         for (Group group : groups) {
             Set<String> groupRoles = resolveRoles(group);

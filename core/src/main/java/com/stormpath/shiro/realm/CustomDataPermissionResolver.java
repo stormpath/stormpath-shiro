@@ -47,8 +47,6 @@ import java.util.Set;
  */
 public class CustomDataPermissionResolver {
 
-    public static final String DEFAULT_CUSTOM_DATA_FIELD_NAME = "apacheShiroPermissions";
-
     private String customDataFieldName;
 
     private PermissionResolver permissionResolver;
@@ -58,7 +56,7 @@ public class CustomDataPermissionResolver {
      * {@code apacheShiroPermissions} and a default {@link WildcardPermissionResolver}.
      */
     public CustomDataPermissionResolver() {
-        this.customDataFieldName = DEFAULT_CUSTOM_DATA_FIELD_NAME;
+        this.customDataFieldName = CustomDataPermissionsEditor.DEFAULT_CUSTOM_DATA_FIELD_NAME;
         this.permissionResolver = new WildcardPermissionResolver();
     }
 

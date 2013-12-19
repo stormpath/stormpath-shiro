@@ -20,11 +20,17 @@ import com.stormpath.sdk.application.Application
 import com.stormpath.sdk.authc.AuthenticationRequest
 import com.stormpath.sdk.authc.AuthenticationResult
 import com.stormpath.sdk.client.Client
+import com.stormpath.sdk.directory.CustomData
 import com.stormpath.sdk.ds.DataStore
+import com.stormpath.sdk.group.Group
+import com.stormpath.sdk.group.GroupList
 import com.stormpath.sdk.resource.ResourceException
+import com.stormpath.shiro.authz.CustomDataPermissionsEditor
 import org.apache.shiro.authc.AuthenticationException
 import org.apache.shiro.authc.SimpleAuthenticationInfo
 import org.apache.shiro.authc.UsernamePasswordToken
+import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher
+import org.apache.shiro.subject.SimplePrincipalCollection
 import org.easymock.IAnswer
 import org.junit.Before
 import org.junit.Test
@@ -41,6 +47,15 @@ class ApplicationRealmTest {
     @Before
     void setUp() {
         realm = new ApplicationRealm()
+    }
+
+    @Test
+    void testDefaultInstance() {
+        assertTrue realm.getCredentialsMatcher() instanceof AllowAllCredentialsMatcher //allow all - Stormpath will do the credentials comparison as necessary
+        assertTrue realm.getGroupRoleResolver() instanceof DefaultGroupRoleResolver
+        assertTrue realm.getGroupPermissionResolver() instanceof GroupCustomDataPermissionResolver
+        assertTrue realm.getAccountPermissionResolver() instanceof AccountCustomDataPermissionResolver
+        assertNull realm.getAccountRoleResolver()
     }
 
     @Test(expected = IllegalStateException)
@@ -75,6 +90,7 @@ class ApplicationRealmTest {
 
         realm.init()
 
+
         verify client
     }
 
@@ -89,6 +105,18 @@ class ApplicationRealmTest {
         assertSame client, realm.client
 
         verify client
+    }
+
+    @Test
+    void testSetAccountRoleResolver() {
+        def r = createStrictMock(AccountRoleResolver)
+
+        replay r
+        realm.accountRoleResolver = r
+
+        assertSame r, realm.getAccountRoleResolver()
+
+        verify r
     }
 
     @Test

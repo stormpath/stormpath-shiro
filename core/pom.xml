@@ -42,6 +42,12 @@
             <groupId>com.stormpath.sdk</groupId>
             <artifactId>stormpath-sdk-api</artifactId>
         </dependency>
+
+        <!-- Test dependencies: -->
+        <dependency>
+            <groupId>com.stormpath.sdk</groupId>
+            <artifactId>stormpath-sdk-httpclient</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

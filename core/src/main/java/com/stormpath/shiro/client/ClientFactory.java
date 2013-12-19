@@ -32,18 +32,22 @@ import java.util.Properties;
  * As this class is a simple bridge between APIs, it does not do much - all configuration properties are immediately
  * passed through to an internal {@link com.stormpath.sdk.client.ClientBuilder ClientBuilder} instance, and the
  * {@link #createInstance()} implementation merely calls {@link com.stormpath.sdk.client.ClientBuilder#build()}.
- * <h2>Usage</h2>
+ * <h5>Usage</h5>
  * Example {@code shiro.ini} configuration:
  * <p/>
  * <pre>
  * [main]
  * ...
+ * cacheManager = some.impl.of.org.apache.shiro.cache.CacheManager
+ * securityManager.cacheManager = $cacheManager
+ *
  * stormpathClient = com.stormpath.shiro.client.ClientFactory
  * stormpathClient.apiKeyFileLocation = /home/myhomedir/.stormpath/apiKey.properties
+ * stormpathClient.cacheManager = $cacheManager
  *
  * stormpathRealm = com.stormpath.shiro.realm.ApplicationRealm
  * stormpathRealm.client = $stormpathClient
- * stormpathRealm.applicationRestUrl = https://api.stormpath.com/v1/applications/someExampleIdHere
+ * stormpathRealm.applicationRestUrl = https://api.stormpath.com/v1/applications/yourAppIdHere
  *
  * securityManager.realm = $stormpathRealm
  *
