@@ -23,7 +23,7 @@ This project requires Maven 3 to build.  Run the following from a command prompt
 
 ### 0.5.0
 
-- Upgraded Stormpath SDK dependency to latest stable release of 0.9.0
+- Upgraded Stormpath SDK dependency to latest stable release of 0.9.1
 - Added Permission support!  It is now possible to assign Shiro permissions to Stormpath Accounts or Groups by leveraging Stormpath's newly released [CustomData](http://docs.stormpath.com/rest/product-guide/#custom-data) feature.  You can add and remove permission to an Account or Group by modifying that account or group's CustomData resource.  For example:
 
 ```java
