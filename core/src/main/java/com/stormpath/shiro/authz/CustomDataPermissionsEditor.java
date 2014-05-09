@@ -64,7 +64,7 @@ import java.util.Set;
  *         "perm1",
  *         "perm2",
  *         ...,
- *         "permN"j
+ *         "permN"
  *     ]
  * }
  * </pre>
