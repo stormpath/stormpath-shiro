@@ -21,6 +21,11 @@ This project requires Maven 3 to build.  Run the following from a command prompt
 
 ## Change Log
 
+### 0.6.0
+
+- Upgraded Shiro dependency to latest stable release of 1.2.3
+- Upgraded Stormpath SDK dependency to latest released version: 1.0.beta
+
 ### 0.5.0
 
 - Upgraded Stormpath SDK dependency to latest stable release of 0.9.1

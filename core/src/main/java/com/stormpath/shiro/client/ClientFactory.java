@@ -15,6 +15,7 @@
  */
 package com.stormpath.shiro.client;
 
+import com.stormpath.sdk.client.ApiKeys;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.client.ClientBuilder;
 import com.stormpath.sdk.client.Clients;
@@ -56,7 +57,8 @@ import java.util.Properties;
  * </pre>
  *
  * @see ClientBuilder
- * @see ClientBuilder#setApiKeyFileLocation(String)
+ * @see ClientBuilder#setApiKey(com.stormpath.sdk.client.ApiKey)
+ * @see com.stormpath.sdk.client.ApiKeyBuilder#setFileLocation(String)
  * @since 0.1
  */
 public class ClientFactory extends AbstractFactory<Client> {
@@ -82,71 +84,77 @@ public class ClientFactory extends AbstractFactory<Client> {
     }
 
     /**
-     * Calls {@code clientBuilder.}{@link ClientBuilder#setApiKeyFileLocation(String) setApiKeyFileLocation(location)}.
+     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.client.ApiKeyBuilder#setFileLocation(String) setFileLocation(apiKeyFileLocation)}{@code .build())}.
      * See that JavaDoc for expected syntax/format.
      *
      * @param apiKeyFileLocation the file, classpath or url location of the API Key {@code .properties} file to load when
      *                           constructing the API Key to use for communicating with the Stormpath REST API.
-     * @see ClientBuilder#setApiKeyFileLocation(String)
+     * @see ClientBuilder#setApiKey(com.stormpath.sdk.client.ApiKey)
+     * @see com.stormpath.sdk.client.ApiKeyBuilder#setFileLocation(String)
      * @since 0.2
      */
     public void setApiKeyFileLocation(String apiKeyFileLocation) {
-        this.clientBuilder.setApiKeyFileLocation(apiKeyFileLocation);
+        this.clientBuilder.setApiKey(ApiKeys.builder().setFileLocation(apiKeyFileLocation).build());
     }
 
     /**
-     * Calls {@code clientBuilder.}{@link ClientBuilder#setApiKeyInputStream(java.io.InputStream) setApiKeyInputStream}.
+     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.client.ApiKeyBuilder#setInputStream(java.io.InputStream) setInputStream(apiKeyInputStream)}{@code .build())}.
      *
      * @param apiKeyInputStream the InputStream to use to construct a configuration Properties instance.
-     * @see ClientBuilder#setApiKeyInputStream(java.io.InputStream)
+     * @see ClientBuilder#setApiKey(com.stormpath.sdk.client.ApiKey)
+     * @see com.stormpath.sdk.client.ApiKeyBuilder#setInputStream(java.io.InputStream)
      * @since 0.2
      */
     public void setApiKeyInputStream(InputStream apiKeyInputStream) {
-        this.clientBuilder.setApiKeyInputStream(apiKeyInputStream);
+        this.clientBuilder.setApiKey(ApiKeys.builder().setInputStream(apiKeyInputStream).build());
     }
 
     /**
-     * Calls {@code clientBuilder.}{@link ClientBuilder#setApiKeyReader(java.io.Reader) setApiKeyReader}.
+     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.client.ApiKeyBuilder#setReader(java.io.Reader) setReader(apiKeyReader)}{@code .build())}.
      *
      * @param apiKeyReader the reader to use to construct a configuration Properties instance.
-     * @see ClientBuilder#setApiKeyReader(java.io.Reader)
+     * @see ClientBuilder#setApiKey(com.stormpath.sdk.client.ApiKey)
+     * @see com.stormpath.sdk.client.ApiKeyBuilder#setReader(java.io.Reader)
      * @since 0.2
      */
     public void setApiKeyReader(Reader apiKeyReader) {
-        this.clientBuilder.setApiKeyReader(apiKeyReader);
+        this.clientBuilder.setApiKey(ApiKeys.builder().setReader(apiKeyReader).build());
     }
 
     /**
-     * Calls {@code clientBuilder.}{@link ClientBuilder#setApiKeyProperties(java.util.Properties)}.
+     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.client.ApiKeyBuilder#setProperties(java.util.Properties) setProperties(properties)}{@code .build())}.
      *
      * @param properties the properties instance to use to load the API Key ID and Secret.
-     * @see ClientBuilder#setApiKeyProperties(java.util.Properties)
+     * @see ClientBuilder#setApiKey(com.stormpath.sdk.client.ApiKey)
+     * @see com.stormpath.sdk.client.ApiKeyBuilder#setProperties(java.util.Properties)
      * @since 0.2
      */
     public void setApiKeyProperties(Properties properties) {
-        this.clientBuilder.setApiKeyProperties(properties);
+        this.clientBuilder.setApiKey(ApiKeys.builder().setProperties(properties).build());
     }
 
     /**
-     * Calls {@code clientBuilder.}{@link ClientBuilder#setApiKeyIdPropertyName(String) setApiKeyIdPropertyName}.
+     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.client.ApiKeyBuilder#setIdPropertyName(String) setIdPropertyName(apiKeyIdPropertyName)}{@code .build())}.
      *
      * @param apiKeyIdPropertyName the name used to query for the API Key ID from a Properties instance.
-     * @see ClientBuilder#setApiKeyIdPropertyName(String)
+     * @see ClientBuilder#setApiKey(com.stormpath.sdk.client.ApiKey)
+     * @see com.stormpath.sdk.client.ApiKeyBuilder#setIdPropertyName(String)
      * @since 0.2
      */
     public void setApiKeyIdPropertyName(String apiKeyIdPropertyName) {
-        this.clientBuilder.setApiKeyIdPropertyName(apiKeyIdPropertyName);
+        this.clientBuilder.setApiKey(ApiKeys.builder().setIdPropertyName(apiKeyIdPropertyName).build());
     }
 
     /**
-     * Calls {@code clientBuilder.}{@link ClientBuilder#setApiKeySecretPropertyName(String) setApiKeySecretPropertyName}.
+     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.client.ApiKeyBuilder#setSecretPropertyName(String) setSecretPropertyName(apiKeySecretPropertyName)}{@code .build())}.
      *
      * @param apiKeySecretPropertyName the name used to query for the API Key Secret from a Properties instance.
-     * @see ClientBuilder#setApiKeySecretPropertyName(String)
+     * @see ClientBuilder#setApiKey(com.stormpath.sdk.client.ApiKey)
+     * @see com.stormpath.sdk.client.ApiKeyBuilder#setSecretPropertyName(String)
      * @since 0.2
      */
     public void setApiKeySecretPropertyName(String apiKeySecretPropertyName) {
-        this.clientBuilder.setApiKeySecretPropertyName(apiKeySecretPropertyName);
+        this.clientBuilder.setApiKey(ApiKeys.builder().setSecretPropertyName(apiKeySecretPropertyName).build());
     }
 
     /**
