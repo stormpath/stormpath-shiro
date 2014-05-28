@@ -25,6 +25,7 @@ This project requires Maven 3 to build.  Run the following from a command prompt
 
 - Upgraded Shiro dependency to latest stable release of 1.2.3
 - Upgraded Stormpath SDK dependency to latest released version: 1.0.beta
+- [Issue 6](https://github.com/stormpath/stormpath-shiro/issues/6): Fixed bug that prevented Authentication data to be removed from cache after a successful logout.
 
 ### 0.5.0
 

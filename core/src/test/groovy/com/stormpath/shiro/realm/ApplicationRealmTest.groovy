@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Stormpath, Inc.
+ * Copyright 2014 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,18 +20,22 @@ import com.stormpath.sdk.application.Application
 import com.stormpath.sdk.authc.AuthenticationRequest
 import com.stormpath.sdk.authc.AuthenticationResult
 import com.stormpath.sdk.client.Client
-import com.stormpath.sdk.directory.CustomData
 import com.stormpath.sdk.ds.DataStore
-import com.stormpath.sdk.group.Group
-import com.stormpath.sdk.group.GroupList
+import com.stormpath.sdk.lang.Objects
 import com.stormpath.sdk.resource.ResourceException
-import com.stormpath.shiro.authz.CustomDataPermissionsEditor
 import org.apache.shiro.authc.AuthenticationException
+import org.apache.shiro.authc.AuthenticationInfo
 import org.apache.shiro.authc.SimpleAuthenticationInfo
 import org.apache.shiro.authc.UsernamePasswordToken
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher
+import org.apache.shiro.cache.Cache
+import org.apache.shiro.cache.MemoryConstrainedCacheManager
+import org.apache.shiro.mgt.DefaultSecurityManager
+import org.apache.shiro.subject.PrincipalCollection
 import org.apache.shiro.subject.SimplePrincipalCollection
+import org.apache.shiro.subject.Subject
 import org.easymock.IAnswer
+import org.easymock.IArgumentMatcher
 import org.junit.Before
 import org.junit.Test
 import static org.junit.Assert.*
@@ -220,6 +224,116 @@ class ApplicationRealmTest {
         }
         finally {
             verify client, ds, app
+        }
+    }
+
+    /**
+     * @since 0.6.0
+     */
+    @Test
+    void testGetAuthenticationCacheKey() {
+
+        def appHref = 'https://api.stormpath.com/v1/applications/foo'
+        def accountHref = 'https://api.stormpath.com/v1/accounts/3107eAtpiK67G6eTI0GrJo'
+        def username = 'jsmith'
+        def email = 'jsmith@foo.com'
+        def acctGivenName = 'John'
+        def acctMiddleName = 'A'
+        def acctSurname = 'Smith'
+
+        def client = createStrictMock(Client)
+        def dataStore = createStrictMock(DataStore)
+        def app = createStrictMock(Application)
+        def authcResult = createStrictMock(AuthenticationResult)
+        def account = createStrictMock(Account)
+        def cacheManager = createStrictMock(MemoryConstrainedCacheManager)
+        def authcCache = createStrictMock(Cache)
+        def authzCache = createStrictMock(Cache)
+        def authenticationInfoEquals = new AuthenticationInfoEquals()
+
+        expect(cacheManager.getCache(contains("com.stormpath.shiro.realm.ApplicationRealm.authenticationCache"))).andReturn(authcCache)
+        expect(cacheManager.getCache(contains("com.stormpath.shiro.realm.ApplicationRealm.authorizationCache"))).andReturn(authzCache)
+        expect(dataStore.getResource(appHref, Application)).andStubReturn(app)
+        expect(app.authenticateAccount(anyObject() as AuthenticationRequest)).andReturn(authcResult)
+        expect(client.getDataStore()).andReturn(dataStore)
+        expect(authcResult.getAccount()).andReturn(account)
+        expect(account.href).andReturn(accountHref)
+        expect(account.username).andReturn(username)
+        expect(account.email).andReturn(email)
+        expect(account.givenName).andReturn(acctGivenName)
+        expect(account.middleName).andReturn(acctMiddleName)
+        expect(account.surname).andReturn(acctSurname)
+        expect(account.href).andReturn(accountHref)
+        expect(authcCache.remove(email)).andReturn(null)
+        expect(authzCache.remove((AuthenticationInfo) reportMatcher(authenticationInfoEquals))).andReturn(null)
+
+        replay client, dataStore, app, authcResult, account, cacheManager, authcCache, authzCache
+
+        def realm = new ApplicationRealm()
+        realm.client = client
+        realm.applicationRestUrl = appHref
+        realm.authenticationCachingEnabled = true
+
+        def securityManager = new DefaultSecurityManager(realm)
+        securityManager.cacheManager = cacheManager
+
+        def upToken = new UsernamePasswordToken('foo', 'bar', 'baz')
+        def returnedAuthenticationInfo = realm.doGetAuthenticationInfo(upToken)
+        authenticationInfoEquals.setAuthenticationInfo(returnedAuthenticationInfo)
+        Subject subject = new Subject.Builder(securityManager).principals(returnedAuthenticationInfo.principals).buildSubject()
+        securityManager.logout(subject)
+
+        verify client, dataStore, app, authcResult, account, cacheManager, authcCache, authzCache
+    }
+
+    /**
+     * @since 0.6.0
+     */
+    @Test
+    void testGetAuthenticationCacheKeyNullPrincipals() {
+        assertNull(realm.getAuthenticationCacheKey((PrincipalCollection) null))
+    }
+
+    /**
+     * @since 0.6.0
+     */
+    @Test
+    void testGetAuthenticationCacheKeyEmptyPrincipals() {
+        def principals  = createStrictMock(PrincipalCollection)
+        def primaryPrincipal  = createStrictMock(Object)
+
+        expect(principals.isEmpty()).andReturn(false)
+        expect(principals.fromRealm(contains("com.stormpath.shiro.realm.ApplicationRealm"))).andReturn(null)
+        expect(principals.getPrimaryPrincipal()).andReturn(primaryPrincipal)
+
+        replay principals, primaryPrincipal
+
+        assertSame(realm.getAuthenticationCacheKey(principals), primaryPrincipal)
+
+        verify principals, primaryPrincipal
+    }
+
+    /**
+     * @since 0.6.0
+     */
+    static class AuthenticationInfoEquals implements IArgumentMatcher {
+
+        private AuthenticationInfo expected
+
+        public setAuthenticationInfo(AuthenticationInfo authenticationInfo) {
+            expected = authenticationInfo;
+        }
+
+        boolean matches(Object o) {
+            if (o == null || ! SimplePrincipalCollection.isInstance(o)) {
+                return false;
+            }
+            SimplePrincipalCollection actual = (SimplePrincipalCollection) o
+            return (Objects.nullSafeEquals(expected.principals, actual))
+        }
+
+        void appendTo(StringBuffer stringBuffer) {
+            stringBuffer.append(expected.toString())
         }
     }
 }
