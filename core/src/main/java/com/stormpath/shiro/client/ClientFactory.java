@@ -17,6 +17,7 @@ package com.stormpath.shiro.client;
 
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.client.ClientBuilder;
+import com.stormpath.sdk.client.Clients;
 import com.stormpath.shiro.cache.ShiroCacheManager;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.util.AbstractFactory;
@@ -64,7 +65,7 @@ public class ClientFactory extends AbstractFactory<Client> {
 
     public ClientFactory() {
         super();
-        this.clientBuilder = new ClientBuilder();
+        this.clientBuilder = Clients.builder();
     }
 
     @Override

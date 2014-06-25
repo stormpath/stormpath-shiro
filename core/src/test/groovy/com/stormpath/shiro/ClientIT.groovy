@@ -2,7 +2,7 @@ package com.stormpath.shiro
 
 import com.stormpath.sdk.cache.Caches
 import com.stormpath.sdk.client.Client
-import com.stormpath.sdk.client.ClientBuilder
+import com.stormpath.sdk.client.Clients
 import com.stormpath.sdk.resource.Deletable
 import org.junit.After
 import org.junit.Before
@@ -10,13 +10,11 @@ import org.junit.BeforeClass
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-
 class ClientIT {
 
     private static final Logger log = LoggerFactory.getLogger(ClientIT)
 
     static String apiKeyFileLocation = System.getProperty('user.home') + "/.stormpath/apiKey.properties"
-    static String baseUrl = 'https://api.stormpath.com/v1'
     static Client client
 
     List<Deletable> resourcesToDelete;
@@ -54,7 +52,7 @@ class ClientIT {
     // created in IntelliJ after that point will pick up these vars.
     static Client buildClient(boolean enableCaching=true) {
 
-        def builder = new ClientBuilder().setBaseUrl(baseUrl)
+        def builder = Clients.builder()
 
         //see if the api key file exists first - if so, use it:
         def file = new File(apiKeyFileLocation)
