@@ -512,7 +512,13 @@ public class ApplicationRealm extends AuthorizingRealm {
                 iterator.next(); //First item is the Stormpath' account href
                 //Second item is Stormpath' account map
                 Map<String, Object> accountInfo = (Map<String, Object>) iterator.next();
-                return accountInfo.get("email");
+                //Users can indistinctively login using their emails or usernames. Therefore, we need to try which is
+                //the key used in each case
+                String email = (String) accountInfo.get("email");
+                if (getAuthenticationCache().get(email) != null) {
+                    return email;
+                }
+                return accountInfo.get("username");
             } else {
                 //no principals attributed to this particular realm.  Fall back to the 'master' primary:
                 return principals.getPrimaryPrincipal();

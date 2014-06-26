@@ -231,7 +231,7 @@ class ApplicationRealmTest {
      * @since 0.6.0
      */
     @Test
-    void testGetAuthenticationCacheKey() {
+    void testGetAuthenticationCacheKeyWithEmail() {
 
         def appHref = 'https://api.stormpath.com/v1/applications/foo'
         def accountHref = 'https://api.stormpath.com/v1/accounts/3107eAtpiK67G6eTI0GrJo'
@@ -264,6 +264,7 @@ class ApplicationRealmTest {
         expect(account.middleName).andReturn(acctMiddleName)
         expect(account.surname).andReturn(acctSurname)
         expect(account.href).andReturn(accountHref)
+        expect(authcCache.get(email)).andReturn(authcResult)
         expect(authcCache.remove(email)).andReturn(null)
         expect(authzCache.remove((AuthenticationInfo) reportMatcher(authenticationInfoEquals))).andReturn(null)
 
@@ -277,7 +278,68 @@ class ApplicationRealmTest {
         def securityManager = new DefaultSecurityManager(realm)
         securityManager.cacheManager = cacheManager
 
-        def upToken = new UsernamePasswordToken('foo', 'bar', 'baz')
+        def upToken = new UsernamePasswordToken(email, 'bar', 'baz')
+        def returnedAuthenticationInfo = realm.doGetAuthenticationInfo(upToken)
+        authenticationInfoEquals.setAuthenticationInfo(returnedAuthenticationInfo)
+        Subject subject = new Subject.Builder(securityManager).principals(returnedAuthenticationInfo.principals).buildSubject()
+        securityManager.logout(subject)
+
+        verify client, dataStore, app, authcResult, account, cacheManager, authcCache, authzCache
+    }
+
+
+    /**
+     * @since 0.6.0
+     */
+    @Test
+    void testGetAuthenticationCacheKeyWithUsername() {
+
+        def appHref = 'https://api.stormpath.com/v1/applications/foo'
+        def accountHref = 'https://api.stormpath.com/v1/accounts/3107eAtpiK67G6eTI0GrJo'
+        def username = 'jsmith'
+        def email = 'jsmith@foo.com'
+        def acctGivenName = 'John'
+        def acctMiddleName = 'A'
+        def acctSurname = 'Smith'
+
+        def client = createStrictMock(Client)
+        def dataStore = createStrictMock(DataStore)
+        def app = createStrictMock(Application)
+        def authcResult = createStrictMock(AuthenticationResult)
+        def account = createStrictMock(Account)
+        def cacheManager = createStrictMock(MemoryConstrainedCacheManager)
+        def authcCache = createStrictMock(Cache)
+        def authzCache = createStrictMock(Cache)
+        def authenticationInfoEquals = new AuthenticationInfoEquals()
+
+        expect(cacheManager.getCache(contains("com.stormpath.shiro.realm.ApplicationRealm.authenticationCache"))).andReturn(authcCache)
+        expect(cacheManager.getCache(contains("com.stormpath.shiro.realm.ApplicationRealm.authorizationCache"))).andReturn(authzCache)
+        expect(dataStore.getResource(appHref, Application)).andStubReturn(app)
+        expect(app.authenticateAccount(anyObject() as AuthenticationRequest)).andReturn(authcResult)
+        expect(client.getDataStore()).andReturn(dataStore)
+        expect(authcResult.getAccount()).andReturn(account)
+        expect(account.href).andReturn(accountHref)
+        expect(account.username).andReturn(username)
+        expect(account.email).andReturn(email)
+        expect(account.givenName).andReturn(acctGivenName)
+        expect(account.middleName).andReturn(acctMiddleName)
+        expect(account.surname).andReturn(acctSurname)
+        expect(account.href).andReturn(accountHref)
+        expect(authcCache.get(email)).andReturn(null)
+        expect(authcCache.remove(username)).andReturn(null)
+        expect(authzCache.remove((AuthenticationInfo) reportMatcher(authenticationInfoEquals))).andReturn(null)
+
+        replay client, dataStore, app, authcResult, account, cacheManager, authcCache, authzCache
+
+        def realm = new ApplicationRealm()
+        realm.client = client
+        realm.applicationRestUrl = appHref
+        realm.authenticationCachingEnabled = true
+
+        def securityManager = new DefaultSecurityManager(realm)
+        securityManager.cacheManager = cacheManager
+
+        def upToken = new UsernamePasswordToken(username, 'bar', 'baz')
         def returnedAuthenticationInfo = realm.doGetAuthenticationInfo(upToken)
         authenticationInfoEquals.setAuthenticationInfo(returnedAuthenticationInfo)
         Subject subject = new Subject.Builder(securityManager).principals(returnedAuthenticationInfo.principals).buildSubject()
