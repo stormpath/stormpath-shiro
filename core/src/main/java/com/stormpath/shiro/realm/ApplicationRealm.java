@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Stormpath, Inc.
+ * Copyright 2014 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,12 +38,7 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A {@code Realm} implementation that uses the <a href="http://www.stormpath.com">Stormpath</a> Cloud Identity
@@ -491,5 +486,44 @@ public class ApplicationRealm extends AuthorizingRealm {
             return accountRoleResolver.resolveRoles(account);
         }
         return Collections.emptySet();
+    }
+
+    /**
+     * If authentication caching is enabled, authentication data for an account must be evicted (removed) from the cached during logout.
+     * <p/>
+     * Since the user submitted username is different to the the primary account identifier (i.e. username for the former, account href for the latter),
+     * we need to overwrite the {@link org.apache.shiro.realm.AuthenticatingRealm#getAuthenticationCacheKey(org.apache.shiro.subject.PrincipalCollection)
+     * AuthenticatingRealm#getAuthenticationCacheKey(PrincipalCollection)}.
+     * <p/>
+     * This guarantees that the same cache key used to cache the data during authentication (derived from the AuthenticationToken)
+     * will be used to remove the cached data during logout (derived from the PrincipalCollection).
+     * <p/>
+     * This is a fix for <a href="https://github.com/stormpath/stormpath-shiro/issues/6">Issue #6</a>.
+     *
+     * @param principals the collection of all principals associated with the current subject.
+     * @return the key used to store the authentication information in the cache (i.e. Stormpath's {@link Account} email)
+     * @since 0.6.0
+     */
+    protected Object getAuthenticationCacheKey(PrincipalCollection principals) {
+        if (!CollectionUtils.isEmpty(principals)) {
+            Collection thisPrincipals = principals.fromRealm(getName());
+            if (!CollectionUtils.isEmpty(thisPrincipals)) {
+                Iterator iterator = thisPrincipals.iterator();
+                iterator.next(); //First item is the Stormpath' account href
+                //Second item is Stormpath' account map
+                Map<String, Object> accountInfo = (Map<String, Object>) iterator.next();
+                //Users can indistinctively login using their emails or usernames. Therefore, we need to try which is
+                //the key used in each case
+                String email = (String) accountInfo.get("email");
+                if (getAuthenticationCache().get(email) != null) {
+                    return email;
+                }
+                return accountInfo.get("username");
+            } else {
+                //no principals attributed to this particular realm.  Fall back to the 'master' primary:
+                return principals.getPrimaryPrincipal();
+            }
+        }
+        return null;
     }
 }
