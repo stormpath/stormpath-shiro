@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stormpath.shiro.realm.authc;
+package com.stormpath.shiro.web.filter
 
-import com.stormpath.sdk.provider.ProviderAccountRequest;
-import com.stormpath.sdk.provider.Providers;
+import com.stormpath.shiro.authc.FacebookAuthenticationToken
+import org.junit.Test
 
 /**
  * @since 0.6.0
  */
-public class FacebookAuthenticationToken extends OauthAuthenticationToken {
+class FacebookFilterTest {
 
-    public FacebookAuthenticationToken(String token) {
-        super(token);
+    @Test
+    public void testToken() {
+        def facebookFilter = new FacebookFilter()
+        def token = facebookFilter.getOauthAuthenticatingToken("someFacebookCode")
+        assert(token instanceof FacebookAuthenticationToken)
+        token.principal.equals("someFacebookCode")
     }
 
-    @Override
-    protected ProviderAccountRequest getProviderAccountRequest() {
-        return Providers.FACEBOOK.account().setAccessToken(this.token).build();
-    }
 }

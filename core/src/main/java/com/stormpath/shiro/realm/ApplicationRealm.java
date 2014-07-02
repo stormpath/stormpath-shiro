@@ -24,7 +24,7 @@ import com.stormpath.sdk.group.Group;
 import com.stormpath.sdk.group.GroupList;
 import com.stormpath.sdk.provider.ProviderAccountRequest;
 import com.stormpath.sdk.resource.ResourceException;
-import com.stormpath.shiro.realm.authc.OauthAuthenticationToken;
+import com.stormpath.shiro.authc.OauthAuthenticationToken;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -347,7 +347,7 @@ public class ApplicationRealm extends AuthorizingRealm {
 
         try {
             if(authcToken instanceof OauthAuthenticationToken) {
-                account = application.getAccount((ProviderAccountRequest)authcToken.getPrincipal()).getAccount();
+                account = application.getAccount((ProviderAccountRequest)authcToken.getCredentials()).getAccount();
             } else {
                 AuthenticationRequest request = createAuthenticationRequest((UsernamePasswordToken) authcToken);
                 account = application.authenticateAccount(request).getAccount();

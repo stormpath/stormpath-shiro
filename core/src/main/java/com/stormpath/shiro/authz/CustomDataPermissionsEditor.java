@@ -30,7 +30,7 @@ import java.util.Set;
 
 /**
  * A {@code CustomDataPermissionsEditor} can read or modify a collection of Shiro permission Strings stored in a
- * {@link CustomData} resource.  This is used to support a common convention for Shiro+Stormpath applications: you can
+ * {@link CustomData} resource.  This is used to support a utils convention for Shiro+Stormpath applications: you can
  * assign Shiro permissions to an {@link Account} or a {@link Group} by storing those permissions in the respective
  * account or group's {@link CustomData} map.
  * <h3>Usage</h3>

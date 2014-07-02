@@ -13,22 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stormpath.shiro.realm.authc;
+package com.stormpath.shiro.authc;
 
+import com.stormpath.sdk.lang.Assert;
 import com.stormpath.sdk.provider.ProviderAccountRequest;
-import com.stormpath.sdk.provider.Providers;
+import org.apache.shiro.authc.AuthenticationToken;
 
 /**
  * @since 0.6.0
  */
-public class GoogleAuthenticationToken extends OauthAuthenticationToken {
+public abstract class OauthAuthenticationToken implements AuthenticationToken {
 
-    public GoogleAuthenticationToken(String token) {
-        super(token);
+    protected final String token;
+
+    public OauthAuthenticationToken(String token) {
+        Assert.notNull(token, "token cannot be null.");
+        this.token = token;
     }
 
     @Override
-    protected ProviderAccountRequest getProviderAccountRequest() {
-        return Providers.GOOGLE.account().setCode(this.token).build();
+    public Object getPrincipal() {
+        return null;
     }
+
+    @Override
+    public Object getCredentials() {
+        return getProviderAccountRequest();
+    }
+
+    protected abstract ProviderAccountRequest getProviderAccountRequest();
 }

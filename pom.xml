@@ -76,12 +76,14 @@
 
     <modules>
         <module>core</module>
+        <module>web</module>
     </modules>
 
     <properties>
 
         <!-- Standard Dependencies: -->
         <shiro.version>1.2.3</shiro.version>
+        <servlet.version>2.5</servlet.version>
         <slf4j.version>1.6.6</slf4j.version>
         <stormpath.sdk.version>1.0.beta</stormpath.sdk.version>
 
@@ -91,6 +93,11 @@
         <junit.version>4.8.2</junit.version>
         <logback.version>0.9.29</logback.version>
         <jackson.version>1.9.13</jackson.version>
+        <velocity.version>1.7</velocity.version>
+        <velocity.tools.version>2.0</velocity.tools.version>
+
+        <!-- Web Dependencies -->
+        <jstl.version>1.2</jstl.version>
 
     </properties>
 
@@ -136,6 +143,11 @@
 
             <!-- Intraproject libs: -->
             <dependency>
+                <groupId>com.stormpath.sdk</groupId>
+                <artifactId>stormpath-sdk-api</artifactId>
+                <version>${stormpath.sdk.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.stormpath.shiro</groupId>
                 <artifactId>stormpath-shiro-core</artifactId>
                 <version>${project.version}</version>
@@ -147,11 +159,33 @@
                 <artifactId>shiro-core</artifactId>
                 <version>${shiro.version}</version>
             </dependency>
-
             <dependency>
-                <groupId>com.stormpath.sdk</groupId>
-                <artifactId>stormpath-sdk-api</artifactId>
-                <version>${stormpath.sdk.version}</version>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-web</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${servlet.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jstl</artifactId>
+                <version>${jstl.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity</artifactId>
+                <version>${velocity.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity-tools</artifactId>
+                <version>${velocity.tools.version}</version>
+                <scope>provided</scope>
             </dependency>
 
             <!-- Logging: -->

@@ -13,33 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stormpath.shiro.realm.authc;
+package com.stormpath.shiro.authc;
 
-import com.stormpath.sdk.lang.Assert;
 import com.stormpath.sdk.provider.ProviderAccountRequest;
-import org.apache.shiro.authc.AuthenticationToken;
+import com.stormpath.sdk.provider.Providers;
 
 /**
  * @since 0.6.0
  */
-public abstract class OauthAuthenticationToken implements AuthenticationToken {
+public class FacebookAuthenticationToken extends OauthAuthenticationToken {
 
-    protected final String token;
-
-    public OauthAuthenticationToken(String token) {
-        Assert.notNull(token, "token cannot be null.");
-        this.token = token;
+    public FacebookAuthenticationToken(String token) {
+        super(token);
     }
 
     @Override
-    public Object getPrincipal() {
-        return getProviderAccountRequest();
+    protected ProviderAccountRequest getProviderAccountRequest() {
+        return Providers.FACEBOOK.account().setAccessToken(this.token).build();
     }
-
-    @Override
-    public Object getCredentials() {
-        return null;
-    }
-
-    protected abstract ProviderAccountRequest getProviderAccountRequest();
 }

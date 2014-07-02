@@ -1,0 +1,33 @@
+#set( $subject = "Hello" )
+
+<h1>AAAAA</h1>
+hello
+
+
+
+
+
+
+#####define()
+#####parse("/templates/base.vm")
+##<html>
+##<body>
+##I'm a velocity template.
+##
+##    #if( $XHTML )
+##        #set( $br = "<br />" )
+##    #else
+##        #set( $br = "<br>" )
+##    #end
+##
+##    $br
+##    $br
+##
+##Here we use a custom tool: $registerBean.email
+##
+##    $br
+##    $br
+##
+####Here we get the date from the DateTool:  $date.medium
+##</body>
+##</html>

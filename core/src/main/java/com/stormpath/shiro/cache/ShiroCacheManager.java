@@ -37,7 +37,7 @@ public class ShiroCacheManager implements CacheManager {
      * Constructs a new {@code ShiroCacheManager} instance that wraps (delegates to) the specified
      * Shiro {@link org.apache.shiro.cache.CacheManager CacheManager} instance.
      *
-     * @param shiroCacheManager the target Shiro cache manager to wrap.
+     * @param shiroCacheManager the target Shiro cache service to wrap.
      */
     public ShiroCacheManager(org.apache.shiro.cache.CacheManager shiroCacheManager) {
         Assert.notNull(shiroCacheManager, "Shiro CacheManager instance cannot be null.");
