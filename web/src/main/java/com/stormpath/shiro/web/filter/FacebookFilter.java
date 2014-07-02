@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  *      /facebookOauthCallback = facebookOauth
  * </pre>
  *
- * @since 0.6.0
+ * @since 0.7.0
  */
 public class FacebookFilter extends OauthFilter {
 

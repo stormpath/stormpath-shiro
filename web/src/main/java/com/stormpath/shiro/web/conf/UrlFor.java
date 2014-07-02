@@ -24,7 +24,7 @@ import java.io.*;
 import java.util.Properties;
 
 /**
- * @since 0.6.0
+ * @since 0.7.0
  */
 public class UrlFor {
 

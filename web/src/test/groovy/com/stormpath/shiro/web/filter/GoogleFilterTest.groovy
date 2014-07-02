@@ -19,7 +19,7 @@ import com.stormpath.shiro.authc.GoogleAuthenticationToken
 import org.junit.Test
 
 /**
- * @since 0.6.0
+ * @since 0.7.0
  */
 class GoogleFilterTest {
 

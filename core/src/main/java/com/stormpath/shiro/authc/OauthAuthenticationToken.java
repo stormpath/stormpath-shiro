@@ -20,7 +20,7 @@ import com.stormpath.sdk.provider.ProviderAccountRequest;
 import org.apache.shiro.authc.AuthenticationToken;
 
 /**
- * @since 0.6.0
+ * @since 0.7.0
  */
 public abstract class OauthAuthenticationToken implements AuthenticationToken {
 

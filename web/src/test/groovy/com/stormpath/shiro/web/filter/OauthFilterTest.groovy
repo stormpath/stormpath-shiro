@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 import static org.easymock.EasyMock.*;
 
 /**
- * @since 0.6.0
+ * @since 0.7.0
  */
 class OauthFilterTest {
 

@@ -18,7 +18,7 @@ package com.stormpath.shiro.web.model;
 /**
  * Holder for registration data.
  *
- * @since 0.6.0
+ * @since 0.7.0
  */
 public class RegisterBean {
 

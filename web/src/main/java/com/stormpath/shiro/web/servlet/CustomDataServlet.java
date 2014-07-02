@@ -33,7 +33,7 @@ import java.util.Map;
 
 /**
  * Endpoint responding to custom data requests from the UI.
- * @version 0.6.0
+ * @version 0.7.0
  */
 public class CustomDataServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(CustomDataServlet.class);

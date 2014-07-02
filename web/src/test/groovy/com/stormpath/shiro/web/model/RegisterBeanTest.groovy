@@ -19,7 +19,7 @@ import org.junit.Test
 import static org.junit.Assert.*
 
 /**
- * @since 0.6.0
+ * @since 0.7.0
  */
 class RegisterBeanTest {
 

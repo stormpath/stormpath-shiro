@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNull
 
 /**
- * @since 0.6.0
+ * @since 0.7.0
  */
 class GoogleAuthenticationTokenTest {
 

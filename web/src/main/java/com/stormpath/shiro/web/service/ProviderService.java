@@ -41,7 +41,7 @@ import java.util.UUID;
  * @see GoogleService
  * @see FacebookService
  *
- * @since 0.6.0
+ * @since 0.7.0
  */
 public abstract class ProviderService extends AbstractService {
 

@@ -34,7 +34,7 @@ import java.io.IOException;
  * Endpoint responding to Registration requests from the UI. The account-creation process will be handed over to the
  * {@link com.stormpath.shiro.web.service.RegisterService}.
  *
- * @since 0.6.0
+ * @since 0.7.0
  */
 public class RegisterServlet extends HttpServlet {
 

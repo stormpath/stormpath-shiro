@@ -22,7 +22,7 @@ import org.apache.shiro.UnavailableSecurityManagerException;
 import org.apache.shiro.mgt.RealmSecurityManager;
 
 /**
- * @since 0.6.0
+ * @since 0.7.0
  */
 public abstract class AbstractService {
 

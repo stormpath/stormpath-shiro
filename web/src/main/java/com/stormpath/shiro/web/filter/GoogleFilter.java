@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  *      /googleOauthCallback = googleOauth
  * </pre>
  *
- * @since 0.6.0
+ * @since 0.7.0
  */
 public class GoogleFilter extends OauthFilter {
     private static final Logger logger = LoggerFactory.getLogger(GoogleFilter.class);

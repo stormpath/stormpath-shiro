@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * @since 0.6.0
+ * @since 0.7.0
  */
 public class Configuration {
     private static final Logger logger = LoggerFactory.getLogger(Configuration.class);

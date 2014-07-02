@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @since 0.6.0
+ * @since 0.7.0
  */
 public class AccountService extends AbstractService {
 

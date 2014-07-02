@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Facebook-specific Singleton {@link ProviderService}.
  *
- * @since 0.6.0
+ * @since 0.7.0
  */
 public class FacebookService extends ProviderService {
 

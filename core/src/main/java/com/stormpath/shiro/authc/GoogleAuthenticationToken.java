@@ -19,7 +19,7 @@ import com.stormpath.sdk.provider.ProviderAccountRequest;
 import com.stormpath.sdk.provider.Providers;
 
 /**
- * @since 0.6.0
+ * @since 0.7.0
  */
 public class GoogleAuthenticationToken extends OauthAuthenticationToken {
 

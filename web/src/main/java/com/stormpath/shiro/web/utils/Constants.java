@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @since 0.6.0
+ * @since 0.7.0
  */
 public class Constants {
     private static final Logger logger = LoggerFactory.getLogger(Configuration.class);

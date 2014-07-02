@@ -23,12 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.shiro.util.ThreadContext;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @since 0.6.0
+ * @since 0.7.0
  */
 public class UserUtils {
     private static final Logger logger = LoggerFactory.getLogger(UserUtils.class);

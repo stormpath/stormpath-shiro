@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /**
- * @since 0.6.0
+ * @since 0.7.0
  */
 public class UserBean {
 

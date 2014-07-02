@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
- * @since 0.6.0
+ * @since 0.7.0
  */
 public class VelocityFilter extends PassThruAuthenticationFilter {
     private static final Logger logger = LoggerFactory.getLogger(VelocityFilter.class);

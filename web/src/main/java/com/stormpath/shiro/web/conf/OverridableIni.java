@@ -35,7 +35,7 @@ import java.util.*;
  * {@code Section} is itself a map of {@code String} name/value pairs.  Name/value pairs are guaranteed to be unique
  * within each {@code Section} only - not across the entire {@code OverridableIni} instance.
  *
- * @since 0.6.0
+ * @since 0.7.0
  */
 public class OverridableIni implements Map<String, OverridableIni.Section> {
 

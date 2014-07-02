@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @since 0.6.0
+ * @since 0.670
  */
 public class RegisterService extends AbstractService {
 

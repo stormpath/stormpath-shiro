@@ -38,7 +38,7 @@ import java.util.Map;
  * This abstract class provides most of the Oauth authentication logic and relies on Provider-specific
  * sub-classes (like {@link FacebookFilter} or {@link GoogleFilter}) to fulfill its task.
  *
- * @since 0.6.0
+ * @since 0.7.0
  */
 public abstract class OauthFilter extends PassThruAuthenticationFilter {
     private static final Logger logger = LoggerFactory.getLogger(OauthFilter.class);

@@ -197,7 +197,7 @@ class ApplicationRealmTest {
         verify client, ds, app, authcResult, account
     }
 
-    // @since 0.6.0
+    // @since 0.7.0
     @Test
     void testDoGetAuthenticationInfoSuccessWithOauthToken() {
 
