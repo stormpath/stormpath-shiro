@@ -2,7 +2,7 @@
 
 # Apache Shiro plugin for Stormpath #
 
-Copyright &copy; 2013 Stormpath, Inc. and contributors. This project is open-source via the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0).  
+Copyright &copy; 2013-2014 Stormpath, Inc. and contributors. This project is open-source via the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0).
 
 The `stormpath-shiro` plugin allows an [Apache Shiro](http://shiro.apache.org)-enabled application
 use the [Stormpath](http://www.stormpath.com) User Management & Authentication service for all authentication and access control needs.
@@ -24,7 +24,7 @@ This project requires Maven 3 to build.  Run the following from a command prompt
 ### 0.6.0
 
 - Upgraded Shiro dependency to latest stable release of 1.2.3
-- Upgraded Stormpath SDK dependency to latest released version: 1.0.beta
+- Upgraded Stormpath SDK dependency to latest released version: 1.0.RC2
 - [Issue 6](https://github.com/stormpath/stormpath-shiro/issues/6): Fixed bug that prevented Authentication data to be removed from cache after a successful logout.
 
 ### 0.5.0
