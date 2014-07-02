@@ -21,6 +21,11 @@ This project requires Maven 3 to build.  Run the following from a command prompt
 
 ## Change Log
 
+### 0.7.0
+
+- [Issue 16](https://github.com/stormpath/stormpath-shiro/issues/16): Replace JSP with Velocity
+- [Issue 15](https://github.com/stormpath/stormpath-shiro/issues/15): Add Social Login for Google and Facebook
+
 ### 0.6.0
 
 - Upgraded Shiro dependency to latest stable release of 1.2.3
