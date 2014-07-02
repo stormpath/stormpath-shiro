@@ -68,12 +68,12 @@ class RegisterServiceTest {
         expect(client.getResource(appHref, Application)).andReturn(app)
         expect(realm.getClient()).andReturn(client)
         expect(client.instantiate(Account)).andReturn(account)
-        expect(account.setEmail(bean.email))
-        expect(account.setUsername(bean.username))
-        expect(account.setPassword(bean.password))
-        expect(account.setGivenName(bean.firstName))
-        expect(account.setMiddleName(bean.middleName))
-        expect(account.setSurname(bean.lastName))
+        expect(account.setEmail(bean.email)).andReturn(account)
+        expect(account.setUsername(bean.username)).andReturn(account)
+        expect(account.setPassword(bean.password)).andReturn(account)
+        expect(account.setGivenName(bean.firstName)).andReturn(account)
+        expect(account.setMiddleName(bean.middleName)).andReturn(account)
+        expect(account.setSurname(bean.lastName)).andReturn(account)
         expect(app.createAccount(account)).andReturn(account)
 
         replay securityManager, collection, iterator, realm, client, app, account
