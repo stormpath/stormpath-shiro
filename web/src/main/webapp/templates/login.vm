@@ -36,23 +36,15 @@
                     </div>
                     #end
                     <form class="login-form form-horizontal" role="form" method="post" name="loginform">
-##                        $form.hidden_tag()
                         <div class="form-group group-email">
                             <label class="#if ( $config.isFacebookEnabled() || $config.isGoogleEnabled() ) col-sm-12#{else}col-sm-4#end">#if ($config.isUsernameEnabled()) Username or #end Email</label>
                             <div class="#if ( $config.isFacebookEnabled() || $config.isGoogleEnabled() )col-sm-12#{else}col-sm-8#end">
-##                                #if ( $config.isUsernameEnabled() )
-####                                    $form.login('true', 'form-control', 'Username or Email', 'true')
-##                                    <input type="email" class="form-control" id="usernameOrEmail" name="usernameOrEmail" placeholder="Email" autofocus>
-##                                #else
-##                                    $form.login('true', 'form-control', 'Email', 'true')
                                     <input class="form-control" id="username" name="username" placeholder="#if ($config.isUsernameEnabled())Username or #{end}Email" autofocus/>
-##                                #end
                             </div>
                         </div>
                         <div class="form-group group-password">
                             <label class="#if ($config.isFacebookEnabled() || $config.isGoogleEnabled() ) col-sm-12#{else}col-sm-4#end">Password</label>
                             <div class="#if ($config.isFacebookEnabled() || $config.isGoogleEnabled() ) col-sm-12#{else}col-sm-8#end">
-##                                $form.password('form-control', 'Password', 'true')
                                 <input type="password" class="form-control" id="password" name="password" placeholder="Password" />
                             </div>
                         </div>

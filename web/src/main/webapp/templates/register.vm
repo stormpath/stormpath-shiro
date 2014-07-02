@@ -11,7 +11,6 @@
                         <span>Create an Account</span>
                     </div>
                     <form class="registration-form form-horizontal sp-form" role="form" method="post" name="registerForm" action="$urlFor.get("register.action")" >
-##                        {{ form.hidden_tag() }}
                         #if ( $messages )
                         <div class="alert alert-danger">
                             #foreach ($message in $messages)
@@ -24,56 +23,44 @@
                             <label class="col-sm-4">Username</label>
                             <div class="col-sm-8">
                                 #if ($config.isUsernameRequired())
-##                                {{ form.username(class='form-control', placeholder='Username', required='true') }}
                                     <input class="form-control" placeholder="Username" required="true" name="username" autofocus />
                                 #else
                                     <input class="form-control" placeholder="Username" name="username" autofocus />
-##                                {{ form.username(class='form-control', placeholder='Username') }}
                                 #end
                             </div>
                         </div>
                         #end
-##                        {% if config['STORMPATH_ENABLE_GIVEN_NAME'] %}
                         #if ($config.isGivenNameEnabled())
                             <div class="form-group group-first-name" form-group>
                             <label class="col-sm-4">First Name</label>
                             <div class="col-sm-8">
                                 #if ($config.isGivenNameRequired())
-##                                {{ form.given_name(class='form-control', placeholder='First Name', required='true') }}
                                     <input class="form-control" placeholder="First Name" name="firstName" required="true" />
                                 #else
-##                                {{ form.given_name(class='form-control', placeholder='First Name') }}
                                     <input class="form-control" placeholder="First Name" name="firstName" />
                                 #end
                             </div>
                             </div>
                         #end
-##                        {% if config['STORMPATH_ENABLE_MIDDLE_NAME'] %}
                         #if ($config.isMiddleNameEnabled())
                         <div class="form-group group-middle-name" form-group>
                             <label class="col-sm-4">Middle Name</label>
                             <div class="col-sm-8">
                                 #if ($config.isMiddleNameRequired())
-##                                {{ form.middle_name(class='form-control', placeholder='Middle Name', required='true') }}
                                     <input class="form-control" placeholder="Middle Name" name="middleName" required="true" />
                                 #else
-##                                {{ form.middle_name(class='form-control', placeholder='Middle Name') }}
                                     <input class="form-control" placeholder="Middle Name" name="middleName" />
                                 #end
                             </div>
                         </div>
                         #end
-##                        {% if config['STORMPATH_ENABLE_SURNAME'] %}
                         #if ($config.isSurnameEnabled())
                         <div class="form-group group-last-name" form-group>
                             <label class="col-sm-4">Last Name</label>
                             <div class="col-sm-8">
-##                                {% if config['STORMPATH_REQUIRE_SURNAME'] %}
                                 #if ($config.isSurnameRequired())
-##                                {{ form.surname(class='form-control', placeholder='Last Name', required='true') }}
                                     <input class="form-control" placeholder="Last Name" name="lastName" required="true" />
                                 #else
-##                                {{ form.surname(class='form-control', placeholder='Last Name') }}
                                     <input class="form-control" placeholder="Last Name" name="lastName"  />
                                 #end
                             </div>
@@ -82,14 +69,12 @@
                         <div class="form-group group-email" form-group>
                             <label class="col-sm-4">Email</label>
                             <div class="col-sm-8">
-##                                {{ form.email(class='form-control', placeholder='Email', required='true', type='email') }}
                                 <input class="form-control" placeholder="Email" name="email" required="true" type="email" />
                             </div>
                         </div>
                         <div class="form-group group-password" form-group>
                             <label class="col-sm-4">Password</label>
                             <div class="col-sm-8">
-##                                {{ form.password(class='form-control', placeholder='Password', required='true', type='password') }}
                                     <input class="form-control" placeholder="Password" name="password" required="true" type="password" />
                             </div>
                         </div>
@@ -97,7 +82,6 @@
                     </form>
                 </div>
             </div>
-##            {% if config['STORMPATH_ENABLE_LOGIN'] %}
             #if ($config.isStormpathLoginEnabled())
                 <a class="to-login" href="$urlFor.get('login')">Back to Log In</a>
             #end
