@@ -22,7 +22,9 @@ import com.stormpath.sdk.authc.UsernamePasswordRequest;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.group.Group;
 import com.stormpath.sdk.group.GroupList;
+import com.stormpath.sdk.provider.ProviderAccountRequest;
 import com.stormpath.sdk.resource.ResourceException;
+import com.stormpath.shiro.authc.OauthAuthenticationToken;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -339,16 +341,17 @@ public class ApplicationRealm extends AuthorizingRealm {
 
         assertState();
 
-        UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
-
-        AuthenticationRequest request = createAuthenticationRequest(token);
-
         Application application = ensureApplicationReference();
 
         Account account;
 
         try {
-            account = application.authenticateAccount(request).getAccount();
+            if(authcToken instanceof OauthAuthenticationToken) {
+                account = application.getAccount((ProviderAccountRequest)authcToken.getCredentials()).getAccount();
+            } else {
+                AuthenticationRequest request = createAuthenticationRequest((UsernamePasswordToken) authcToken);
+                account = application.authenticateAccount(request).getAccount();
+            }
         } catch (ResourceException e) {
             //todo error code translation to throw more detailed exceptions
             String msg = StringUtils.clean(e.getMessage());
@@ -525,5 +528,19 @@ public class ApplicationRealm extends AuthorizingRealm {
             }
         }
         return null;
+    }
+
+    /**
+     *
+     * @param token
+     * @return
+     * @since 0.6.0
+     */
+    @Override
+    public boolean supports(AuthenticationToken token) {
+        if (token instanceof OauthAuthenticationToken) {
+            return true;
+        }
+        return super.supports(token);
     }
 }

@@ -22,7 +22,12 @@ import com.stormpath.sdk.authc.AuthenticationResult
 import com.stormpath.sdk.client.Client
 import com.stormpath.sdk.ds.DataStore
 import com.stormpath.sdk.lang.Objects
+import com.stormpath.sdk.provider.FacebookProviderData
+import com.stormpath.sdk.provider.ProviderAccountRequest
+import com.stormpath.sdk.provider.ProviderAccountResult
 import com.stormpath.sdk.resource.ResourceException
+import com.stormpath.shiro.authc.FacebookAuthenticationToken
+import com.stormpath.shiro.authc.GoogleAuthenticationToken
 import org.apache.shiro.authc.AuthenticationException
 import org.apache.shiro.authc.AuthenticationInfo
 import org.apache.shiro.authc.SimpleAuthenticationInfo
@@ -171,6 +176,72 @@ class ApplicationRealmTest {
         realm.applicationRestUrl = appHref
 
         def upToken = new UsernamePasswordToken(username, password, host)
+        def info = realm.doGetAuthenticationInfo(upToken)
+
+        assertTrue info instanceof SimpleAuthenticationInfo
+        assertEquals 2, info.principals.asSet().size()
+
+        assertEquals acctHref, info.principals.iterator().next()
+        assertEquals acctHref, info.principals.primaryPrincipal
+
+        def m = info.principals.oneByType(Map)
+        assertNotNull m
+        assertEquals 6, m.size()
+        assertEquals acctHref, m.href
+        assertEquals username, m.username
+        assertEquals email, m.email
+        assertEquals acctGivenName, m.givenName
+        assertEquals acctMiddleName, m.middleName
+        assertEquals acctSurname, m.surname
+
+        verify client, ds, app, authcResult, account
+    }
+
+    // @since 0.7.0
+    @Test
+    void testDoGetAuthenticationInfoSuccessWithOauthToken() {
+
+        def appHref = 'https://api.stormpath.com/v1/applications/foo'
+        def username = 'jsmith'
+        def acctHref = 'https://api.stormpath.com/v1/accounts/123'
+        def email = 'jsmith@foo.com'
+        def acctGivenName = 'John'
+        def acctMiddleName = 'A'
+        def acctSurname = 'Smith'
+
+        def facebookCode = "someFooGoogleCode"
+
+        def client = createStrictMock(Client)
+        def ds = createStrictMock(DataStore)
+        def app = createStrictMock(Application)
+        def authcResult = createStrictMock(ProviderAccountResult)
+        def account = createStrictMock(Account)
+
+        expect(client.dataStore).andStubReturn(ds)
+        expect(ds.getResource(eq(appHref), same(Application))).andReturn(app)
+        expect(app.getAccount(anyObject() as ProviderAccountRequest)).andAnswer( new IAnswer<ProviderAccountResult>() {
+            ProviderAccountResult answer() throws Throwable {
+                def authcRequest = getCurrentArguments()[0] as ProviderAccountRequest
+
+                assertEquals facebookCode, ((FacebookProviderData)authcRequest.providerData).accessToken
+                return authcResult
+            }
+        })
+        expect(authcResult.account).andReturn account
+
+        expect(account.href).andStubReturn(acctHref)
+        expect(account.username).andReturn(username)
+        expect(account.email).andReturn(email)
+        expect(account.givenName).andReturn(acctGivenName)
+        expect(account.middleName).andReturn(acctMiddleName)
+        expect(account.surname).andReturn(acctSurname)
+
+        replay client, ds, app, authcResult, account
+
+        realm.client = client
+        realm.applicationRestUrl = appHref
+
+        def upToken = new FacebookAuthenticationToken(facebookCode)
         def info = realm.doGetAuthenticationInfo(upToken)
 
         assertTrue info instanceof SimpleAuthenticationInfo

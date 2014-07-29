@@ -1,0 +1,74 @@
+#*
+ * Copyright 2014 Stormpath, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*#
+#set($title = "Log in")
+#set($description = "Log into your account!")
+#set($bodyTag = "login")
+
+<div class="container custom-container">
+    <div class="va-wrapper">
+        <div class="view login-view container">
+            <div class="box row">
+                <div class="email-password-area col-xs-12 #if ($config.isFacebookEnabled() || $config.isGoogleEnabled() ) small col-sm-8#{else}large col-sm-12#end">
+                    <div class="header">
+                        <span>Log In #if ($config.isRegistrationEnabled()) or #end</span>
+                        #if ($config.isRegistrationEnabled())
+                        <a href="$urlFor.get('register')">Create an Account</a>
+                        #end
+                    </div>
+                    #if ( $messages )
+                    <div class="alert alert-danger bad-login">
+                        #foreach ($message in $messages)
+                            $message
+                        #end
+                    </div>
+                    #end
+                    <form class="login-form form-horizontal" role="form" method="post" name="loginform">
+                        <div class="form-group group-email">
+                            <label class="#if ( $config.isFacebookEnabled() || $config.isGoogleEnabled() ) col-sm-12#{else}col-sm-4#end">#if ($config.isUsernameEnabled()) Username or #end Email</label>
+                            <div class="#if ( $config.isFacebookEnabled() || $config.isGoogleEnabled() )col-sm-12#{else}col-sm-8#end">
+                                    <input class="form-control" id="username" name="username" placeholder="#if ($config.isUsernameEnabled())Username or #{end}Email" autofocus/>
+                            </div>
+                        </div>
+                        <div class="form-group group-password">
+                            <label class="#if ($config.isFacebookEnabled() || $config.isGoogleEnabled() ) col-sm-12#{else}col-sm-4#end">Password</label>
+                            <div class="#if ($config.isFacebookEnabled() || $config.isGoogleEnabled() ) col-sm-12#{else}col-sm-8#end">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password" />
+                            </div>
+                        </div>
+                        <div>
+                            <button class="login btn btn-login btn-sp-green" type="submit">Log In</button>
+                        </div>
+                    </form>
+                </div>
+                #if ($config.isFacebookEnabled() || $config.isGoogleEnabled() )
+                    <div class="social-area col-xs-12 col-sm-4">
+                        <div class="header">&nbsp;</div>
+                        <label>Easy 1-click login:</label>
+                        #if ( $config.isFacebookEnabled() )
+                            #parse("templates/facebook_login_form.vm")
+                        #end
+                        #if ( $config.isGoogleEnabled() )
+                            #parse("templates/google_login_form.vm")
+                        #end
+                    </div>
+                #end
+            </div>
+            <!-- to enable once we add in forgot password support
+            <a class="forgot" href="#forgot">Forgot Password?</a>
+            -->
+        </div>
+    </div>
+</div>
