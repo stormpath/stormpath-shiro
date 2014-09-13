@@ -15,7 +15,7 @@
  */
 package com.stormpath.shiro.client;
 
-import com.stormpath.sdk.client.ApiKeys;
+import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.client.ClientBuilder;
 import com.stormpath.sdk.client.Clients;

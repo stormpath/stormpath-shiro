@@ -1,7 +1,7 @@
 package com.stormpath.shiro
 
 import com.stormpath.sdk.cache.Caches
-import com.stormpath.sdk.client.ApiKeys
+import com.stormpath.sdk.api.ApiKeys
 import com.stormpath.sdk.client.Client
 import com.stormpath.sdk.client.Clients
 import com.stormpath.sdk.resource.Deletable

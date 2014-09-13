@@ -23,6 +23,7 @@ import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.group.Group;
 import com.stormpath.sdk.group.GroupList;
 import com.stormpath.sdk.resource.ResourceException;
+import com.stormpath.shiro.authc.IdSiteAuthenticationToken;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -338,17 +339,21 @@ public class ApplicationRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
 
         assertState();
-
-        UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
-
-        AuthenticationRequest request = createAuthenticationRequest(token);
-
         Application application = ensureApplicationReference();
 
         Account account;
+        AuthenticationRequest request = null;
 
         try {
-            account = application.authenticateAccount(request).getAccount();
+
+            if(authcToken instanceof IdSiteAuthenticationToken) {
+                account = ((IdSiteAuthenticationToken) authcToken).getAccount();
+            } else {
+                //Must be a UsernamePasswordAuthenticationToken
+                request = createAuthenticationRequest((UsernamePasswordToken) authcToken);
+                account = application.authenticateAccount(request).getAccount();
+            }
+
         } catch (ResourceException e) {
             //todo error code translation to throw more detailed exceptions
             String msg = StringUtils.clean(e.getMessage());
@@ -359,6 +364,11 @@ public class ApplicationRealm extends AuthorizingRealm {
                 msg = "Invalid login or password.";
             }
             throw new AuthenticationException(msg, e);
+        } finally {
+            //Clear the request data to prevent later memory access
+            if(request != null) {
+                request.clear();
+            }
         }
 
         PrincipalCollection principals;
@@ -491,7 +501,7 @@ public class ApplicationRealm extends AuthorizingRealm {
     /**
      * If authentication caching is enabled, authentication data for an account must be evicted (removed) from the cached during logout.
      * <p/>
-     * Since the user submitted username is different to the the primary account identifier (i.e. username for the former, account href for the latter),
+     * Since the user submitted username is different to the primary account identifier (i.e. username for the former, account href for the latter),
      * we need to overwrite the {@link org.apache.shiro.realm.AuthenticatingRealm#getAuthenticationCacheKey(org.apache.shiro.subject.PrincipalCollection)
      * AuthenticatingRealm#getAuthenticationCacheKey(PrincipalCollection)}.
      * <p/>
@@ -525,5 +535,16 @@ public class ApplicationRealm extends AuthorizingRealm {
             }
         }
         return null;
+    }
+
+    //@since 0.7.0
+    public boolean supports(AuthenticationToken token) {
+        if(token instanceof IdSiteAuthenticationToken) {
+            return true;
+        }
+        if(token instanceof UsernamePasswordToken) {
+            return true;
+        }
+        return false;
     }
 }
