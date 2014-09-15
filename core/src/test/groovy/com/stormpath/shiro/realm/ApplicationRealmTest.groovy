@@ -21,13 +21,20 @@ import com.stormpath.sdk.authc.AuthenticationRequest
 import com.stormpath.sdk.authc.AuthenticationResult
 import com.stormpath.sdk.client.Client
 import com.stormpath.sdk.ds.DataStore
+import com.stormpath.sdk.group.Group
+import com.stormpath.sdk.group.GroupList
+import com.stormpath.sdk.idsite.AccountResult
+import com.stormpath.sdk.idsite.IdSiteCallbackHandler
 import com.stormpath.sdk.lang.Objects
 import com.stormpath.sdk.resource.ResourceException
+import com.stormpath.shiro.authc.IdSiteAuthenticationToken
 import org.apache.shiro.authc.AuthenticationException
 import org.apache.shiro.authc.AuthenticationInfo
 import org.apache.shiro.authc.SimpleAuthenticationInfo
 import org.apache.shiro.authc.UsernamePasswordToken
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher
+import org.apache.shiro.authz.Permission
+import org.apache.shiro.authz.SimpleAuthorizationInfo
 import org.apache.shiro.cache.Cache
 import org.apache.shiro.cache.MemoryConstrainedCacheManager
 import org.apache.shiro.mgt.DefaultSecurityManager
@@ -398,4 +405,101 @@ class ApplicationRealmTest {
             stringBuffer.append(expected.toString())
         }
     }
+
+    //@since 0.7.0
+    @Test
+    void test_IdSite_DoGetAuthenticationInfoSuccess() {
+
+        def appHref = 'https://api.stormpath.com/v1/applications/foo'
+        def acctUsername = 'jsmith'
+        def acctHref = 'https://api.stormpath.com/v1/accounts/123'
+        def acctEmail = 'jsmith@foo.com'
+        def acctGivenName = 'John'
+        def acctMiddleName = 'A'
+        def acctSurname = 'Smith'
+        Set<String> groupShiroPermissions = new HashSet<>();
+        groupShiroPermissions.add("groupShiroPermissionsItem");
+        Set<String> accountShiroGrantedAuthorities = new HashSet<>();
+        accountShiroGrantedAuthorities.add("accountShiroPermissionsItem");
+
+        def groupHref = 'https://api.stormpath.com/v1/groups/456'
+
+        def authentication = createStrictMock(IdSiteAuthenticationToken)
+        def idSiteCallbackHandler = createStrictMock(IdSiteCallbackHandler)
+        def accountResult = createStrictMock(AccountResult)
+        def client = createStrictMock(Client)
+        def dataStore = createStrictMock(DataStore)
+        def app = createStrictMock(Application)
+        def account = createStrictMock(Account)
+        def groupList = createStrictMock(GroupList)
+        def iterator = createStrictMock(Iterator)
+        def group = createStrictMock(Group)
+        def accountPermissionResolver = createStrictMock(AccountPermissionResolver)
+        def groupPermissionResolver = createStrictMock(GroupPermissionResolver)
+        def groupPermission = createStrictMock(Permission)
+        def accountPermission = createStrictMock(Permission)
+        def groupPermissionSet = new HashSet<Permission>()
+        groupPermissionSet.add(groupPermission)
+        def accountPermissionsSet = new HashSet<Permission>()
+        accountPermissionsSet.add(accountPermission)
+
+        expect(client.dataStore).andStubReturn(dataStore)
+        expect(dataStore.getResource(eq(appHref), same(Application))).andReturn(app)
+        expect(authentication.getAccount()).andReturn(account)
+        expect(account.href).andReturn acctHref
+        expect(account.username).andReturn acctUsername
+        expect(account.email).andReturn acctEmail
+        expect(account.givenName).andReturn acctGivenName
+        expect(account.middleName).andReturn acctMiddleName
+        expect(account.surname).andReturn acctSurname
+        expect(account.href).andReturn acctHref
+
+        //Authorization
+        expect(dataStore.getResource(acctHref, Account)).andReturn(account)
+        expect(account.getGroups()).andReturn(groupList)
+        expect(groupList.iterator()).andReturn iterator
+        expect(iterator.hasNext()).andReturn true
+        expect(iterator.next()).andReturn group
+        expect(group.getHref()).andReturn groupHref
+        expect(groupPermissionResolver.resolvePermissions(group)).andReturn groupPermissionSet
+        expect(iterator.hasNext()).andReturn false
+        expect(accountPermissionResolver.resolvePermissions(account)).andReturn accountPermissionsSet
+
+        replay authentication, client, dataStore, app, account, groupList, iterator, group,
+                accountPermissionResolver, groupPermissionResolver, groupPermission, accountPermission,
+                idSiteCallbackHandler, accountResult
+
+        realm.client = client
+        realm.applicationRestUrl = appHref
+        realm.accountPermissionResolver = accountPermissionResolver
+        realm.groupPermissionResolver = groupPermissionResolver
+
+        def authenticationInfo = realm.doGetAuthenticationInfo(authentication)
+
+        assertTrue authenticationInfo instanceof SimpleAuthenticationInfo
+
+        assertEquals null, authenticationInfo.credentials
+        assertEquals 2, authenticationInfo.getPrincipals().asList().size()
+        assertEquals acctHref, authenticationInfo.getPrincipals().asList().get(0).toString()
+        assertEquals acctHref, authenticationInfo.getPrincipals().asList().get(1).get("href")
+        assertEquals acctUsername, authenticationInfo.getPrincipals().asList().get(1).get("username")
+        assertEquals acctEmail, authenticationInfo.getPrincipals().asList().get(1).get("email")
+        assertEquals acctGivenName, authenticationInfo.getPrincipals().asList().get(1).get("givenName")
+        assertEquals acctMiddleName, authenticationInfo.getPrincipals().asList().get(1).get("middleName")
+        assertEquals acctSurname, authenticationInfo.getPrincipals().asList().get(1).get("surname")
+
+        def authorizationInfo = realm.doGetAuthorizationInfo(authenticationInfo.getPrincipals())
+
+        assertTrue authorizationInfo instanceof SimpleAuthorizationInfo
+
+        assertEquals 1, authorizationInfo.roles.size()
+        assertTrue authorizationInfo.roles.contains(groupHref)
+        assertEquals 2, authorizationInfo.objectPermissions.size()
+        assertTrue authorizationInfo.objectPermissions.containsAll([groupPermission, accountPermission])
+
+        verify authentication, client, dataStore, app, account, groupList, iterator, group,
+                accountPermissionResolver, groupPermissionResolver, groupPermission, accountPermission,
+                idSiteCallbackHandler, accountResult
+    }
+
 }

@@ -21,6 +21,32 @@ This project requires Maven 3 to build.  Run the following from a command prompt
 
 ## Change Log
 
+### 0.7.0
+
+- [Issue 19](https://github.com/stormpath/stormpath-shiro/issues/19): [ID Site](http://docs.stormpath.com/guides/using-id-site/) support.
+
+#### ID Site Functionality! ####
+
+This is one of the big features available through the Java SDK that we wanted to leverage with Shiro: your own hosted
+white-labeled Identity Site, what we call an 'ID Site'!
+
+You can have a 100% customizable white-labeled site, for example, `https://id.awesomeapp.com` or
+`https://my.awesomeapp.com`, hosted and served securely by Stormpath.  Your ID Site provides your end-users with a
+hosted and secure registration, login, and password reset functionality, and **completely hands-off integration with
+Google and Facebook!**.
+
+Your white-labeled ID Site is beautiful and 'just works' out-of-the box and requires no development effort, but if you
+want to customize it in any way, you can easily fork our default GitHub repo and customize it as you desire, and we'll
+serve your fork securely just the same.
+
+This release includes a servlet in charge of communicating with your ID Site so you don't have to code that yourself. All that
+is required for this to work is that you configure your Shiro Application's login and logout redirect URLs and
+the Stormpath Spring Security plugin will do all the work.
+
+You can see a working sample app [here](https://github.com/stormpath/stormpath-shiro-web-sample) along with its
+configuration and installation instructions.
+Its usage documentation is in the [wiki](https://github.com/stormpath/stormpath-shiro-web-sample/wiki)
+
 ### 0.6.0
 
 - Upgraded Shiro dependency to latest stable release of 1.2.3
