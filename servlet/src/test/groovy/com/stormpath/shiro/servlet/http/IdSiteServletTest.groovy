@@ -19,13 +19,15 @@ import com.stormpath.sdk.account.Account
 import com.stormpath.sdk.application.Application
 import com.stormpath.sdk.client.Client
 import com.stormpath.sdk.idsite.AccountResult
+import com.stormpath.sdk.idsite.AuthenticationResult
 import com.stormpath.sdk.idsite.IdSiteCallbackHandler
-import com.stormpath.sdk.idsite.IdSiteResultListener
 import com.stormpath.sdk.idsite.IdSiteUrlBuilder
+import com.stormpath.sdk.idsite.LogoutResult
 import com.stormpath.shiro.realm.ApplicationRealm
 import com.stormpath.shiro.authc.IdSiteAuthenticationToken
 import com.stormpath.shiro.servlet.conf.Configuration
 import com.stormpath.shiro.servlet.conf.UrlFor
+import com.stormpath.shiro.servlet.listener.IdSiteListener
 import com.stormpath.shiro.servlet.service.AbstractService
 import com.stormpath.shiro.servlet.service.IdSiteService
 import org.apache.shiro.mgt.DefaultSecurityManager
@@ -99,9 +101,8 @@ class IdSiteServletTest {
 
         def request = createStrictMock(HttpServletRequest)
         def response = createStrictMock(HttpServletResponse)
-        //def idSiteService = createStrictMock(IdSiteService)
         def applicationRealm = createStrictMock(ApplicationRealm)
-        def idSiteResultListener = createStrictMock(IdSiteResultListener)
+        def idSiteListener = new IdSiteListener()
 
         def subjectFactory = createStrictMock(SubjectFactory)
         def subject = createStrictMock(Subject)
@@ -109,6 +110,7 @@ class IdSiteServletTest {
         def callbackHandler = createStrictMock(IdSiteCallbackHandler)
         def accountResult = createStrictMock(AccountResult)
         def account = createStrictMock(Account)
+        def authenticationResult = createStrictMock(AuthenticationResult)
 
         def accountEmail = "some@email.com"
         def appHref = 'https://api.stormpath.com/v1/applications/foo'
@@ -126,11 +128,14 @@ class IdSiteServletTest {
             }
         })
         expect(request.getRequestURI()).andReturn("/idsite/callbackLogin")
-        expect(callbackHandler.setResultListener(idSiteResultListener)).andReturn(callbackHandler)
-        expect(callbackHandler.getAccountResult()).andReturn(accountResult)
-        expect(accountResult.getAccount()).andReturn(account)
-        expect(account.getEmail()).andReturn(accountEmail)
-
+        expect(callbackHandler.setResultListener(idSiteListener)).andReturn(callbackHandler)
+        expect(callbackHandler.getAccountResult()).andAnswer( new IAnswer<AccountResult>() {
+            AccountResult answer() throws Throwable {
+                idSiteListener.onAuthenticated(authenticationResult)
+                return accountResult
+            }
+        })
+        expect(authenticationResult.getAccount()).andReturn(account)
         expect(subjectFactory.createSubject(anyObject(DefaultSubjectContext))).andReturn(subject)
         expect(subject.getSession(false)).andReturn(null)
         expect(subject.isRunAs()).andReturn(false)
@@ -145,10 +150,13 @@ class IdSiteServletTest {
                 assertEquals idSiteAuthenticationToken.getCredentials(), null
             }
         })
+
+        expect(account.getEmail()).andReturn(accountEmail) times 2
+
         expect(response.sendRedirect("http://localhost:8080/index.jsp"))
 
-        replay client, application, request, response, subjectFactory, subject, applicationRealm, idSiteResultListener,
-                callbackHandler, accountResult, account
+        replay client, application, request, response, subjectFactory, subject, applicationRealm,
+                callbackHandler, accountResult, account, authenticationResult
 
         //setup a quick Shiro SecurityManager using the ApplicationRealm
         def defaultSecurityManager = new DefaultSecurityManager(applicationRealm)
@@ -156,11 +164,11 @@ class IdSiteServletTest {
         ThreadContext.bind(defaultSecurityManager)
 
         IdSiteServlet servlet = new IdSiteServlet()
-        servlet.idSiteResultListener = idSiteResultListener
+        servlet.idSiteResultListener = idSiteListener
         servlet.doGet(request, response)
 
-        verify client, application, request, response, subjectFactory, subject, applicationRealm, idSiteResultListener,
-                callbackHandler, accountResult, account
+        verify client, application, request, response, subjectFactory, subject, applicationRealm,
+                callbackHandler, accountResult, account, authenticationResult
     }
 
     @Test
@@ -204,31 +212,25 @@ class IdSiteServletTest {
         def client = createStrictMock(Client)
         def application = createStrictMock(Application)
 
-
         def request = createStrictMock(HttpServletRequest)
         def response = createStrictMock(HttpServletResponse)
-
         def applicationRealm = createStrictMock(ApplicationRealm)
-        def idSiteResultListener = createStrictMock(IdSiteResultListener)
+        def idSiteListener = new IdSiteListener()
+
         def subjectFactory = createStrictMock(SubjectFactory)
         def subject = createStrictMock(Subject)
 
         def callbackUri = Configuration.getLogoutRedirectUri()
         def callbackHandler = createStrictMock(IdSiteCallbackHandler)
         def accountResult = createStrictMock(AccountResult)
+        def account = createStrictMock(Account)
+        def logoutResult = createStrictMock(LogoutResult)
+
+        def accountEmail = "some@email.com"
         def appHref = 'https://api.stormpath.com/v1/applications/foo'
 
-        expect(request.getRequestURI()).andReturn("/idsite/callbackLogout")
-
-        expect(subjectFactory.createSubject(anyObject(DefaultSubjectContext))).andReturn(subject)
-        expect(subject.getSession(false)).andReturn(null)
-        expect(subject.isRunAs()).andReturn(false)
-        expect(subject.getPrincipals()).andReturn(null)
-        expect(subject.getSession(false)).andReturn(null) times 2
-        expect(subject.isAuthenticated()).andReturn(false)
-        expect(subject.logout())
-
         expect(applicationRealm.getClient()).andReturn(client)
+
         expect(applicationRealm.getApplicationRestUrl()).andReturn(appHref)
         expect(client.getResource(eq(appHref), same(Application))).andReturn(application)
         expect(application.newIdSiteCallbackHandler(request)).andAnswer( new IAnswer<IdSiteCallbackHandler>() {
@@ -240,15 +242,29 @@ class IdSiteServletTest {
                 return callbackHandler
             }
         })
+        expect(request.getRequestURI()).andReturn("/idsite/callbackLogout")
+        expect(callbackHandler.setResultListener(idSiteListener)).andReturn(callbackHandler)
+        expect(callbackHandler.getAccountResult()).andAnswer( new IAnswer<AccountResult>() {
+            AccountResult answer() throws Throwable {
+                idSiteListener.onLogout(logoutResult)
+                return accountResult
+            }
+        })
+        expect(subjectFactory.createSubject(anyObject(DefaultSubjectContext))).andReturn(subject)
+        expect(subject.getSession(false)).andReturn(null)
+        expect(subject.isRunAs()).andReturn(false)
+        expect(subject.getPrincipals()).andReturn(null)
+        expect(subject.getSession(false)).andReturn(null) times 2
+        expect(subject.isAuthenticated()).andReturn(false)
+        expect(subject.logout())
 
-
-        expect(callbackHandler.setResultListener(idSiteResultListener)).andReturn(callbackHandler)
-        expect(callbackHandler.getAccountResult()).andReturn(accountResult)
+        expect(logoutResult.getAccount()).andReturn(account)
+        expect(account.getEmail()).andReturn(accountEmail)
 
         expect(response.sendRedirect(callbackUri))
 
-        replay client, application, request, response, subjectFactory, subject, applicationRealm, idSiteResultListener,
-                callbackHandler, accountResult
+        replay client, application, request, response, subjectFactory, subject, applicationRealm,
+                callbackHandler, accountResult, account, logoutResult
 
         //setup a quick Shiro SecurityManager using the ApplicationRealm
         def defaultSecurityManager = new DefaultSecurityManager(applicationRealm)
@@ -256,11 +272,11 @@ class IdSiteServletTest {
         ThreadContext.bind(defaultSecurityManager)
 
         IdSiteServlet servlet = new IdSiteServlet()
-        servlet.idSiteResultListener = idSiteResultListener
+        servlet.idSiteResultListener = idSiteListener
         servlet.doGet(request, response)
 
-        verify client, application, request, response, subjectFactory, subject, applicationRealm, idSiteResultListener,
-                callbackHandler, accountResult
+        verify client, application, request, response, subjectFactory, subject, applicationRealm,
+                callbackHandler, accountResult, account, logoutResult
     }
 
 

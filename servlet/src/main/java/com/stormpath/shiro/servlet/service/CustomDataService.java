@@ -26,7 +26,7 @@ import java.util.Map;
 
 
 /**
- * Singleton controller encapsulating Custom Data operations (i.e. retrieve, delete, insert) to be executed in
+ * Singleton service encapsulating Custom Data operations (i.e. retrieve, delete, insert) to be executed in
  * the <a href="http://www.stormpath.com">Stormpath</a> account by means of the
  * <a href="https://github.com/stormpath/stormpath-sdk-java">Stormpath Java SDK</a>
  * @since 0.7.0

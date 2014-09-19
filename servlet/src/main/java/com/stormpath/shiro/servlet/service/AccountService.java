@@ -21,7 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides
+ * Singleton service encapsulating {@link com.stormpath.sdk.account.Account Stormpath Account}-specific operations to be executed in
+ * the <a href="http://www.stormpath.com">Backend</a> by means of the <a href="https://github.com/stormpath/stormpath-sdk-java">Stormpath Java SDK</a>
  *
  * @since 0.7.0
  */

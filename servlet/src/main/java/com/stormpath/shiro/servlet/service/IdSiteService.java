@@ -15,17 +15,15 @@
  */
 package com.stormpath.shiro.servlet.service;
 
-import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.idsite.IdSiteCallbackHandler;
 import com.stormpath.sdk.idsite.IdSiteResultListener;
-import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This service provides ID Site-related operations such as creating the <code>redirectUri</code> for both login and
+ * This singleton service provides ID Site-related operations such as creating the <code>redirectUri</code> for both login and
  * logout. This service is used by the {@link com.stormpath.shiro.servlet.http.IdSiteServlet IDSiteServlet}.
  *
  * @since 0.7.0
