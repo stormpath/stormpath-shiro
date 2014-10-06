@@ -20,6 +20,7 @@ import com.stormpath.sdk.application.Application
 import com.stormpath.sdk.authc.AuthenticationRequest
 import com.stormpath.sdk.authc.AuthenticationResult
 import com.stormpath.sdk.client.Client
+import com.stormpath.sdk.directory.CustomData
 import com.stormpath.sdk.ds.DataStore
 import com.stormpath.sdk.lang.Objects
 import com.stormpath.sdk.resource.ResourceException
@@ -373,6 +374,85 @@ class ApplicationRealmTest {
         assertSame(realm.getAuthenticationCacheKey(principals), primaryPrincipal)
 
         verify principals, primaryPrincipal
+    }
+
+    @Test
+    void testDoGetAuthenticationInfoSuccessWithCustomData() {
+
+        def appHref = 'https://api.stormpath.com/v1/applications/foo'
+        def username = 'jsmith'
+        def password = 'secret'
+        def host = '123.456.789.012'
+        def acctHref = 'https://api.stormpath.com/v1/accounts/123'
+        def email = 'jsmith@foo.com'
+        def acctGivenName = 'John'
+        def acctMiddleName = 'A'
+        def acctSurname = 'Smith'
+        def cd1 = "foo"
+        def cd2 = "bar"
+
+
+        def client = createStrictMock(Client)
+        def ds = createStrictMock(DataStore)
+        def app = createStrictMock(Application)
+        def authcResult = createStrictMock(AuthenticationResult)
+        def account = createStrictMock(Account)
+        def customData = createStrictMock(CustomData)
+
+        expect(client.dataStore).andStubReturn(ds)
+        expect(ds.getResource(eq(appHref), same(Application))).andReturn(app)
+        expect(app.authenticateAccount(anyObject() as AuthenticationRequest)).andAnswer( new IAnswer<AuthenticationResult>() {
+            AuthenticationResult answer() throws Throwable {
+                def authcRequest = getCurrentArguments()[0] as AuthenticationRequest
+
+                assertEquals username, authcRequest.principals
+                assertTrue Arrays.equals(password.toCharArray(), authcRequest.credentials as char[])
+                assertEquals host, authcRequest.host
+
+                return authcResult
+            }
+        })
+        expect(authcResult.account).andReturn account
+
+        expect(account.href).andStubReturn(acctHref)
+        expect(account.username).andReturn(username)
+        expect(account.email).andReturn(email)
+        expect(account.givenName).andReturn(acctGivenName)
+        expect(account.middleName).andReturn(acctMiddleName)
+        expect(account.surname).andReturn(acctSurname)
+        expect(account.customData).andReturn(customData)
+
+        expect(customData.get("cd1")).andReturn(cd1)
+        expect(customData.get("cd2")).andReturn(cd2)
+
+        replay client, ds, app, authcResult, account, customData
+
+        realm.client = client
+        realm.applicationRestUrl = appHref
+        realm.customDataMappings = [ "cd1": "field1", "cd2": "field2" ]
+
+        def upToken = new UsernamePasswordToken(username, password, host)
+        def info = realm.doGetAuthenticationInfo(upToken)
+
+        assertTrue info instanceof SimpleAuthenticationInfo
+        assertEquals 2, info.principals.asSet().size()
+
+        assertEquals acctHref, info.principals.iterator().next()
+        assertEquals acctHref, info.principals.primaryPrincipal
+
+        def m = info.principals.oneByType(Map)
+        assertNotNull m
+        assertEquals 8, m.size()
+        assertEquals acctHref, m.href
+        assertEquals username, m.username
+        assertEquals email, m.email
+        assertEquals acctGivenName, m.givenName
+        assertEquals acctMiddleName, m.middleName
+        assertEquals acctSurname, m.surname
+        assertEquals cd1, m.field1
+        assertEquals cd2, m.field2
+
+        verify client, ds, app, authcResult, account
     }
 
     /**

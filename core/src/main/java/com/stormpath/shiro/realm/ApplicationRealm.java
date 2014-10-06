@@ -20,9 +20,11 @@ import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.authc.AuthenticationRequest;
 import com.stormpath.sdk.authc.UsernamePasswordRequest;
 import com.stormpath.sdk.client.Client;
+import com.stormpath.sdk.directory.CustomData;
 import com.stormpath.sdk.group.Group;
 import com.stormpath.sdk.group.GroupList;
 import com.stormpath.sdk.resource.ResourceException;
+
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -141,6 +143,7 @@ public class ApplicationRealm extends AuthorizingRealm {
     private GroupPermissionResolver groupPermissionResolver;
     private AccountPermissionResolver accountPermissionResolver;
     private AccountRoleResolver accountRoleResolver;
+    private Map<String, String> customDataMappings;
 
     private Application application; //acquired via the client at runtime, not configurable by the Realm user
 
@@ -305,6 +308,14 @@ public class ApplicationRealm extends AuthorizingRealm {
         this.accountRoleResolver = accountRoleResolver;
     }
 
+    public Map<String, String> getCustomDataMappings() {
+        return customDataMappings;
+    }
+
+    public void setCustomDataMappings(final Map<String, String> customDataMappings) {
+        this.customDataMappings = customDataMappings;
+    }
+
     @Override
     protected void onInit() {
         super.onInit();
@@ -389,6 +400,14 @@ public class ApplicationRealm extends AuthorizingRealm {
         nullSafePut(props, "givenName", account.getGivenName());
         nullSafePut(props, "middleName", account.getMiddleName());
         nullSafePut(props, "surname", account.getSurname());
+        if (customDataMappings != null && !customDataMappings.isEmpty())
+        {
+            final CustomData customData = account.getCustomData();
+
+            for (String key : customDataMappings.keySet()) {
+                nullSafePut(props, customDataMappings.get(key), customData.get(key).toString());
+            }
+        }
 
         Collection<Object> principals = new ArrayList<Object>(2);
         principals.add(account.getHref());
