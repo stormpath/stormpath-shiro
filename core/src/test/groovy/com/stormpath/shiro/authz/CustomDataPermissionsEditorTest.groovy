@@ -15,7 +15,7 @@
  */
 package com.stormpath.shiro.authz
 
-import org.codehaus.jackson.map.ObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Test
 
 import static org.junit.Assert.*
