@@ -22,10 +22,10 @@ Please email support@stormpath.com with any errors or issues with the documentat
 ## Links
 
 Below are some resources you might find useful!
-
 - [Apache Shiro Webapp Tutorial](http://shiro.apache.org/webapp-tutorial.html)
 - [Stormpath-Shiro Sample Webapp](https://github.com/stormpath/stormpath-shiro-web-sample)
 
+**Stormpath Java Support**
 - [Stormpath API Docs for Java](https://docs.stormpath.com/java/apidocs/)
 - [Stormpath Java Product Guide](https://docs.stormpath.com/java/product-guide/)
 - [Stormpath Java SDK](https://github.com/stormpath/stormpath-sdk-java)
