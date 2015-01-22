@@ -2,7 +2,7 @@
 
 # Apache Shiro plugin for Stormpath #
 
-The `stormpath-shiro` plugin allows an [Apache Shiro](http://shiro.apache.org)-enabled application
+The `stormpath-shiro` plugin allows an [Apache Shiro](http://shiro.apache.org)-enabled application to
 use the [Stormpath](http://www.stormpath.com) User Management & Authentication API for all authentication and access control needs.
 
 Stormpath is a User Management API that reduces development time with instant-on, scalable user infrastructure. Stormpath's intuitive API and expert support make it easy for developers to authenticate, manage, and secure users and roles in any application.
@@ -39,6 +39,8 @@ repository, making your changes, and issuing pull request on the develop branch.
 This project requires Maven 3 to build.  Run the following from a command prompt:
 
 `mvn install`
+
+Release changes are viewable in the [change log](changelog.md)
 
 ## Copyright ##
 
