@@ -1,13 +1,15 @@
 package com.stormpath.shiro.realm
 
 import com.stormpath.sdk.resource.CollectionResource
+import com.stormpath.sdk.resource.Resource
 
 
 class MockCollectionResource<T> implements CollectionResource {
 
-    int offset, limit
+    int offset, limit, size
     String href
     Collection items
+    T single;
 
     @Override
     int getOffset() {
@@ -28,4 +30,15 @@ class MockCollectionResource<T> implements CollectionResource {
     String getHref() {
         return href
     }
+
+    @Override
+    int getSize() {
+        return size
+    }
+
+    @Override
+    Resource single() {
+        return single
+    }
+
 }

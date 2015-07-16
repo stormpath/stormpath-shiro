@@ -83,14 +83,13 @@
         <!-- Standard Dependencies: -->
         <shiro.version>1.2.3</shiro.version>
         <slf4j.version>1.6.6</slf4j.version>
-        <stormpath.sdk.version>1.0.RC2</stormpath.sdk.version>
+        <stormpath.sdk.version>1.0.RC4.5</stormpath.sdk.version>
 
         <!-- Test Dependencies: -->
         <easymock.version>3.0</easymock.version>
         <groovy.version>2.1.6</groovy.version>
         <junit.version>4.8.2</junit.version>
         <logback.version>0.9.29</logback.version>
-        <jackson.version>1.9.13</jackson.version>
 
     </properties>
 
@@ -119,12 +118,6 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>${jackson.version}</version>
             <scope>test</scope>
         </dependency>
 
