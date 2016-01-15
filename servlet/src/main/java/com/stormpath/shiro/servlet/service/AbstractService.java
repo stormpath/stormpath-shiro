@@ -20,6 +20,7 @@ import com.stormpath.sdk.client.Client;
 import com.stormpath.shiro.realm.ApplicationRealm;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.RealmSecurityManager;
+import org.apache.shiro.realm.Realm;
 
 /**
  * Abstract class that should be overriden by any class that integrates this app with Stormpath's Backend. This
@@ -42,7 +43,16 @@ public abstract class AbstractService {
      */
     protected ApplicationRealm getApplicationRealm() {
         if (applicationRealm == null) {
-            applicationRealm = (ApplicationRealm)((RealmSecurityManager) SecurityUtils.getSecurityManager()).getRealms().iterator().next();
+
+            for (final Realm r : ((RealmSecurityManager) SecurityUtils.getSecurityManager()).getRealms()) {
+                if (r instanceof ApplicationRealm) {
+                    applicationRealm = (ApplicationRealm) r;
+                }
+            }
+
+            if (applicationRealm == null) {
+                throw new IllegalStateException("Stormpath ApplicationRealm not found in Shiro!");
+            }
         }
         return applicationRealm;
     }
