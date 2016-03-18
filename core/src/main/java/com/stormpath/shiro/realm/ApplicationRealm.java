@@ -426,6 +426,10 @@ public class ApplicationRealm extends AuthorizingRealm {
     protected String getAccountHref(PrincipalCollection principals) {
         Collection c = principals.fromRealm(getName());
         //Based on the createPrincipals implementation above, the first one is the Account href:
+        if (c.isEmpty())
+        {
+            return principals.getPrimaryPrincipal().toString();
+        }
         return (String) c.iterator().next();
     }
 
