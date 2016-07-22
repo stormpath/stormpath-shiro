@@ -1,17 +1,16 @@
 package com.stormpath.shiro
 
+import com.stormpath.sdk.api.ApiKeys
 import com.stormpath.sdk.cache.Caches
-import com.stormpath.sdk.client.ApiKeys
 import com.stormpath.sdk.client.Client
 import com.stormpath.sdk.client.Clients
 import com.stormpath.sdk.resource.Deletable
-import org.junit.After
-import org.junit.Before
-import org.junit.BeforeClass
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.testng.annotations.AfterTest
+import org.testng.annotations.BeforeTest
 
-class ClientIT {
+abstract class ClientIT {
 
     private static final Logger log = LoggerFactory.getLogger(ClientIT)
 
@@ -20,17 +19,17 @@ class ClientIT {
 
     List<Deletable> resourcesToDelete;
 
-    @BeforeClass
+    @BeforeTest
     static void setupClient() {
         client = buildClient();
     }
 
-    @Before
+    @BeforeTest
     public void setUp() {
         resourcesToDelete = []
     }
 
-    @After
+    @AfterTest
     public void tearDown() {
         def reversed = resourcesToDelete.reverse() //delete in opposite order (cleaner - children deleted before parents)
 

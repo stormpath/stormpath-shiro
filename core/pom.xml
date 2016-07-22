@@ -43,10 +43,19 @@
             <artifactId>stormpath-sdk-api</artifactId>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.stormpath.sdk</groupId>
+            <artifactId>stormpath-sdk-impl</artifactId>
+            <version>${stormpath.sdk.version}</version>
+        </dependency>
+
+
         <!-- Test dependencies: -->
         <dependency>
             <groupId>com.stormpath.sdk</groupId>
             <artifactId>stormpath-sdk-httpclient</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

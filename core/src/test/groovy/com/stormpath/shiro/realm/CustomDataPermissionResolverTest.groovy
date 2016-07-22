@@ -2,11 +2,10 @@ package com.stormpath.shiro.realm
 
 import com.stormpath.sdk.directory.CustomData
 import org.apache.shiro.authz.permission.PermissionResolver
-import org.junit.Test
+import org.testng.annotations.Test
 
-import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
-
+import static org.easymock.EasyMock.createStrictMock
+import static org.testng.Assert.*
 
 class CustomDataPermissionResolverTest {
 
