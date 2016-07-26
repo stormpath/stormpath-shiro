@@ -29,3 +29,8 @@ env:
   global:
     - STORMPATH_API_KEY_ID=CN5D6CEHMI7M1HVSBW74N626X
     - secure: "W7X8AjOaQRmrzfZ3G2wn5rxld1aw5osYLKWY98U6hU5jy148HLzJ1s+v/RdydAAB2d4xuYvr5WrUEaF/eHJ4AF0zBNDwst84VHUxT3yTzBFVHgnd/rbn8AMpITQtwIiXEr+hMK3cAVXwZtZ+mLmkllyf48Myk75QDxwwJnKS2UA="
+
+before_install:
+  - cat /etc/hosts # optionally check the content *before*
+  - sudo hostname "$(hostname | cut -c1-63)"
+  - sed -e "s/^\\(127\\.0\\.0\\.1.*\\)/\\1 $(hostname | cut -c1-63)/" /etc/hosts | sudo tee /etc/hosts
