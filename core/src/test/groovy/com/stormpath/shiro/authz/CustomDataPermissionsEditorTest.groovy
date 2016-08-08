@@ -16,9 +16,9 @@
 package com.stormpath.shiro.authz
 
 import org.codehaus.jackson.map.ObjectMapper
-import org.junit.Test
+import org.testng.annotations.Test
 
-import static org.junit.Assert.*
+import static org.testng.Assert.*
 
 class CustomDataPermissionsEditorTest {
 
@@ -29,7 +29,7 @@ class CustomDataPermissionsEditorTest {
         assertEquals "apacheShiroPermissions", CustomDataPermissionsEditor.DEFAULT_CUSTOM_DATA_FIELD_NAME
     }
 
-    @Test(expected = IllegalArgumentException)
+    @Test(expectedExceptions = IllegalArgumentException)
     void testNewInstanceWithNullArg() {
         new CustomDataPermissionsEditor(null)
     }
@@ -192,7 +192,7 @@ class CustomDataPermissionsEditorTest {
         assertTrue result.isEmpty()
     }
 
-    @Test(expected=UnsupportedOperationException)
+    @Test(expectedExceptions=UnsupportedOperationException)
     void testGetPermissionStringsReturnsImmutableSet() {
 
         def customData = new MockCustomData()

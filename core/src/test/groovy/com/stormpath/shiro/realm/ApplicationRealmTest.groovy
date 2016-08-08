@@ -36,25 +36,20 @@ import org.apache.shiro.subject.SimplePrincipalCollection
 import org.apache.shiro.subject.Subject
 import org.easymock.IAnswer
 import org.easymock.IArgumentMatcher
-import org.junit.Before
-import org.junit.Test
-import static org.junit.Assert.*
+import org.testng.annotations.Test
+
 import static org.easymock.EasyMock.*
+import static org.testng.Assert.*
 
 /**
  * @since 0.3
  */
 class ApplicationRealmTest {
 
-    ApplicationRealm realm
-
-    @Before
-    void setUp() {
-        realm = new ApplicationRealm()
-    }
-
     @Test
     void testDefaultInstance() {
+
+        def realm = new ApplicationRealm()
         assertTrue realm.getCredentialsMatcher() instanceof AllowAllCredentialsMatcher //allow all - Stormpath will do the credentials comparison as necessary
         assertTrue realm.getGroupRoleResolver() instanceof DefaultGroupRoleResolver
         assertTrue realm.getGroupPermissionResolver() instanceof GroupCustomDataPermissionResolver
@@ -62,13 +57,17 @@ class ApplicationRealmTest {
         assertNull realm.getAccountRoleResolver()
     }
 
-    @Test(expected = IllegalStateException)
+    @Test(expectedExceptions = IllegalStateException)
     void testInitWithoutClient() {
+
+        def realm = new ApplicationRealm()
         realm.init() //needs client and applicationUrl properties
     }
 
-    @Test(expected = IllegalStateException)
+    @Test(expectedExceptions = IllegalStateException)
     void testInitWithoutApplicationUrl() {
+
+        def realm = new ApplicationRealm()
         def client = createStrictMock(Client)
 
         replay client
@@ -84,6 +83,7 @@ class ApplicationRealmTest {
     @Test
     void testWorkingInit() {
 
+        def realm = new ApplicationRealm()
         def client = createStrictMock(Client)
         def href = 'https://api.stormpath.com/v1/applications/foo'
 
@@ -100,6 +100,8 @@ class ApplicationRealmTest {
 
     @Test
     void testSetClient() {
+
+        def realm = new ApplicationRealm()
         def client = createStrictMock(Client)
 
         replay client
@@ -113,6 +115,8 @@ class ApplicationRealmTest {
 
     @Test
     void testSetAccountRoleResolver() {
+
+        def realm = new ApplicationRealm()
         def r = createStrictMock(AccountRoleResolver)
 
         replay r
@@ -126,6 +130,7 @@ class ApplicationRealmTest {
     @Test
     void testDoGetAuthenticationInfoSuccess() {
 
+        def realm = new ApplicationRealm()
         def appHref = 'https://api.stormpath.com/v1/applications/foo'
         def username = 'jsmith'
         def password = 'secret'
@@ -192,8 +197,10 @@ class ApplicationRealmTest {
         verify client, ds, app, authcResult, account
     }
 
-    @Test(expected=AuthenticationException)
+    @Test(expectedExceptions = AuthenticationException)
     void testDoGetAuthenticationInfoResourceException() {
+
+        def realm = new ApplicationRealm()
 
         def appHref = 'https://api.stormpath.com/v1/applications/foo'
         def client = createStrictMock(Client)
@@ -353,6 +360,8 @@ class ApplicationRealmTest {
      */
     @Test
     void testGetAuthenticationCacheKeyNullPrincipals() {
+
+        def realm = new ApplicationRealm()
         assertNull(realm.getAuthenticationCacheKey((PrincipalCollection) null))
     }
 
@@ -361,6 +370,8 @@ class ApplicationRealmTest {
      */
     @Test
     void testGetAuthenticationCacheKeyEmptyPrincipals() {
+
+        def realm = new ApplicationRealm()
         def principals  = createStrictMock(PrincipalCollection)
         def primaryPrincipal  = createStrictMock(Object)
 

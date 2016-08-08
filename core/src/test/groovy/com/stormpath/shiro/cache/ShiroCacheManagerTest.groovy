@@ -15,17 +15,18 @@
  */
 package com.stormpath.shiro.cache
 
-import org.junit.Test
+import org.testng.annotations.Test
 
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.testng.Assert.assertNotNull
+import static org.testng.Assert.assertSame
 
 /**
  * @since 0.4.0
  */
 class ShiroCacheManagerTest {
 
-    @Test(expected = IllegalArgumentException)
+    @Test(expectedExceptions = IllegalArgumentException)
     void testNullCacheManager() {
         new ShiroCacheManager(null)
     }
