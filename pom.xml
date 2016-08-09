@@ -65,7 +65,7 @@
     <distributionManagement>
         <site>
             <id>stormpath.github</id>
-            <url>scm:git:ssh://git@github.com/bdemers/stormpath-shiro.git</url> <!-- TODO change to stormpath, after testing-->
+            <url>scm:git:git@github.com:bdemers/stormpath-shiro.git</url> <!-- TODO change to stormpath, after testing-->
         </site>
     </distributionManagement>
 
@@ -107,6 +107,9 @@
         <jackson.version>1.9.13</jackson.version>
         <testng.version>6.9.10</testng.version>
 
+        <!-- site staging path needs to be absolute, this allows for that:
+             http://stackoverflow.com/questions/1012402/maven2-property-that-indicates-the-parent-directory -->
+        <stagingDirectory>${session.executionRootDirectory}/target/staging/static</stagingDirectory>
     </properties>
 
     <dependencies>
@@ -252,6 +255,27 @@
                                 <version>1.4.6 </version>
                             </plugin>
                         </plugins>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.5.1</version>
+                    <configuration>
+                        <skipDeploy>true</skipDeploy>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-publish-plugin</artifactId>
+                    <version>1.1</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <checkinComment>Publishing Site Docs for ${project.artifactId}:${project.version}</checkinComment>
+                        <!-- do not delete files, we are publishing the static files in a subdirectory -->
+                        <skipDeletedFiles>true</skipDeletedFiles>
+                        <!-- special github branch for sites -->
+                        <scmBranch>gh-pages</scmBranch>
                     </configuration>
                 </plugin>
             </plugins>
