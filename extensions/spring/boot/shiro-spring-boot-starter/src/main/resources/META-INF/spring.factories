@@ -1,0 +1,1 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration = com.stormpath.shiro.spring.boot.autoconfigure.ShiroAutoConfiguration,com.stormpath.shiro.spring.boot.autoconfigure.ShiroAnnotationProcessorAutoConfiguration

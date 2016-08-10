@@ -3,6 +3,7 @@ package com.stormpath.shiro.servlet.config
 import com.stormpath.sdk.servlet.config.Config
 import com.stormpath.sdk.servlet.config.ConfigLoader
 import com.stormpath.sdk.servlet.i18n.MessageContext
+import com.stormpath.shiro.sdk.servlet.config.impl.AppendingConfigFactory
 import org.easymock.Capture
 import org.testng.annotations.Test
 
@@ -25,7 +26,8 @@ public class ShiroIniConfigLoaderTest {
 
         servletContext.removeAttribute(Config.getName())
         servletContext.removeAttribute(MessageContext.class.getName())
-        servletContext.removeAttribute(StormpathShiroConfigFactory.SHIRO_STORMPATH_PROPERTIES_ATTRIBUTE)
+//        servletContext.removeAttribute(StormpathShiroConfigFactory.SHIRO_STORMPATH_PROPERTIES_ATTRIBUTE)
+        servletContext.removeAttribute(AppendingConfigFactory.SHIRO_STORMPATH_ADDITIONAL_PROPERTIES_ATTRIBUTE)
 
         replay servletContext
 
@@ -45,11 +47,12 @@ public class ShiroIniConfigLoaderTest {
         expectLastCall().anyTimes()
 
         expect(servletContext.getInitParameter(ConfigLoader.CONFIG_FACTORY_CLASS_PARAM_NAME)).andReturn(null)
-        expect(servletContext.setInitParameter(ConfigLoader.CONFIG_FACTORY_CLASS_PARAM_NAME, StormpathShiroConfigFactory.getName())).andReturn(true)
+        expect(servletContext.setInitParameter(ConfigLoader.CONFIG_FACTORY_CLASS_PARAM_NAME, AppendingConfigFactory.getName())).andReturn(true)
 
         // we verified the correct config class was set, now return a different one for testing
         expect(servletContext.getInitParameter(ConfigLoader.CONFIG_FACTORY_CLASS_PARAM_NAME)).andReturn(MockConfigFactory.getName())
-        servletContext.setAttribute(eq(StormpathShiroConfigFactory.SHIRO_STORMPATH_PROPERTIES_ATTRIBUTE), anyObject(IniPropertiesSource))
+//        servletContext.setAttribute(eq(StormpathShiroConfigFactory.SHIRO_STORMPATH_PROPERTIES_ATTRIBUTE), anyObject(IniPropertiesSource))
+        servletContext.setAttribute(eq(AppendingConfigFactory.SHIRO_STORMPATH_ADDITIONAL_PROPERTIES_ATTRIBUTE), anyObject(Collection))
         expect(servletContext.getAttribute(Config.getName())).andReturn(null)
         servletContext.setAttribute(eq(Config.getName()), capture(configCapture))
         servletContext.setAttribute(MessageContext.getName(), null)

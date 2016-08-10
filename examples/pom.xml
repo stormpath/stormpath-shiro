@@ -32,6 +32,8 @@
 
     <modules>
         <module>servlet</module>
+        <module>spring-boot</module>
+        <module>spring-boot-web</module>
     </modules>
 
 </project>
