@@ -57,6 +57,12 @@
             <artifactId>stormpath-sdk-httpclient</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>java-hamcrest</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

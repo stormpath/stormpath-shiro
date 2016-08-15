@@ -38,7 +38,7 @@ class ShiroIDSiteResultControllerTest extends ShiroTestSupport {
         expect(authResult.getAccount()).andReturn(account).times(2)
         saver.set(eq(request), eq(response), anyObject())
         publisher.publish(anyObject())
-        subject.login(anyObject(StormpathWebRealm.AccessTokenResultAuthToken))
+        subject.login(anyObject(StormpathWebRealm.AccountAuthenticationToken))
 
         replay request, response, authResult, account, saver, publisher, subject
 
@@ -66,7 +66,7 @@ class ShiroIDSiteResultControllerTest extends ShiroTestSupport {
         expect(authResult.getAccount()).andReturn(account).times(2)
         saver.set(eq(request), eq(response), anyObject())
         publisher.publish(anyObject())
-        subject.login(anyObject(StormpathWebRealm.AccessTokenResultAuthToken))
+        subject.login(anyObject(StormpathWebRealm.AccountAuthenticationToken))
         expectLastCall().andThrow(new AuthenticationException("Expected test exception"))
 
         replay request, response, authResult, account, saver, publisher, subject

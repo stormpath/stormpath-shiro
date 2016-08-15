@@ -59,8 +59,11 @@ import java.util.Properties;
  * @see ClientBuilder
  * @see ClientBuilder#setApiKey(com.stormpath.sdk.api.ApiKey)
  * @see com.stormpath.sdk.api.ApiKeyBuilder#setFileLocation(String)
+ * @see com.stormpath.shiro.config.DefaultClientFactory
  * @since 0.1
+ * @deprecated Use @{link DefaultClientFactory}
  */
+@Deprecated
 public class ClientFactory extends AbstractFactory<Client> {
 
     private ClientBuilder clientBuilder;

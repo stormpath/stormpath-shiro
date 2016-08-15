@@ -35,7 +35,7 @@ public class ShiroLoginHandlerTest extends ShiroTestSupport {
         def request = createMock(HttpServletRequest)
         def response = createMock(HttpServletResponse)
 
-        Capture<StormpathWebRealm.AccessTokenResultAuthToken> loginCapture = new Capture<>()
+        Capture<StormpathWebRealm.AccountAuthenticationToken> loginCapture = new Capture<>()
 
         expect(securityManager.createSubject(anyObject(SubjectContext))).andReturn(subject)
         subject.login(capture(loginCapture))

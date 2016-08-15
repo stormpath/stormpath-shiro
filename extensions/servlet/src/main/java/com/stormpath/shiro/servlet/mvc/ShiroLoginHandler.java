@@ -16,7 +16,7 @@ public class ShiroLoginHandler implements WebHandler {
     @Override
     public boolean handle(HttpServletRequest request, HttpServletResponse response, Account account) {
 
-        AuthenticationToken token = new StormpathWebRealm.AccessTokenResultAuthToken(account);
+        AuthenticationToken token = new StormpathWebRealm.AccountAuthenticationToken(account);
 
         try {
             SecurityUtils.getSubject().login(token);

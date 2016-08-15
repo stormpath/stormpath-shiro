@@ -19,7 +19,7 @@ public class ShiroIDSiteResultController extends IdSiteResultController {
     protected ViewModel onAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationResult result) {
         ViewModel vm = super.onAuthentication(request, response, result);
 
-        AuthenticationToken token = new StormpathWebRealm.AccessTokenResultAuthToken(result.getAccount());
+        AuthenticationToken token = new StormpathWebRealm.AccountAuthenticationToken(result.getAccount());
 
         try {
             SecurityUtils.getSubject().login(token);
