@@ -1,0 +1,5 @@
+
+.view::before {
+    content: "Stormpath + Apache Shiro - Servlet Example";
+    font-size: 20pt;
+}

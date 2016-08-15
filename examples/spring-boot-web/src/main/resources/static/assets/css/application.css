@@ -1,0 +1,5 @@
+
+.view::before {
+    content: "Stormpath + Apache Shiro - Spring Boot Example";
+    font-size: 18pt;
+}
