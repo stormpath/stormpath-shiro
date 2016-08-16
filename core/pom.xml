@@ -14,7 +14,9 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -24,6 +26,10 @@
         <version>0.7.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
+
+    <properties>
+        <stormpath.version>1.0.2</stormpath.version>
+    </properties>
 
     <artifactId>stormpath-shiro-core</artifactId>
     <name>Stormpath Shiro :: Core</name>
@@ -41,12 +47,21 @@
         <dependency>
             <groupId>com.stormpath.sdk</groupId>
             <artifactId>stormpath-sdk-api</artifactId>
+            <version>1.0.2</version>
         </dependency>
-
-        <!-- Test dependencies: -->
         <dependency>
             <groupId>com.stormpath.sdk</groupId>
             <artifactId>stormpath-sdk-httpclient</artifactId>
+            <version>1.0.2</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- This next runtime dependency is only necessary if you have
+             a REST API and you want to secure it with OAuth: -->
+        <dependency>
+            <groupId>com.stormpath.sdk</groupId>
+            <artifactId>stormpath-sdk-oauth</artifactId>
+            <version>1.0.2</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

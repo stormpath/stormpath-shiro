@@ -18,7 +18,7 @@ package com.stormpath.shiro.realm;
 import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.authc.AuthenticationRequest;
-import com.stormpath.sdk.authc.UsernamePasswordRequest;
+import com.stormpath.sdk.authc.UsernamePasswordRequests;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.group.Group;
 import com.stormpath.sdk.group.GroupList;
@@ -376,7 +376,11 @@ public class ApplicationRealm extends AuthorizingRealm {
         String username = token.getUsername();
         char[] password = token.getPassword();
         String host = token.getHost();
-        return new UsernamePasswordRequest(username, password, host);
+        return UsernamePasswordRequests.builder()
+                .setUsernameOrEmail(username)
+                .setPassword(password)
+                .setHost(host)
+                .build();
     }
 
     protected PrincipalCollection createPrincipals(Account account) {
