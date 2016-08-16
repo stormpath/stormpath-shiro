@@ -22,12 +22,13 @@ import com.stormpath.sdk.authc.UsernamePasswordRequests;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.group.Group;
 import com.stormpath.sdk.group.GroupList;
+import com.stormpath.sdk.oauth.Authenticators;
+import com.stormpath.sdk.oauth.OAuthBearerRequestAuthentication;
+import com.stormpath.sdk.oauth.OAuthBearerRequestAuthenticationResult;
+import com.stormpath.sdk.oauth.OAuthRequests;
 import com.stormpath.sdk.resource.ResourceException;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import com.stormpath.shiro.jwt.JwtAuthenticationToken;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.Permission;
@@ -80,7 +81,7 @@ import java.util.*;
  *         <td>None</td>
  *         <td>Most Shiro+Stormpath applications should only need the above {@code DefaultGroupRoleResolver} when using
  *             Stormpath Groups as Shiro roles.  This realm implementation already acquires the
- *             {@link com.stormpath.sdk.account.Account#getGroups() account's assigned groups} and resolves the group
+ *             {@link Account#getGroups() account's assigned groups} and resolves the group
  *             roles via the above {@code groupRoleResolver}.  <b>You only need to configure this property
  *             if you need an additional way to represent an account's assigned roles that cannot already be
  *             represented via Stormpath account &lt;--&gt; group associations.</td>
@@ -90,7 +91,7 @@ import java.util.*;
  *         <td>{@link GroupCustomDataPermissionResolver}</td>
  *         <td>The {@code GroupCustomDataPermissionResolver} assumes the convention that a Group's assigned permissions
  *         are stored as a nested {@code Set&lt;String&gt;} field in the
- *         {@link com.stormpath.sdk.group.Group#getCustomData() group's CustomData resource}.  See the
+ *         {@link Group#getCustomData() group's CustomData resource}.  See the
  *         {@link GroupCustomDataPermissionResolver} JavaDoc for more information.</td>
  *     </tr>
  *     <tr>
@@ -98,7 +99,7 @@ import java.util.*;
  *         <td>{@link AccountCustomDataPermissionResolver}</td>
  *         <td>The {@code AccountCustomDataPermissionResolver} assumes the convention that an Account's directly
  *         assigned permissions are stored as a nested {@code Set&lt;String&gt;} field in the
- *         {@link com.stormpath.sdk.account.Account#getCustomData() account's CustomData resource}.  See the
+ *         {@link Account#getCustomData() account's CustomData resource}.  See the
  *         {@link AccountCustomDataPermissionResolver} JavaDoc for more information.</td>
  *     </tr>
  * </table>
@@ -133,7 +134,7 @@ import java.util.*;
  * @see AccountRoleResolver
  * @since 0.1
  */
-public class ApplicationRealm extends AuthorizingRealm {
+public class JWTApplicationRealm extends AuthorizingRealm {
 
     private Client client;
     private String applicationRestUrl;
@@ -144,7 +145,7 @@ public class ApplicationRealm extends AuthorizingRealm {
 
     private Application application; //acquired via the client at runtime, not configurable by the Realm user
 
-    public ApplicationRealm() {
+    public JWTApplicationRealm() {
         //Stormpath authenticates user accounts directly, no need to perform that here in Shiro:
         setCredentialsMatcher(new AllowAllCredentialsMatcher());
         setGroupRoleResolver(new DefaultGroupRoleResolver());
@@ -339,16 +340,19 @@ public class ApplicationRealm extends AuthorizingRealm {
 
         assertState();
 
-        UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
+        JwtAuthenticationToken token = (JwtAuthenticationToken) authcToken;
 
-        AuthenticationRequest request = createAuthenticationRequest(token);
+        OAuthBearerRequestAuthentication request = createAuthenticationRequest(token);
+
 
         Application application = ensureApplicationReference();
 
         Account account;
 
         try {
-            account = application.authenticateAccount(request).getAccount();
+            OAuthBearerRequestAuthenticationResult res = Authenticators.OAUTH_BEARER_REQUEST_AUTHENTICATOR.forApplication(application).authenticate(request);
+            //account = application.authenticateAccount(request).getAccount();
+            account = res.getAccount();
         } catch (ResourceException e) {
             //todo error code translation to throw more detailed exceptions
             String msg = StringUtils.clean(e.getMessage());
@@ -372,15 +376,8 @@ public class ApplicationRealm extends AuthorizingRealm {
         return new SimpleAuthenticationInfo(principals, null);
     }
 
-    protected AuthenticationRequest createAuthenticationRequest(UsernamePasswordToken token) {
-        String username = token.getUsername();
-        char[] password = token.getPassword();
-        String host = token.getHost();
-        return UsernamePasswordRequests.builder()
-                .setUsernameOrEmail(username)
-                .setPassword(password)
-                .setHost(host)
-                .build();
+    protected OAuthBearerRequestAuthentication createAuthenticationRequest(UsernamePasswordToken token) {
+        return OAuthRequests.OAUTH_BEARER_REQUEST.builder().setJwt(token.getUsername()).build();
     }
 
     protected PrincipalCollection createPrincipals(Account account) {
@@ -496,7 +493,7 @@ public class ApplicationRealm extends AuthorizingRealm {
      * If authentication caching is enabled, authentication data for an account must be evicted (removed) from the cached during logout.
      * <p/>
      * Since the user submitted username is different to the the primary account identifier (i.e. username for the former, account href for the latter),
-     * we need to overwrite the {@link org.apache.shiro.realm.AuthenticatingRealm#getAuthenticationCacheKey(org.apache.shiro.subject.PrincipalCollection)
+     * we need to overwrite the {@link org.apache.shiro.realm.AuthenticatingRealm#getAuthenticationCacheKey(PrincipalCollection)
      * AuthenticatingRealm#getAuthenticationCacheKey(PrincipalCollection)}.
      * <p/>
      * This guarantees that the same cache key used to cache the data during authentication (derived from the AuthenticationToken)
