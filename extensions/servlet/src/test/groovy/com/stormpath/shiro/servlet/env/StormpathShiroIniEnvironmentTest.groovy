@@ -4,11 +4,15 @@ import com.stormpath.sdk.client.Client
 import com.stormpath.sdk.servlet.config.Config
 import com.stormpath.sdk.servlet.config.ConfigLoader
 import com.stormpath.sdk.servlet.config.impl.DefaultConfigFactory
+import com.stormpath.sdk.servlet.filter.StormpathFilter
 import com.stormpath.shiro.config.ClientFactory
 import com.stormpath.shiro.config.DefaultClientFactory
 import com.stormpath.shiro.realm.ApplicationRealm
 import com.stormpath.shiro.servlet.ShiroTestSupportWithSystemProperties
 import org.apache.shiro.config.Ini
+import org.apache.shiro.util.Factory
+import org.apache.shiro.web.config.IniFilterChainResolverFactory
+import org.apache.shiro.web.filter.mgt.FilterChainResolver
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager
 import org.easymock.Capture
 import org.easymock.IAnswer
@@ -21,6 +25,7 @@ import javax.servlet.ServletContext
 import static org.easymock.EasyMock.*
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
+import static org.testng.Assert.assertNotNull
 import static org.testng.Assert.assertSame
 
 /**
@@ -154,6 +159,63 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
         def actualClient = clientCapture.value
 
         assertSame baseUrl, actualClient.dataStore.baseUrl
+    }
+
+    @Test
+    public void testSimpleFilterConfig() {
+
+        def appHref = "http://testSimpleFilterConfig"
+
+        def servletContext = mock(ServletContext)
+
+        def clientCapture = new Capture<Client>();
+
+        final def delayedInitMap = new HashMap<String, Object>()
+        final def configKey = "config"
+
+        expectConfigFromServletContext(servletContext, delayedInitMap, configKey).anyTimes()
+
+        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES)).andReturn(null)
+        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES)).andReturn(null)
+        expect(servletContext.getResourceAsStream(anyObject())).andReturn(null).anyTimes()
+        servletContext.setAttribute(eq(Client.getName()), capture(clientCapture))
+
+        replay servletContext
+
+        def config = new DefaultConfigFactory().createConfig(servletContext)
+        delayedInitMap.put(configKey, config)
+
+        def ini = new Ini()
+        ini.setSectionProperty("main", "stormpathRealm.applicationRestUrl", appHref)
+        // we need to have at least one path defined for the filterChain to be configured.
+        ini.setSectionProperty(IniFilterChainResolverFactory.URLS, "/foobar", "anon")
+
+        def configLoader = createNiceMock(ConfigLoader)
+        def filterChainResolverFactory = createNiceMock(Factory)
+        def filterChainResolver = createNiceMock(FilterChainResolver)
+
+        expect(filterChainResolverFactory.getInstance()).andReturn(filterChainResolver);
+
+        replay configLoader, filterChainResolverFactory, filterChainResolver
+
+        StormpathShiroIniEnvironment environment = new StormpathShiroIniEnvironment() {
+            @Override
+            protected Factory<? extends FilterChainResolver> getFilterChainResolverFactory(FilterChainResolver originalFilterChainResolver) {
+                return filterChainResolverFactory;
+            }
+
+            @Override
+            protected ConfigLoader ensureConfigLoader() {
+                return configLoader
+            }
+        };
+        environment.setIni(ini)
+        environment.setServletContext(servletContext)
+        environment.init()
+
+        verify servletContext, filterChainResolverFactory, filterChainResolver
+
+        assertNotNull environment.getFilterChainResolver()
     }
 
     @Test

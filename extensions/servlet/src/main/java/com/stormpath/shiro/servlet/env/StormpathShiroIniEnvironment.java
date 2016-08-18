@@ -9,11 +9,14 @@ import com.stormpath.shiro.realm.ApplicationRealm;
 import com.stormpath.shiro.realm.StormpathWebRealm;
 import com.stormpath.shiro.servlet.config.ShiroIniConfigLoader;
 import com.stormpath.shiro.servlet.config.StormpathWebClientFactory;
+import com.stormpath.shiro.servlet.filter.StormpathShiroFilterChainResolverFactory;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.util.CollectionUtils;
+import org.apache.shiro.util.Factory;
 import org.apache.shiro.web.config.WebIniSecurityManagerFactory;
 import org.apache.shiro.web.env.IniWebEnvironment;
+import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +83,7 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
         Map<String, Object> defaults = new LinkedHashMap<String, Object>();
 
         Ini.Section configSection = getConfigSection();
+        defaults.put("shiro.loginUrl", "/login"); // TODO: this duplicates stormpath config, but we do NOT have the config object yet, think about this a bit more
         defaults.put("stormpathClient", new StormpathWebClientFactory(getServletContext()));
 
         String href = ConfigResolver.INSTANCE.getConfig(getServletContext()).get(DefaultServletContextClientFactory.STORMPATH_APPLICATION_HREF);
@@ -102,11 +106,19 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
 
         configureStormpathEnvironment();
 
-        super.configure();
+        this.objects.clear();
+
+        WebSecurityManager securityManager = createWebSecurityManager();
+        setWebSecurityManager(securityManager);
 
         ClientFactory clientFactory = getObject("stormpathClient", ClientFactory.class);
         log.debug("Updating Client in ServletContext, with instance configured via shiro.ini");
         getServletContext().setAttribute(Client.class.getName(), clientFactory.getInstance());
+
+        FilterChainResolver resolver = createFilterChainResolver();
+        if (resolver != null) {
+            setFilterChainResolver(resolver);
+        }
 
     }
 
@@ -114,12 +126,13 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
         ensureConfigLoader().createConfig(getServletContext());
     }
 
-    private ConfigLoader ensureConfigLoader() {
+    protected ConfigLoader ensureConfigLoader() {
         if (configLoader == null) {
             configLoader = new ShiroIniConfigLoader(getIni());
         }
         return configLoader;
     }
+
 
     @Override
     public void destroy() throws Exception {
@@ -128,8 +141,23 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
         super.destroy();
     }
 
-    // TODO think about putting these in Shiro proper
+    @Override
+    protected FilterChainResolver createFilterChainResolver() {
 
+        FilterChainResolver originalFilterChainResolver = super.createFilterChainResolver();
+
+        if (originalFilterChainResolver == null) {
+            return null;
+        }
+
+        return getFilterChainResolverFactory(originalFilterChainResolver).getInstance();
+    }
+
+    protected Factory<? extends FilterChainResolver> getFilterChainResolverFactory(FilterChainResolver originalFilterChainResolver) {
+        return new StormpathShiroFilterChainResolverFactory(originalFilterChainResolver, getServletContext());
+    }
+
+// TODO think about putting these in Shiro proper
 
     @Override
     protected WebSecurityManager createWebSecurityManager() {

@@ -24,15 +24,16 @@
         <listener-class>com.stormpath.shiro.servlet.env.StormpathShiroEnvironmentLoaderListener</listener-class>
     </listener>
 
-    <listener>
-        <!-- Load the webapp's Stormpath Application resource, referenced during various request flows: -->
-        <listener-class>com.stormpath.sdk.servlet.application.DefaultApplicationLoaderListener</listener-class>
-    </listener>
+    <!--<listener>-->
+        <!--&lt;!&ndash; Load the webapp's Stormpath Application resource, referenced during various request flows: &ndash;&gt;-->
+        <!--<listener-class>com.stormpath.sdk.servlet.application.DefaultApplicationLoaderListener</listener-class>-->
+    <!--</listener>-->
 
-    <filter>
-        <filter-name>StormpathFilter</filter-name>
-        <filter-class>com.stormpath.sdk.servlet.config.filter.SelfConfiguredStormpathFilter</filter-class>
-    </filter>
+    <!--<filter>-->
+        <!--<filter-name>StormpathFilter</filter-name>-->
+        <!--<filter-class>com.stormpath.sdk.servlet.config.filter.SelfConfiguredStormpathFilter</filter-class>-->
+    <!--</filter>-->
+    <!--</filter>-->
 
     <filter>
         <filter-name>ShiroFilter</filter-name>
@@ -51,13 +52,13 @@
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
-    <filter-mapping>
-        <filter-name>StormpathFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
-        <dispatcher>ERROR</dispatcher>
-    </filter-mapping>
+    <!--<filter-mapping>-->
+        <!--<filter-name>StormpathFilter</filter-name>-->
+        <!--<url-pattern>/*</url-pattern>-->
+        <!--<dispatcher>REQUEST</dispatcher>-->
+        <!--<dispatcher>FORWARD</dispatcher>-->
+        <!--<dispatcher>INCLUDE</dispatcher>-->
+        <!--<dispatcher>ERROR</dispatcher>-->
+    <!--</filter-mapping>-->
 
 </web-fragment>
