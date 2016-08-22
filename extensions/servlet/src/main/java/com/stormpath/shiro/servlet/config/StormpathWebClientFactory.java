@@ -59,7 +59,7 @@ public class StormpathWebClientFactory extends AbstractFactory<Client> implement
 
 
 
-    private ServletContext servletContext;
+    final private ServletContext servletContext;
 
     public StormpathWebClientFactory(ServletContext servletContext) {
         this.servletContext = servletContext;
@@ -114,23 +114,24 @@ public class StormpathWebClientFactory extends AbstractFactory<Client> implement
         }
 
         @Override
+        @SuppressWarnings("PMD.NPathComplexity")
         protected ApiKey createApiKey() {
 
             ApiKeyBuilder apiKeyBuilder = ApiKeys.builder();
             Config config = getConfig();
 
-            String value = apiKeyId != null ? apiKeyId : config.get("stormpath.client.apiKey.id");
+            String value = Strings.hasText(apiKeyId) ? apiKeyId : config.get("stormpath.client.apiKey.id");
             if (Strings.hasText(value)) {
                 apiKeyBuilder.setId(value);
             }
 
             //check for API Key ID embedded in the properties configuration
-            value = apiKeySecret != null ? apiKeySecret : config.get("stormpath.client.apiKey.secret");
+            value = Strings.hasText(apiKeySecret) ? apiKeySecret : config.get("stormpath.client.apiKey.secret");
             if (Strings.hasText(value)) {
                 apiKeyBuilder.setSecret(value);
             }
 
-            value = apiKeyFileLocation != null ? apiKeyFileLocation : config.get(STORMPATH_API_KEY_FILE);
+            value = Strings.hasText(apiKeyFileLocation) ? apiKeyFileLocation : config.get(STORMPATH_API_KEY_FILE);
             if (Strings.hasText(value)) {
                 apiKeyBuilder.setFileLocation(value);
             }
@@ -141,12 +142,12 @@ public class StormpathWebClientFactory extends AbstractFactory<Client> implement
         @Override
         protected void applyCacheManager(ClientBuilder builder) {
 
-            if (cacheManager != null) {
-                com.stormpath.sdk.cache.CacheManager stormpathCacheManager = new ShiroCacheManager(cacheManager);
-                builder.setCacheManager(stormpathCacheManager);
+            if (cacheManager == null) {
+                super.applyCacheManager(builder);
             }
             else {
-                super.applyCacheManager(builder);
+                com.stormpath.sdk.cache.CacheManager stormpathCacheManager = new ShiroCacheManager(cacheManager);
+                builder.setCacheManager(stormpathCacheManager);
             }
         }
     }

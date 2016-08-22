@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class DefaultShiroFilterChainDefinitionProvider implements ShiroFilterChainDefinitionProvider {
 
-    private Map<String, String> filterChainDefinitionMap = new HashMap<>();
+    final private Map<String, String> filterChainDefinitionMap = new HashMap<>();
 
     public void addPathDefinition(String antPath, String definition) {
         filterChainDefinitionMap.put(antPath, definition);

@@ -133,6 +133,7 @@ import java.util.*;
  * @see AccountRoleResolver
  * @since 0.1
  */
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.GodClass"})
 public class ApplicationRealm extends AuthorizingRealm {
 
     private Client client;
@@ -405,9 +406,9 @@ public class ApplicationRealm extends AuthorizingRealm {
     }
 
     private void nullSafePut(Map<String, String> props, String propName, String value) {
-        value = StringUtils.clean(value);
-        if (value != null) {
-            props.put(propName, value);
+        String cleanValue = StringUtils.clean(value);
+        if (cleanValue != null) {
+            props.put(propName, cleanValue);
         }
     }
 
@@ -514,7 +515,11 @@ public class ApplicationRealm extends AuthorizingRealm {
     protected Object getAuthenticationCacheKey(PrincipalCollection principals) {
         if (!CollectionUtils.isEmpty(principals)) {
             Collection thisPrincipals = principals.fromRealm(getName());
-            if (!CollectionUtils.isEmpty(thisPrincipals)) {
+            if (CollectionUtils.isEmpty(thisPrincipals)) {
+                //no principals attributed to this particular realm.  Fall back to the 'master' primary:
+                return principals.getPrimaryPrincipal();
+
+            } else {
                 Iterator iterator = thisPrincipals.iterator();
                 iterator.next(); //First item is the Stormpath' account href
                 //Second item is Stormpath' account map
@@ -526,9 +531,6 @@ public class ApplicationRealm extends AuthorizingRealm {
                     return email;
                 }
                 return accountInfo.get("username");
-            } else {
-                //no principals attributed to this particular realm.  Fall back to the 'master' primary:
-                return principals.getPrimaryPrincipal();
             }
         }
         return null;

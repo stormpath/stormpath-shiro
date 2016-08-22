@@ -6,7 +6,7 @@ import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 
-public abstract class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
+public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
 
     protected SessionsSecurityManager createSecurityManager() {
 

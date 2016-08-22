@@ -33,7 +33,7 @@ import java.util.Map;
 @Configuration
 @ControllerAdvice
 @SpringBootApplication
-public class WebApp {
+public class WebApp { //NOPMD
 
     private static Logger log = LoggerFactory.getLogger(WebApp.class);
 

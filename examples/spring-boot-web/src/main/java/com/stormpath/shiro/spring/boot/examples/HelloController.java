@@ -41,11 +41,11 @@ public class HelloController {
 
         if (!CollectionUtils.isEmpty(principalCollection)) {
             Collection<Map> principalMaps = subject.getPrincipals().byType(Map.class);
-            if (!CollectionUtils.isEmpty(principalMaps)) {
-                name = (String) principalMaps.iterator().next().get("username"); // TODO: dirty cast
+            if (CollectionUtils.isEmpty(principalMaps)) {
+                name = subject.getPrincipal().toString();
             }
             else {
-                name = subject.getPrincipal().toString();
+                name = (String) principalMaps.iterator().next().get("username"); // TODO: dirty cast
             }
         }
 

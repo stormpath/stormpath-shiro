@@ -365,6 +365,26 @@
                     <version>3.6</version>
                     <configuration>
                         <skipEmptyReport>false</skipEmptyReport>
+
+                        <rulesets>
+                            <!-- defaults -->
+                            <ruleset>/rulesets/java/basic.xml</ruleset>
+                            <ruleset>/rulesets/java/unusedcode.xml</ruleset>
+                            <ruleset>/rulesets/java/imports.xml</ruleset>
+
+                            <!-- additional checks -->
+                            <ruleset>/rulesets/java/sunsecure.xml</ruleset>
+                            <ruleset>/rulesets/java/strings.xml</ruleset>
+                            <ruleset>/rulesets/java/empty.xml</ruleset>
+                            <ruleset>/rulesets/java/codesize.xml</ruleset>
+                            <ruleset>/rulesets/java/design.xml</ruleset>
+                            <ruleset>/rulesets/java/j2ee.xml</ruleset>
+                        </rulesets>
+                        <excludes>
+                            <!-- ignore the examples -->
+                            <exclude>**/examples/**</exclude>
+                        </excludes>
+
                     </configuration>
                 </plugin>
                 <plugin>

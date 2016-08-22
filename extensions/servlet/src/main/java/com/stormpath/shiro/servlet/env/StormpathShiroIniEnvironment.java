@@ -54,7 +54,7 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
     private ConfigLoader configLoader;
 
     @Override
-    public void setIni(Ini ini) {
+    public void setIni(Ini ini) { //NOPMD
 
         if (ini == null) {
             ini = new Ini();

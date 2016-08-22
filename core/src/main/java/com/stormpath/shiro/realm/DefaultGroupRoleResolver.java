@@ -19,6 +19,7 @@ import com.stormpath.sdk.group.Group;
 import org.apache.shiro.util.CollectionUtils;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -168,7 +169,7 @@ public class DefaultGroupRoleResolver implements GroupRoleResolver {
         NAME;
 
         public static Mode fromString(final String name) {
-            String upper = name.toUpperCase();
+            String upper = name.toUpperCase(Locale.ENGLISH);
             for (Mode mode : values()) {
                 if (mode.name().equals(upper)) {
                     return mode;

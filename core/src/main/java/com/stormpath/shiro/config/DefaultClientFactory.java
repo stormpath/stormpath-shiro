@@ -147,7 +147,7 @@ public class DefaultClientFactory {
     protected void applyAuthenticationScheme(ClientBuilder builder) {
         String schemeName = config.get(STORMPATH_AUTHENTICATION_SCHEME);
         if (Strings.hasText(schemeName)) {
-            AuthenticationScheme scheme = AuthenticationScheme.valueOf(schemeName.toUpperCase());
+            AuthenticationScheme scheme = AuthenticationScheme.valueOf(schemeName.toUpperCase(Locale.ENGLISH));
             builder.setAuthenticationScheme(scheme);
         }
     }
