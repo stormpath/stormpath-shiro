@@ -1,4 +1,4 @@
-package com.stormpath.shiro.sdk.servlet.config.impl;
+package com.stormpath.shiro.servlet.config;
 
 import com.stormpath.sdk.impl.config.PropertiesSource;
 import com.stormpath.sdk.servlet.config.Config;

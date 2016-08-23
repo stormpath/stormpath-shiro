@@ -142,6 +142,7 @@ public class ApplicationRealm extends AuthorizingRealm {
     private GroupPermissionResolver groupPermissionResolver;
     private AccountPermissionResolver accountPermissionResolver;
     private AccountRoleResolver accountRoleResolver;
+    private ApplicationResolver applicationResolver;
 
     private Application application; //acquired via the client at runtime, not configurable by the Realm user
 
@@ -151,6 +152,7 @@ public class ApplicationRealm extends AuthorizingRealm {
         setGroupRoleResolver(new DefaultGroupRoleResolver());
         setGroupPermissionResolver(new GroupCustomDataPermissionResolver());
         setAccountPermissionResolver(new AccountCustomDataPermissionResolver());
+        setApplicationResolver(new DefaultApplicationResolver());
     }
 
     /**
@@ -306,31 +308,40 @@ public class ApplicationRealm extends AuthorizingRealm {
         this.accountRoleResolver = accountRoleResolver;
     }
 
+    public ApplicationResolver getApplicationResolver() {
+        return applicationResolver;
+    }
+
+    public void setApplicationResolver(ApplicationResolver applicationResolver) {
+        this.applicationResolver = applicationResolver;
+    }
+
     @Override
     protected void onInit() {
         super.onInit();
         assertState();
+        if (application == null) {
+            this.application = ensureApplicationReference();
+        }
     }
 
     private void assertState() {
         if (this.client == null) {
             throw new IllegalStateException("Stormpath SDK Client instance must be configured.");
         }
-        if (this.applicationRestUrl == null) {
-            throw new IllegalStateException("\n\nThis application's Stormpath REST URL must be configured.\n\n  " +
-                    "You may get your application's Stormpath REST URL as shown here:\n\n " +
-                    "http://www.stormpath.com/docs/application-rest-url\n\n" +
-                    "Copy and paste the 'REST URL' value as the 'applicationRestUrl' property of this class.");
-        }
     }
+
 
     //this is not thread safe, but the Client is, and this is only executed during initial Application
     //acquisition, so it is negligible if this executes a few times instead of just once.
     protected final Application ensureApplicationReference() {
         if (this.application == null) {
             assertState();
-            String href = getApplicationRestUrl();
-            this.application = client.getDataStore().getResource(href, Application.class);
+            Application tmpApp = applicationResolver.getApplication(client, applicationRestUrl);
+            if (tmpApp == null) {
+                throw new IllegalStateException("ApplicationResolver returned 'null' Application, this is likely a configuration error.");
+            }
+            this.application = tmpApp;
         }
         return this.application;
     }

@@ -1,7 +1,8 @@
-package com.stormpath.shiro.sdk.servlet.config.impl
+package com.stormpath.shiro.servlet.config
 
 import com.stormpath.sdk.impl.config.PropertiesSource
 import com.stormpath.sdk.servlet.config.impl.DefaultConfigFactory
+import com.stormpath.shiro.servlet.config.AppendingConfigFactory
 import org.apache.shiro.config.ConfigurationException
 import org.testng.annotations.Test
 

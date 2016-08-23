@@ -4,9 +4,7 @@ import com.stormpath.sdk.client.Client
 import com.stormpath.sdk.servlet.config.Config
 import com.stormpath.sdk.servlet.config.ConfigLoader
 import com.stormpath.sdk.servlet.config.impl.DefaultConfigFactory
-import com.stormpath.sdk.servlet.filter.StormpathFilter
 import com.stormpath.shiro.config.ClientFactory
-import com.stormpath.shiro.config.DefaultClientFactory
 import com.stormpath.shiro.realm.ApplicationRealm
 import com.stormpath.shiro.servlet.ShiroTestSupportWithSystemProperties
 import org.apache.shiro.config.Ini
@@ -30,6 +28,11 @@ import static org.testng.Assert.assertSame
 
 /**
  * Tests for {@link StormpathShiroIniEnvironment}.
+ *
+ * TODO: this class loads an ApplicationRealm, when that class is loaded it will make a remote connection to api.stormpath.com
+ * This makes this class an integration test. A different class could by setting <code>stormpathRealm = com.stub.class.Here</code> in the ini config.
+ * The downside os that 'testDefaultCreate' would not longer be testing the default create.  PowerMock might be a solution here.
+ *
  */
 @Test(singleThreaded = true)
 class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemProperties {
@@ -37,9 +40,6 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
     @Test
     public void testDefaultCreate() {
 
-        def appHref = "http://testDefaultObjects"
-        setSystemProperty(DefaultClientFactory.STORMPATH_APPLICATION_HREF, appHref)
-
         def servletContext = mock(ServletContext)
 
         def clientCapture = new Capture<Client>();
@@ -61,15 +61,12 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
 
 
         def ini = new Ini()
-        doTestWithIni(ini, appHref, servletContext)
+        doTestWithIni(ini, servletContext)
     }
 
     @Test
     public void testDefaultCreateWithNoIni() {
 
-        def appHref = "http://testDefaultObjectsNoIni"
-        setSystemProperty(DefaultClientFactory.STORMPATH_APPLICATION_HREF, appHref)
-
         def servletContext = mock(ServletContext)
 
         def clientCapture = new Capture<Client>();
@@ -90,14 +87,12 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
         delayedInitMap.put(configKey, config)
 
 
-        doTestWithIni(null, appHref, servletContext)
+        doTestWithIni(null, servletContext)
     }
 
     @Test
     public void testCreateWithIniAppHref() {
 
-        def appHref = "http://testCreateSecurityManagerIniAppHref"
-
         def servletContext = mock(ServletContext)
 
         def clientCapture = new Capture<Client>();
@@ -118,54 +113,14 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
         delayedInitMap.put(configKey, config)
 
         def ini = new Ini()
-        ini.setSectionProperty("main", "stormpathRealm.applicationRestUrl", appHref)
 
-        doTestWithIni(ini, appHref, servletContext)
+        doTestWithIni(ini, servletContext)
     }
 
-    @Test
-    public void testCreateWithIniStormpathClientBaseUrl() {
-
-        def appHref = "http://testCreateSecurityManagerIniAppHref"
-        setSystemProperty(DefaultClientFactory.STORMPATH_APPLICATION_HREF, appHref)
-
-        def baseUrl = "http://baseUrl"
-
-        def ini = new Ini()
-        ini.setSectionProperty("main", "stormpathClient.baseUrl", baseUrl)
-
-
-        final def delayedInitMap = new HashMap<String, Object>()
-        final def configKey = "config"
-
-        def servletContext = mock(ServletContext)
-        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES)).andReturn(null)
-        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES)).andReturn(null)
-        expect(servletContext.getResourceAsStream(anyObject())).andReturn(null).anyTimes()
-
-        expectConfigFromServletContext(servletContext, delayedInitMap, configKey).anyTimes()
-
-        def clientCapture = new Capture<Client>()
-        def client = mock(Client)
-        servletContext.setAttribute(eq(Client.getName()), capture(clientCapture))
-        expectLastCall()
-
-        replay servletContext, client
-
-        def config = new DefaultConfigFactory().createConfig(servletContext)
-        delayedInitMap.put(configKey, config)
-
-        doTestWithIni(ini, appHref, servletContext)
-        def actualClient = clientCapture.value
-
-        assertSame baseUrl, actualClient.dataStore.baseUrl
-    }
 
     @Test
     public void testSimpleFilterConfig() {
 
-        def appHref = "http://testSimpleFilterConfig"
-
         def servletContext = mock(ServletContext)
 
         def clientCapture = new Capture<Client>();
@@ -186,7 +141,6 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
         delayedInitMap.put(configKey, config)
 
         def ini = new Ini()
-        ini.setSectionProperty("main", "stormpathRealm.applicationRestUrl", appHref)
         // we need to have at least one path defined for the filterChain to be configured.
         ini.setSectionProperty(IniFilterChainResolverFactory.URLS, "/foobar", "anon")
 
@@ -236,11 +190,11 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
         verify servletContext, configLoader
     }
 
-    private void doTestWithIni(Ini ini, String expectedApplicationHref, ServletContext servletContext) {
+    private void doTestWithIni(Ini ini, ServletContext servletContext) {
 
         def configLoader = createNiceMock(ConfigLoader)
 
-        replay configLoader
+        replay configLoader //, app, appResolver
 
         StormpathShiroIniEnvironment environment = new StormpathShiroIniEnvironment()
         environment.setIni(ini)
@@ -250,11 +204,10 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
 
         DefaultWebSecurityManager securityManager = (DefaultWebSecurityManager) environment.getWebSecurityManager();
 
-        verify servletContext
+        verify servletContext //, app, appResolver
 
         assertThat securityManager.getRealms(), allOf(Matchers.contains(any(ApplicationRealm)), hasSize(1))
         ApplicationRealm realm = securityManager.getRealms().iterator().next()
-        assertThat realm.getApplicationRestUrl(), equalTo(expectedApplicationHref)
 
         def clientObject = environment.objects.get("stormpathClient")
         assertThat clientObject, instanceOf(ClientFactory)

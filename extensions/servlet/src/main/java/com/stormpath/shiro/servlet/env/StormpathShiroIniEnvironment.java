@@ -1,9 +1,7 @@
 package com.stormpath.shiro.servlet.env;
 
 import com.stormpath.sdk.client.Client;
-import com.stormpath.sdk.servlet.client.DefaultServletContextClientFactory;
 import com.stormpath.sdk.servlet.config.ConfigLoader;
-import com.stormpath.sdk.servlet.config.ConfigResolver;
 import com.stormpath.shiro.config.ClientFactory;
 import com.stormpath.shiro.realm.ApplicationRealm;
 import com.stormpath.shiro.realm.StormpathWebRealm;
@@ -54,7 +52,8 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
     private ConfigLoader configLoader;
 
     @Override
-    public void setIni(Ini ini) { //NOPMD
+    @SuppressWarnings("PMD.AvoidReassigningParameters")
+    public void setIni(Ini ini) {
 
         if (ini == null) {
             ini = new Ini();
@@ -86,10 +85,10 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
         defaults.put("shiro.loginUrl", "/login"); // TODO: this duplicates stormpath config, but we do NOT have the config object yet, think about this a bit more
         defaults.put("stormpathClient", new StormpathWebClientFactory(getServletContext()));
 
-        String href = ConfigResolver.INSTANCE.getConfig(getServletContext()).get(DefaultServletContextClientFactory.STORMPATH_APPLICATION_HREF);
+//        String href = ConfigResolver.INSTANCE.getConfig(getServletContext()).get(DefaultServletContextClientFactory.STORMPATH_APPLICATION_HREF);
 
         ApplicationRealm stormpathRealm = new StormpathWebRealm();
-        stormpathRealm.setApplicationRestUrl(href);
+//        stormpathRealm.setApplicationRestUrl(href);
         defaults.put("stormpathRealm", stormpathRealm);
 
         // lazy associate the client with the realm, so changes can be made if needed.
@@ -99,7 +98,6 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
 
         return defaults;
     }
-
 
     @Override
     protected void configure() {
@@ -162,10 +160,7 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
     @Override
     protected WebSecurityManager createWebSecurityManager() {
         WebIniSecurityManagerFactory factory = getSecurityManagerFactory();
-
-        Ini ini = getIni();
-        // we make sure this is not empty above, TODO: think about this.
-        factory.setIni(ini);
+        factory.setIni(getIni());
 
         WebSecurityManager wsm = (WebSecurityManager)factory.getInstance();
 

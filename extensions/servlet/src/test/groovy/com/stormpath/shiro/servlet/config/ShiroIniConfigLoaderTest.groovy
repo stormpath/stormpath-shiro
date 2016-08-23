@@ -3,7 +3,6 @@ package com.stormpath.shiro.servlet.config
 import com.stormpath.sdk.servlet.config.Config
 import com.stormpath.sdk.servlet.config.ConfigLoader
 import com.stormpath.sdk.servlet.i18n.MessageContext
-import com.stormpath.shiro.sdk.servlet.config.impl.AppendingConfigFactory
 import org.easymock.Capture
 import org.testng.annotations.Test
 

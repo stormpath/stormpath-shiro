@@ -65,7 +65,7 @@
     <distributionManagement>
         <site>
             <id>stormpath.github</id>
-            <url>scm:git:git@github.com:bdemers/stormpath-shiro.git</url> <!-- TODO change to stormpath, after testing-->
+            <url>scm:git:git@github.com:stormpath/stormpath-shiro.git</url>
         </site>
     </distributionManagement>
 
