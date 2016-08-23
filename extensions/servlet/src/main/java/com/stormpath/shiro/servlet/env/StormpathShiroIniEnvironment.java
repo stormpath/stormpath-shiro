@@ -3,7 +3,6 @@ package com.stormpath.shiro.servlet.env;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.servlet.config.ConfigLoader;
 import com.stormpath.shiro.config.ClientFactory;
-import com.stormpath.shiro.realm.ApplicationRealm;
 import com.stormpath.shiro.realm.StormpathWebRealm;
 import com.stormpath.shiro.servlet.config.ShiroIniConfigLoader;
 import com.stormpath.shiro.servlet.config.StormpathWebClientFactory;
@@ -59,42 +58,46 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
             ini = new Ini();
         }
 
-        if (CollectionUtils.isEmpty(ini.getSection(Ini.DEFAULT_SECTION_NAME))) {
-            ini.setSectionProperty(Ini.DEFAULT_SECTION_NAME, "__empty_property__", String.class.getName());
-        }
+        addDefaultsToIni(ini);
 
         super.setIni(ini);
     }
 
-    private Ini.Section getConfigSection() {
-        Ini ini = getIni();
+    private Ini.Section getConfigSection(Ini ini) {
 
         Ini.Section configSection = ini.getSection(IniSecurityManagerFactory.MAIN_SECTION_NAME);
         if (CollectionUtils.isEmpty(configSection)) {
             configSection = ini.getSection(Ini.DEFAULT_SECTION_NAME);
+            if (configSection == null) {
+                configSection = ini.addSection(Ini.DEFAULT_SECTION_NAME);
+            }
         }
 
         return configSection;
     }
 
-    private Map<String, ?> getDefaultEnvironmentObjects() {
+    private void addDefaultsToIni(Ini ini) {
 
-        Map<String, Object> defaults = new LinkedHashMap<String, Object>();
-
-        Ini.Section configSection = getConfigSection();
-        defaults.put("shiro.loginUrl", "/login"); // TODO: this duplicates stormpath config, but we do NOT have the config object yet, think about this a bit more
-        defaults.put("stormpathClient", new StormpathWebClientFactory(getServletContext()));
-
-//        String href = ConfigResolver.INSTANCE.getConfig(getServletContext()).get(DefaultServletContextClientFactory.STORMPATH_APPLICATION_HREF);
-
-        ApplicationRealm stormpathRealm = new StormpathWebRealm();
-//        stormpathRealm.setApplicationRestUrl(href);
-        defaults.put("stormpathRealm", stormpathRealm);
+        // TODO: this is not ideal, we need to make shiro a bit more flexible
+        // and this is tightly coupled with the following method
+        Ini.Section configSection = getConfigSection(ini);
 
         // lazy associate the client with the realm, so changes can be made if needed.
         if (!configSection.containsKey("stormpathRealm.client")) {
             configSection.put("stormpathRealm.client", "$stormpathClient");
         }
+
+        // global properties 'shiro.*' are not loaded from the defaults, we must set it in the ini.
+        if (!configSection.containsKey("shiro.loginUrl")) {
+            configSection.put("shiro.loginUrl", "/login");
+        }
+    }
+
+    private Map<String, ?> getDefaultEnvironmentObjects() {
+
+        Map<String, Object> defaults = new LinkedHashMap<String, Object>();
+        defaults.put("stormpathClient", new StormpathWebClientFactory(getServletContext()));
+        defaults.put("stormpathRealm", new StormpathWebRealm());
 
         return defaults;
     }
