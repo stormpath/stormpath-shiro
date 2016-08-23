@@ -39,7 +39,7 @@
     <url>https://github.com/stormpath/stormpath-shiro/wiki</url>
 
     <organization>
-        <name>Stormpath</name>
+        <name>Stormpath, Inc.</name>
         <url>http://www.stormpath.com</url>
     </organization>
 
@@ -111,9 +111,10 @@
         <jackson.version>1.9.13</jackson.version>
         <testng.version>6.9.10</testng.version>
 
+        <root.dir>${session.executionRootDirectory}</root.dir>
         <!-- site staging path needs to be absolute, this allows for that:
              http://stackoverflow.com/questions/1012402/maven2-property-that-indicates-the-parent-directory -->
-        <stagingDirectory>${session.executionRootDirectory}/target/staging/static</stagingDirectory>
+        <stagingDirectory>${root.dir}/target/staging/static</stagingDirectory>
     </properties>
 
     <dependencies>
@@ -408,6 +409,21 @@
                         <skipDeletedFiles>true</skipDeletedFiles>
                         <!-- special github branch for sites -->
                         <scmBranch>gh-pages</scmBranch>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>3.0</version>
+                    <configuration>
+                        <aggregate>true</aggregate>
+                        <header>${root.dir}/src/license/header.txt</header>
+                        <headerDefinitions>
+                            <headerDefinition>${root.dir}/src/license/header_format.xml</headerDefinition>
+                        </headerDefinitions>
+                        <properties>
+                            <organization.name>${organization.name}</organization.name>
+                        </properties>
                     </configuration>
                 </plugin>
             </plugins>
