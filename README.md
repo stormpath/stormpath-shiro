@@ -21,6 +21,12 @@ This project requires Maven 3 to build.  Run the following from a command prompt
 
 ## Change Log
 
+### 0.7.0
+- Upgraded Shiro dependency to latest stable release of 1.3.0
+- Upgraded Stormpath SDK dependency to latest released version: 1.0.3
+- Added `stormpath-shiro-servlet-plugin` to automaticly configure Shiro to use a Stormpath realm and use Stormpath login UI out of the box
+- Added spring-boot starters for both web and non-web applications.
+
 ### 0.6.0
 
 - Upgraded Shiro dependency to latest stable release of 1.2.3

@@ -30,6 +30,7 @@ import java.util.Map;
 @Controller
 public class HelloController {
 
+    @SuppressWarnings("Duplicates")
     @RequestMapping("/")
     public String home(HttpServletRequest request, Model model) {
 
@@ -45,7 +46,7 @@ public class HelloController {
                 name = subject.getPrincipal().toString();
             }
             else {
-                name = (String) principalMaps.iterator().next().get("username"); // TODO: dirty cast
+                name = (String) principalMaps.iterator().next().get("username");
             }
         }
 
