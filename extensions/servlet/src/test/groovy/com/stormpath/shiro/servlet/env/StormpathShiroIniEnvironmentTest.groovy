@@ -22,6 +22,7 @@ import com.stormpath.sdk.servlet.config.impl.DefaultConfigFactory
 import com.stormpath.shiro.config.ClientFactory
 import com.stormpath.shiro.realm.ApplicationRealm
 import com.stormpath.shiro.servlet.ShiroTestSupportWithSystemProperties
+import com.stormpath.shiro.stubs.StubApplicationResolver
 import org.apache.shiro.config.Ini
 import org.apache.shiro.util.Factory
 import org.apache.shiro.web.config.IniFilterChainResolverFactory
@@ -43,11 +44,6 @@ import static org.testng.Assert.assertSame
 
 /**
  * Tests for {@link StormpathShiroIniEnvironment}.
- *
- * TODO: this class loads an ApplicationRealm, when that class is loaded it will make a remote connection to api.stormpath.com
- * This makes this class an integration test. A different class could by setting <code>stormpathRealm = com.stub.class.Here</code> in the ini config.
- * The downside os that 'testDefaultCreate' would not longer be testing the default create.  PowerMock might be a solution here.
- *
  */
 @Test(singleThreaded = true)
 class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemProperties {
@@ -80,29 +76,15 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
     }
 
     @Test
-    public void testDefaultCreateWithNoIni() {
+    public void testDefaultAddedToIni() {
 
-        def servletContext = mock(ServletContext)
+        def environment = new StormpathShiroIniEnvironment()
+        environment.setIni(null)
 
-        def clientCapture = new Capture<Client>();
-
-        final def delayedInitMap = new HashMap<String, Object>()
-        final def configKey = "config"
-
-        expectConfigFromServletContext(servletContext, delayedInitMap, configKey).anyTimes()
-
-        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES)).andReturn(null)
-        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES)).andReturn(null)
-        expect(servletContext.getResourceAsStream(anyObject())).andReturn(null).anyTimes()
-        servletContext.setAttribute(eq(Client.getName()), capture(clientCapture))
-
-        replay servletContext
-
-        def config = new DefaultConfigFactory().createConfig(servletContext)
-        delayedInitMap.put(configKey, config)
-
-
-        doTestWithIni(null, servletContext)
+        def ini = environment.getIni()
+        assertNotNull ini
+        assertThat(ini.getSection(Ini.DEFAULT_SECTION_NAME), (allOf(hasEntry("shiro.loginUrl", "/login"),
+                                                                    hasEntry("stormpathRealm.client", "\$stormpathClient"))))
     }
 
     @Test
@@ -156,6 +138,7 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
         delayedInitMap.put(configKey, config)
 
         def ini = new Ini()
+        addStubApplicationResolvertoIni(ini)
         // we need to have at least one path defined for the filterChain to be configured.
         ini.setSectionProperty(IniFilterChainResolverFactory.URLS, "/foobar", "anon")
 
@@ -207,6 +190,8 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
 
     private void doTestWithIni(Ini ini, ServletContext servletContext) {
 
+        addStubApplicationResolvertoIni(ini)
+
         def configLoader = createNiceMock(ConfigLoader)
 
         replay configLoader //, app, appResolver
@@ -228,6 +213,12 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
         assertThat clientObject, instanceOf(ClientFactory)
         def actualClient = ((ClientFactory) clientObject).getInstance()
         assertSame realm.getClient(), actualClient
+    }
+
+    private void addStubApplicationResolvertoIni(Ini ini, String sectionName = "main") {
+        assertNotNull ini
+        ini.setSectionProperty(sectionName, "stubApplicationResolver", StubApplicationResolver.getName())
+        ini.setSectionProperty(sectionName, "stormpathRealm.applicationResolver", "\$stubApplicationResolver")
     }
 
     private IExpectationSetters<ServletContext> expectConfigFromServletContext(ServletContext servletContext, final Map<String, ?> delayedInitMap, String configKey = "config") {
