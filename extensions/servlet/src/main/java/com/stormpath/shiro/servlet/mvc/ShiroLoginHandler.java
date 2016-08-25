@@ -17,7 +17,7 @@ package com.stormpath.shiro.servlet.mvc;
 
 import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.servlet.mvc.WebHandler;
-import com.stormpath.shiro.realm.StormpathWebRealm;
+import com.stormpath.shiro.realm.PassthroughApplicationRealm;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -31,7 +31,7 @@ public class ShiroLoginHandler implements WebHandler {
     @Override
     public boolean handle(HttpServletRequest request, HttpServletResponse response, Account account) {
 
-        AuthenticationToken token = new StormpathWebRealm.AccountAuthenticationToken(account);
+        AuthenticationToken token = new PassthroughApplicationRealm.AccountAuthenticationToken(account);
 
         try {
             SecurityUtils.getSubject().login(token);

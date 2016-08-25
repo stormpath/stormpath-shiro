@@ -18,7 +18,7 @@ package com.stormpath.shiro.servlet.env;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.servlet.config.ConfigLoader;
 import com.stormpath.shiro.config.ClientFactory;
-import com.stormpath.shiro.realm.StormpathWebRealm;
+import com.stormpath.shiro.realm.PassthroughApplicationRealm;
 import com.stormpath.shiro.servlet.config.ShiroIniConfigLoader;
 import com.stormpath.shiro.servlet.config.StormpathWebClientFactory;
 import com.stormpath.shiro.servlet.filter.StormpathShiroFilterChainResolverFactory;
@@ -38,14 +38,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * {@link IniWebEnvironment} implementation that creates a default Stormpath {@link StormpathWebRealm}.
+ * {@link IniWebEnvironment} implementation that creates a default Stormpath {@link PassthroughApplicationRealm}.
  *<BR/><BR/>
  * The default objects can be over written, the defaults for these are equivalent to:
  *
  * <code><pre>
  * [main]
  * stormpathClient = com.stormpath.shiro.web.servlet.config.StormpathWebClientFactory
- * stormpathRealm = com.stormpath.shiro.realm.StormpathWebRealm
+ * stormpathRealm = com.stormpath.shiro.realm.PassthroughApplicationRealm
  * stormpathRealm.client = $stormpathClient
  * </pre></code>
  * <BR/>
@@ -112,7 +112,7 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
 
         Map<String, Object> defaults = new LinkedHashMap<String, Object>();
         defaults.put("stormpathClient", new StormpathWebClientFactory(getServletContext()));
-        defaults.put("stormpathRealm", new StormpathWebRealm());
+        defaults.put("stormpathRealm", new PassthroughApplicationRealm());
 
         return defaults;
     }

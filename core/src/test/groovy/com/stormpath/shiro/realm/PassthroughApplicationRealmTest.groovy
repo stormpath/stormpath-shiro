@@ -16,8 +16,8 @@
 package com.stormpath.shiro.realm
 
 import com.stormpath.sdk.account.Account
+import com.stormpath.sdk.account.AccountStatus
 import org.apache.shiro.authc.AuthenticationException
-import org.apache.shiro.authc.AuthenticationInfo
 import org.apache.shiro.authc.UsernamePasswordToken
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher
 import org.testng.annotations.Test
@@ -30,16 +30,17 @@ import static org.testng.Assert.assertTrue
 import static org.easymock.EasyMock.*
 import static org.hamcrest.Matchers.*
 import static org.hamcrest.MatcherAssert.*
+import static org.testng.Assert.fail
 
 /**
- * Tests for {@link StormpathWebRealm}.
+ * Tests for {@link PassthroughApplicationRealm}.
  */
-class StormpathWebRealmTest {
+class PassthroughApplicationRealmTest {
 
     @Test
     void testDefaultInstance() {
 
-        def realm = new StormpathWebRealm()
+        def realm = new PassthroughApplicationRealm()
         assertTrue realm.getCredentialsMatcher() instanceof AllowAllCredentialsMatcher //allow all - Stormpath will do the credentials comparison as necessary
         assertTrue realm.getGroupRoleResolver() instanceof DefaultGroupRoleResolver
         assertTrue realm.getGroupPermissionResolver() instanceof GroupCustomDataPermissionResolver
@@ -49,8 +50,8 @@ class StormpathWebRealmTest {
 
     @Test
     void testAuthTokenType() {
-        assertFalse new StormpathWebRealm().supports(new UsernamePasswordToken("username", "password"))
-        assertTrue new StormpathWebRealm().supports(new StormpathWebRealm.AccountAuthenticationToken(null))
+        assertFalse new PassthroughApplicationRealm().supports(new UsernamePasswordToken("username", "password"))
+        assertTrue new PassthroughApplicationRealm().supports(new PassthroughApplicationRealm.AccountAuthenticationToken(null))
     }
 
     @Test
@@ -59,6 +60,7 @@ class StormpathWebRealmTest {
         def href = "http://accountHref"
 
         def account = createMock(Account)
+        expect(account.status).andReturn(AccountStatus.ENABLED)
         expect(account.href).andReturn(href).times(2)
         expect(account.getUsername()).andReturn("username")
         expect(account.getEmail()).andReturn("email")
@@ -68,8 +70,8 @@ class StormpathWebRealmTest {
 
         replay account
 
-        def realm = new StormpathWebRealm()
-        def token = new StormpathWebRealm.AccountAuthenticationToken(account)
+        def realm = new PassthroughApplicationRealm()
+        def token = new PassthroughApplicationRealm.AccountAuthenticationToken(account)
         def authenticationInfo = realm.doGetAuthenticationInfo(token)
 
         assertNotNull authenticationInfo
@@ -79,11 +81,37 @@ class StormpathWebRealmTest {
         verify account
     }
 
+    @Test
+    void testDisabledAccount() {
+
+        def href = "http://accountHref"
+
+        def account = createMock(Account)
+        expect(account.status).andReturn(AccountStatus.DISABLED)
+        expect(account.href).andReturn(href)
+
+        replay account
+
+        def realm = new PassthroughApplicationRealm()
+        def token = new PassthroughApplicationRealm.AccountAuthenticationToken(account)
+
+        try {
+            realm.doGetAuthenticationInfo(token)
+            fail "Expected AuthenticationException"
+        }
+        catch(AuthenticationException e) {
+            // expected
+        }
+
+        verify account
+    }
+
+
     @Test(expectedExceptions = [AuthenticationException])
     void testFailureAuthc() {
 
-        def realm = new StormpathWebRealm()
-        def token = new StormpathWebRealm.AccountAuthenticationToken(null)
+        def realm = new PassthroughApplicationRealm()
+        def token = new PassthroughApplicationRealm.AccountAuthenticationToken(null)
         realm.doGetAuthenticationInfo(token)
 
     }

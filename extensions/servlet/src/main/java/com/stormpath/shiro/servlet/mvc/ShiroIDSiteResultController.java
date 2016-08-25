@@ -18,7 +18,7 @@ package com.stormpath.shiro.servlet.mvc;
 import com.stormpath.sdk.idsite.AuthenticationResult;
 import com.stormpath.sdk.servlet.mvc.IdSiteResultController;
 import com.stormpath.sdk.servlet.mvc.ViewModel;
-import com.stormpath.shiro.realm.StormpathWebRealm;
+import com.stormpath.shiro.realm.PassthroughApplicationRealm;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -34,12 +34,12 @@ public class ShiroIDSiteResultController extends IdSiteResultController {
     protected ViewModel onAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationResult result) {
         ViewModel vm = super.onAuthentication(request, response, result);
 
-        AuthenticationToken token = new StormpathWebRealm.AccountAuthenticationToken(result.getAccount());
+        AuthenticationToken token = new PassthroughApplicationRealm.AccountAuthenticationToken(result.getAccount());
 
         try {
             SecurityUtils.getSubject().login(token);
         } catch (AuthenticationException e) {
-            String msg = "Stormpath Shiro realm is not configured correctly, see documentation for: " + StormpathWebRealm.class.getName();
+            String msg = "Stormpath Shiro realm is not configured correctly, see documentation for: " + PassthroughApplicationRealm.class.getName();
             throw new ConfigurationException(msg, e);
         }
 

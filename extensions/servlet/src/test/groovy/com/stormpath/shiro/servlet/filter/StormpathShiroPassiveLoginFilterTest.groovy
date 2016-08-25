@@ -16,23 +16,18 @@
 package com.stormpath.shiro.servlet.filter
 
 import com.stormpath.sdk.account.Account
-import com.stormpath.shiro.realm.StormpathWebRealm.AccountAuthenticationToken
+import com.stormpath.shiro.realm.PassthroughApplicationRealm.AccountAuthenticationToken
 import com.stormpath.shiro.servlet.ShiroTestSupport
 import org.apache.shiro.subject.Subject
 import org.apache.shiro.util.ThreadContext
 import org.easymock.Capture
-import org.easymock.EasyMock
 import org.testng.annotations.Test
 
 import javax.servlet.FilterChain
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 import static org.easymock.EasyMock.*
-import static org.hamcrest.Matchers.*
-import static org.hamcrest.MatcherAssert.*
 
 /**
  * Tests for {@link StormpathShiroPassiveLoginFilter}.

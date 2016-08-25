@@ -16,7 +16,7 @@
 package com.stormpath.shiro.servlet.mvc
 
 import com.stormpath.sdk.account.Account
-import com.stormpath.shiro.realm.StormpathWebRealm
+import com.stormpath.shiro.realm.PassthroughApplicationRealm
 import com.stormpath.shiro.servlet.ShiroTestSupport
 import org.apache.shiro.SecurityUtils
 import org.apache.shiro.authc.AuthenticationException
@@ -50,7 +50,7 @@ public class ShiroLoginHandlerTest extends ShiroTestSupport {
         def request = createMock(HttpServletRequest)
         def response = createMock(HttpServletResponse)
 
-        Capture<StormpathWebRealm.AccountAuthenticationToken> loginCapture = new Capture<>()
+        Capture<PassthroughApplicationRealm.AccountAuthenticationToken> loginCapture = new Capture<>()
 
         expect(securityManager.createSubject(anyObject(SubjectContext))).andReturn(subject)
         subject.login(capture(loginCapture))

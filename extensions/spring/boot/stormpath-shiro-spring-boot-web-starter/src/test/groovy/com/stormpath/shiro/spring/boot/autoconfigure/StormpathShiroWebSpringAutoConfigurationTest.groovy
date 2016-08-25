@@ -17,7 +17,7 @@ package com.stormpath.shiro.spring.boot.autoconfigure
 
 import com.stormpath.sdk.application.Application
 import com.stormpath.sdk.client.Client
-import com.stormpath.shiro.realm.StormpathWebRealm
+import com.stormpath.shiro.realm.PassthroughApplicationRealm
 import org.apache.shiro.mgt.SecurityManager
 import org.apache.shiro.web.mgt.WebSecurityManager
 import org.springframework.beans.factory.annotation.Autowired
@@ -49,6 +49,6 @@ public class StormpathShiroWebSpringAutoConfigurationTest extends AbstractTestNG
         assertNotNull client
         assertNotNull application
 
-        assertThat securityManager.realms, allOf(hasSize(1), hasItem(instanceOf(StormpathWebRealm)))
+        assertThat securityManager.realms, allOf(hasSize(1), hasItem(instanceOf(PassthroughApplicationRealm)))
     }
 }

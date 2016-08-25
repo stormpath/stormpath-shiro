@@ -17,7 +17,7 @@ package com.stormpath.shiro.servlet.filter;
 
 import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.servlet.account.AccountResolver;
-import com.stormpath.shiro.realm.StormpathWebRealm.AccountAuthenticationToken;
+import com.stormpath.shiro.realm.PassthroughApplicationRealm.AccountAuthenticationToken;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.servlet.OncePerRequestFilter;

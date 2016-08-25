@@ -16,16 +16,27 @@
 package com.stormpath.shiro.realm;
 
 import com.stormpath.sdk.account.Account;
+import com.stormpath.sdk.account.AccountStatus;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
 import org.apache.shiro.subject.PrincipalCollection;
 
 /**
- * Realm implantation that pushes a stormpath-servlet authenticated/authorized Account into a Shiro Subject.
+ * An {@link ApplicationRealm} implementation that accepts an already authenticated {@link Account}. This realm is
+ * typically used in conjunction one of Stormpath's web integrations, were the user authentication happens through the
+ * Stormpath API via a servlet filter <code>StormpathFilter</code>. This realm has not direct dependencies to any web
+ * framework, and could be used in other integrations with Stormpath's java SDK. <BR/><BR/>
+ *
+ * When integration with Stormpath using a username and password, use {@link ApplicationRealm}.<BR/><BR/>
+ *
+ * Configuration information for this realm is also the same as {@link ApplicationRealm}.
+ *
+ * @see ApplicationRealm
+ * @since 0.7.0
  */
-public class StormpathWebRealm extends ApplicationRealm {
+public class PassthroughApplicationRealm extends ApplicationRealm {
 
-    public StormpathWebRealm() {
+    public PassthroughApplicationRealm() {
         super();
         this.setCredentialsMatcher(new AllowAllCredentialsMatcher());
         this.setAuthenticationTokenClass(AccountAuthenticationToken.class);
@@ -40,13 +51,19 @@ public class StormpathWebRealm extends ApplicationRealm {
         PrincipalCollection principals;
 
         try {
-            principals = createPrincipals(accessAuthToken.getAccount());
+
+            Account account = accessAuthToken.getAccount();
+            // we should not reach this point if the account is not enabled, but, just in case.
+            if (AccountStatus.ENABLED != account.getStatus()) {
+                throw new AuthenticationException("Account for user [" + account.getHref() + "] is not enabled.");
+            }
+
+            principals = createPrincipals(account);
         } catch (Exception e) {
             throw new AuthenticationException("Unable to obtain authenticated account properties.", e);
         }
 
         return new SimpleAuthenticationInfo(principals, null);
-
     }
 
 

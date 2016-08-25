@@ -21,7 +21,7 @@ import com.stormpath.sdk.servlet.mvc.WebHandler;
 import com.stormpath.shiro.realm.ApplicationRealm;
 import com.stormpath.shiro.realm.DefaultGroupRoleResolver;
 import com.stormpath.shiro.realm.GroupCustomDataPermissionResolver;
-import com.stormpath.shiro.realm.StormpathWebRealm;
+import com.stormpath.shiro.realm.PassthroughApplicationRealm;
 import com.stormpath.shiro.servlet.filter.ShiroPrioritizedFilterChainResolver;
 import com.stormpath.shiro.servlet.filter.StormpathShiroPassiveLoginFilter;
 import com.stormpath.shiro.servlet.mvc.ShiroLoginHandler;
@@ -64,7 +64,7 @@ public class StormpathShiroWebAutoConfiguration  {
     @Bean(name = "stormpathRealm")
     @ConditionalOnMissingBean
     public Realm getRealm() {
-        ApplicationRealm realm = new StormpathWebRealm();
+        ApplicationRealm realm = new PassthroughApplicationRealm();
         realm.setApplicationRestUrl(application.getHref());
         realm.setClient(client);
 

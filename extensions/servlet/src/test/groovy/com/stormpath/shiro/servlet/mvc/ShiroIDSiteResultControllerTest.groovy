@@ -20,7 +20,7 @@ import com.stormpath.sdk.idsite.AuthenticationResult
 import com.stormpath.sdk.servlet.event.RequestEvent
 import com.stormpath.sdk.servlet.event.impl.Publisher
 import com.stormpath.sdk.servlet.http.Saver
-import com.stormpath.shiro.realm.StormpathWebRealm
+import com.stormpath.shiro.realm.PassthroughApplicationRealm
 import com.stormpath.shiro.servlet.ShiroTestSupport
 import org.apache.shiro.authc.AuthenticationException
 import org.apache.shiro.config.ConfigurationException
@@ -54,7 +54,7 @@ class ShiroIDSiteResultControllerTest extends ShiroTestSupport {
         expect(authResult.getState()).andReturn(null)
         saver.set(eq(request), eq(response), anyObject())
         publisher.publish(anyObject())
-        subject.login(anyObject(StormpathWebRealm.AccountAuthenticationToken))
+        subject.login(anyObject(PassthroughApplicationRealm.AccountAuthenticationToken))
 
         replay request, response, authResult, account, saver, publisher, subject
 
@@ -83,7 +83,7 @@ class ShiroIDSiteResultControllerTest extends ShiroTestSupport {
         expect(authResult.getState()).andReturn(null)
         saver.set(eq(request), eq(response), anyObject())
         publisher.publish(anyObject())
-        subject.login(anyObject(StormpathWebRealm.AccountAuthenticationToken))
+        subject.login(anyObject(PassthroughApplicationRealm.AccountAuthenticationToken))
         expectLastCall().andThrow(new AuthenticationException("Expected test exception"))
 
         replay request, response, authResult, account, saver, publisher, subject
