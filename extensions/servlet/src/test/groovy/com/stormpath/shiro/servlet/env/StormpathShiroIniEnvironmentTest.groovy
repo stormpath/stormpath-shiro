@@ -19,7 +19,7 @@ import com.stormpath.sdk.client.Client
 import com.stormpath.sdk.servlet.config.Config
 import com.stormpath.sdk.servlet.config.ConfigLoader
 import com.stormpath.sdk.servlet.config.impl.DefaultConfigFactory
-import com.stormpath.shiro.config.ClientFactory
+import com.stormpath.shiro.servlet.config.ClientFactory
 import com.stormpath.shiro.realm.ApplicationRealm
 import com.stormpath.shiro.servlet.ShiroTestSupportWithSystemProperties
 import com.stormpath.shiro.stubs.StubApplicationResolver

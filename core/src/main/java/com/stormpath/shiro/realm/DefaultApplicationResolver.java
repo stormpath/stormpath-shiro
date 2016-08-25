@@ -21,12 +21,12 @@ import com.stormpath.sdk.application.ApplicationList;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.lang.Assert;
 
-import static com.stormpath.shiro.config.DefaultClientFactory.STORMPATH_APPLICATION_HREF;
-
 public class DefaultApplicationResolver implements ApplicationResolver {
 
+    private static final String STORMPATH_APPLICATION_HREF = "stormpath.application.href";
+
     private static final String APP_HREF_ERROR =
-            "The application's stormpath.properties configuration does not have a " + STORMPATH_APPLICATION_HREF +
+            "The application's configuration does not have a " + STORMPATH_APPLICATION_HREF +
                     " property defined.  This property is required when looking up an application by ServletContext and " +
                     "you have more than one application registered in Stormpath.  For example:\n\n" +
                     " # in stormpath.properties:\n" +

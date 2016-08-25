@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stormpath.shiro.config;
+package com.stormpath.shiro.servlet.config;
 
 import com.stormpath.sdk.client.Client;
 import org.apache.shiro.cache.CacheManager;

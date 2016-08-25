@@ -24,7 +24,6 @@ import com.stormpath.sdk.lang.Strings;
 import com.stormpath.sdk.servlet.client.DefaultServletContextClientFactory;
 import com.stormpath.sdk.servlet.config.Config;
 import com.stormpath.shiro.cache.ShiroCacheManager;
-import com.stormpath.shiro.config.ClientFactory;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.util.AbstractFactory;
 

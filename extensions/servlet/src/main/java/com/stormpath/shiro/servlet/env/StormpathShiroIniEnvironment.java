@@ -17,7 +17,7 @@ package com.stormpath.shiro.servlet.env;
 
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.servlet.config.ConfigLoader;
-import com.stormpath.shiro.config.ClientFactory;
+import com.stormpath.shiro.servlet.config.ClientFactory;
 import com.stormpath.shiro.realm.PassthroughApplicationRealm;
 import com.stormpath.shiro.servlet.config.ShiroIniConfigLoader;
 import com.stormpath.shiro.servlet.config.StormpathWebClientFactory;
