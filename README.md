@@ -2,7 +2,7 @@
 
 # Apache Shiro plugin for Stormpath #
 
-Copyright &copy; 2013-2014 Stormpath, Inc. and contributors. This project is open-source via the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0).
+Copyright &copy; 2013-2016 Stormpath, Inc. and contributors. This project is open-source via the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0).
 
 The `stormpath-shiro` plugin allows an [Apache Shiro](http://shiro.apache.org)-enabled application
 use the [Stormpath](http://www.stormpath.com) User Management & Authentication service for all authentication and access control needs.
@@ -21,11 +21,12 @@ This project requires Maven 3 to build.  Run the following from a command prompt
 
 ## Change Log
 
-### 0.7.0
+### 0.7.0 (pending)
 - Upgraded Shiro dependency to latest stable release of 1.3.0
 - Upgraded Stormpath SDK dependency to latest released version: 1.0.3
 - Added `stormpath-shiro-servlet-plugin` to automaticly configure Shiro to use a Stormpath realm and use Stormpath login UI out of the box
-- Added spring-boot starters for both web and non-web applications.
+- Added spring-boot starters for both web and non-web applications, see `stormpath-shiro-spring-boot-starter` and `stormpath-shiro-spring-boot-web-starter`
+- Added examples for core, servlet, spring-boot, and spring-boot-web extensions.
 
 ### 0.6.0
 
