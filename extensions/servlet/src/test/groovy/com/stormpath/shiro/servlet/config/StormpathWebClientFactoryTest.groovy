@@ -16,11 +16,12 @@
 package com.stormpath.shiro.servlet.config
 
 import com.stormpath.sdk.client.Client
+import com.stormpath.sdk.lang.Strings
 import com.stormpath.sdk.servlet.config.Config
 import com.stormpath.sdk.servlet.config.impl.DefaultConfigFactory
-import com.stormpath.shiro.servlet.ShiroTestSupport
 import org.apache.shiro.cache.MemoryConstrainedCacheManager
 import org.easymock.IAnswer
+import org.testng.SkipException
 import org.testng.annotations.Test
 
 import javax.servlet.ServletContext
@@ -122,6 +123,11 @@ class StormpathWebClientFactoryTest {
 
     @Test
     public void testSettingClientApiKeyLocation() {
+
+        if (Strings.hasText(System.getenv("STORMPATH_API_KEY_ID")) ||
+                Strings.hasText(System.getenv("STORMPATH_API_KEY_SECRET")) ) {
+            throw new SkipException("Skipping test due to API key environment variables set.");
+        }
 
         def apiKeyLocation = new File("src/test/resources/com/stormpath/shiro/config/fakeApiKey.properties").absolutePath
         setupMocks()
