@@ -30,7 +30,10 @@ import static org.hamcrest.Matchers.*
 import static org.hamcrest.MatcherAssert.*
 import static org.testng.Assert.*
 
-
+/**
+ * Tests for {@link ShiroPrioritizedFilterChainResolver}.
+ * @since 0.7.0
+ */
 class ShiroPrioritizedFitlerChainResolverTest {
 
     @Test

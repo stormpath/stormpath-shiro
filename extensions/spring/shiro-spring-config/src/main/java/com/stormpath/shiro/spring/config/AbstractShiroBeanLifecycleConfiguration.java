@@ -17,6 +17,9 @@ package com.stormpath.shiro.spring.config;
 
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 
+/**
+ * @since 0.7.0
+ */
 public class AbstractShiroBeanLifecycleConfiguration {
 
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {

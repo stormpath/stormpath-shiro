@@ -24,8 +24,9 @@ import static org.hamcrest.Matchers.instanceOf
 
 /**
  * Tests for {@link ShiroLogoutFilterFactory}.
+ * @since 0.7.0
  */
-class ShiroLogoutFilterFactoryTest extends ShiroTestSupport {
+class ShiroLogoutFilterFactoryTest {
 
     @Test
     public void testNewController() {

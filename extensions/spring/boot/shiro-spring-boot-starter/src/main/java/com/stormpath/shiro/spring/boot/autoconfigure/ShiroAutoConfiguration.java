@@ -28,6 +28,9 @@ import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
+/**
+ * @since 0.7.0
+ */
 @Configuration
 @Import(ShiroBeanLifecycleConfiguration.class)
 @SuppressWarnings("SpringFacetCodeInspection")

@@ -19,6 +19,9 @@ import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * @since 0.7.0
+ */
 @Configuration
 public class ShiroBeanLifecycleConfiguration extends AbstractShiroBeanLifecycleConfiguration {
 

@@ -44,16 +44,13 @@ import javax.servlet.Filter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @since 0.7.0
+ */
 @SuppressWarnings("SpringFacetCodeInspection")
 @Configuration
 @ConditionalOnProperty(name = "stormpath.shiro.web.enabled", matchIfMissing = true)
 public class StormpathShiroWebAutoConfiguration  {
-
-//    @Value("#{ @environment['stormpath.web.login.uri'] ?: '/login' }")
-//    private String loginUri;
-//
-//    @Value("#{ @environment['stormpath.web.login.nextUri'] ?: '/' }")
-//    private String loginNextUri;
 
     @Autowired
     private Client client;
@@ -114,30 +111,4 @@ public class StormpathShiroWebAutoConfiguration  {
 
         return prioritizedFilterChainResolver;
     }
-
-
-
-    // TODO: throw a ConfigException, or something better then a raw exception ?
-//    @Bean
-//    public FilterRegistrationBean getShiroFilterRegistrationBean(SecurityManager securityManager) throws Exception {
-//
-//        ShiroFilterFactoryBean filterFactoryBean = new ShiroFilterFactoryBean();
-//        filterFactoryBean.setSecurityManager(securityManager);
-//
-//        // TODO: this should not be needed, as stormpath handles the login
-//        filterFactoryBean.setLoginUrl(loginUri);
-//        filterFactoryBean.setSuccessUrl(loginNextUri);
-//        filterFactoryBean.setUnauthorizedUrl(loginUri);
-//
-////        filterFactoryBean.setFilterChainDefinitionMap(getFilterChainDefinitionMap());
-//
-//        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-//        filterRegistrationBean.setFilter((AbstractShiroFilter)filterFactoryBean.getObject());
-//        filterRegistrationBean.setOrder(1);
-//        return filterRegistrationBean;
-//    }
-
-
-
-
 }

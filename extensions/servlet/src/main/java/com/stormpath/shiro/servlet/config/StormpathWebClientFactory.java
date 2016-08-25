@@ -58,9 +58,7 @@ import javax.servlet.ServletContext;
  * ...
  * </pre>
  *
- *
- * TODO: move most of these bits into stormpath-shiro-core
- *
+ * @since 0.7.0
  */
 public class StormpathWebClientFactory extends AbstractFactory<Client> implements ClientFactory {
 
@@ -108,7 +106,6 @@ public class StormpathWebClientFactory extends AbstractFactory<Client> implement
     protected Client createInstance() {
         return new ShiroBridgeServletContextClientFactory().createClient(servletContext);
     }
-
 
     /**
      * Wrapper around DefaultServletContextClientFactory, that allows overriding of the <code>baseUrl</code>, api key

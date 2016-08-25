@@ -18,6 +18,12 @@ package com.stormpath.shiro.servlet
 import org.testng.annotations.AfterMethod
 import org.testng.annotations.Test
 
+/**
+ * Test Support class will remember and reset SystemProperties to the same state as before the test ran.  <BR/>
+ * NOTE: If your test manipulates SystemProperties it MUST run single threaded.
+ *
+ * @since 0.7.0
+ */
 @Test(singleThreaded = true)
 abstract class ShiroTestSupportWithSystemProperties extends ShiroTestSupport {
 

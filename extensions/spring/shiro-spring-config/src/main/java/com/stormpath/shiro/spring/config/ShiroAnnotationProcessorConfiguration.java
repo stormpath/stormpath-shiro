@@ -23,6 +23,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
+/**
+ * @since 0.7.0
+ */
 @Configuration
 public class ShiroAnnotationProcessorConfiguration extends AbstractShiroAnnotationProcessorConfiguration{
 

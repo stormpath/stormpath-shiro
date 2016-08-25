@@ -31,6 +31,7 @@ import static org.easymock.EasyMock.*
 
 /**
  * Tests for {@link StormpathShiroPassiveLoginFilter}.
+ * @since 0.7.0
  */
 class StormpathShiroPassiveLoginFilterTest extends ShiroTestSupport {
 

@@ -20,6 +20,9 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 
+/**
+ * @since 0.7.0
+ */
 public class AbstractShiroAnnotationProcessorConfiguration {
 
     public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {

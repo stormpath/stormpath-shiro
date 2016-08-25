@@ -19,6 +19,9 @@ import com.stormpath.sdk.servlet.config.filter.LogoutFilterFactory;
 import com.stormpath.sdk.servlet.mvc.LogoutController;
 import com.stormpath.shiro.servlet.mvc.ShiroLogoutController;
 
+/**
+ * @since 0.7.0
+ */
 public class ShiroLogoutFilterFactory extends LogoutFilterFactory {
 
     @Override

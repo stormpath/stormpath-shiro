@@ -25,7 +25,15 @@ import java.util.Collections;
 
 import static com.stormpath.shiro.servlet.config.AppendingConfigFactory.SHIRO_STORMPATH_ADDITIONAL_PROPERTIES_ATTRIBUTE;
 
-
+/**
+ * Extends ConfigLoader in order to change the default config factory to {@link AppendingConfigFactory} and include
+ * additional properties from a <code>shiro.ini</code> into the {@link Config}.<BR/><BR/>
+ *
+ * NOTE: if the servlet init parameter 'stormpathConfigFactoryClass' is already set this class functions like it's
+ * parent.
+ *
+ * @since 0.7.0
+ */
 public class ShiroIniConfigLoader extends ConfigLoader {
 
     final private Ini ini;

@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.instanceOf
 
 /**
  * Tests for {@link ShiroLoginFilterFactory}.
+ * @since 0.7.0
  */
 class ShiroLoginFilterFactoryTest extends ShiroTestSupport {
 

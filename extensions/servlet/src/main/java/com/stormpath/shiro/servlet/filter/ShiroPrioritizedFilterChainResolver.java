@@ -27,6 +27,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.util.List;
 
+/**
+ * A {@link FilterChainResolver} that executes a list of priority filters before the consulting the delegate
+ * FilterChainResolver.
+ *
+ * @since 0.7.0
+ */
 public class ShiroPrioritizedFilterChainResolver implements FilterChainResolver {
 
     private final FilterChainResolver delegate;

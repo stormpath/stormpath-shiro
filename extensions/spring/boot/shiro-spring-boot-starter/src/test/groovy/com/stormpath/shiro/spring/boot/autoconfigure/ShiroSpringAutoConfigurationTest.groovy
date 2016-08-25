@@ -25,6 +25,9 @@ import org.testng.annotations.Test
 
 import static org.testng.Assert.*
 
+/**
+ * @since 0.7.0
+ */
 @SpringBootTest(classes = [ShiroAutoConfigurationTestApplication])
 public class ShiroSpringAutoConfigurationTest extends AbstractTestNGSpringContextTests {
 

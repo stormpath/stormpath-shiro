@@ -58,6 +58,7 @@ import java.util.Map;
  *
  * stormpathRealm.applicationRestUrl = stormpath.application.href
  * </pre></code>
+ * @since 0.7.0
  */
 public class StormpathShiroIniEnvironment extends IniWebEnvironment {
 

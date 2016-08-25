@@ -21,6 +21,9 @@ import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 
+/**
+ * @since 0.7.0
+ */
 public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
 
     protected SessionsSecurityManager createSecurityManager() {

@@ -15,9 +15,11 @@
  */
 package com.stormpath.shiro.spring.config.web;
 
-
 import java.util.Map;
 
+/**
+ * @since 0.7.0
+ */
 public interface ShiroFilterChainDefinitionProvider {
 
     Map<String, String> getFilterChainDefinition();

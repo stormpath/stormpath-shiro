@@ -19,6 +19,9 @@ package com.stormpath.shiro.spring.config.web;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 
+/**
+ * @since 0.7.0
+ */
 public class AbstractShiroWebFilterConfiguration {
 
     protected ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager, ShiroFilterChainDefinitionProvider shiroFilterChainDefinitionProvider) {

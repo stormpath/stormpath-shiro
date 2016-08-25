@@ -27,6 +27,9 @@ import org.testng.annotations.Test
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
 
+/**
+ * @since 0.7.0
+ */
 @ContextConfiguration(classes = [RealmConfiguration, CacheManagerConfiguration, ShiroWebConfiguration, ShiroAnnotationProcessorConfiguration])
 public class ShiroWebConfigurationWithCacheTest extends AbstractTestNGSpringContextTests {
 

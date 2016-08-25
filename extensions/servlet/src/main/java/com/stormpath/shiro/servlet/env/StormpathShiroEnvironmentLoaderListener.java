@@ -49,6 +49,7 @@ import javax.servlet.ServletContextListener;
  * @see EnvironmentLoader
  * @see org.apache.shiro.web.servlet.ShiroFilter ShiroFilter
  * @see com.stormpath.sdk.servlet.filter.StormpathFilter
+ * @since 0.7.0
  */
 public class StormpathShiroEnvironmentLoaderListener extends EnvironmentLoaderListener {
 

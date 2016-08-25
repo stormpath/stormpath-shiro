@@ -44,6 +44,7 @@ import static org.testng.Assert.assertSame
 
 /**
  * Tests for {@link StormpathShiroIniEnvironment}.
+ * @since 0.7.0
  */
 @Test(singleThreaded = true)
 class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemProperties {

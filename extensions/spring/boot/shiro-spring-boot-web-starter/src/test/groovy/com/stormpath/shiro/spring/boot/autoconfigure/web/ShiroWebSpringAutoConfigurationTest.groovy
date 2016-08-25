@@ -26,6 +26,9 @@ import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.instanceOf
 import static org.testng.Assert.assertNotNull
 
+/**
+ * @since 0.7.0
+ */
 @SpringBootTest(classes = [ShiroWebAutoConfigurationTestApplication])
 public class ShiroWebSpringAutoConfigurationTest extends AbstractTestNGSpringContextTests {
 

@@ -24,6 +24,12 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * A {@link PropertiesSource} that returns all <code>stormpath.*</code> attributes contained withing the
+ * <code>[stormpath]</code> section of an {@link Ini} object (typically a shiro.ini file).
+ *
+ * @since 0.7.0
+ */
 public class IniPropertiesSource implements PropertiesSource {
 
     final private Ini ini;

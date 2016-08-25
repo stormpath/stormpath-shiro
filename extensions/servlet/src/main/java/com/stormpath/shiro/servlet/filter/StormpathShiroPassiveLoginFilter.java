@@ -31,6 +31,8 @@ import java.io.IOException;
 /**
  * If a Stormpath Account is found via the AccountResolver, and the current subject is NOT already logged in,
  * A login request will be made with a {@link AccountAuthenticationToken}.
+ *
+ * @since 0.7.0
  */
 public class StormpathShiroPassiveLoginFilter extends OncePerRequestFilter {
 

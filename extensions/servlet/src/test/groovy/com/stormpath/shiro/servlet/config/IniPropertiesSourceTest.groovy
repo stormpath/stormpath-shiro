@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.*
 
 /**
  * Tests for {@link IniPropertiesSource}.
+ * @since 0.7.0
  */
 class IniPropertiesSourceTest {
 

@@ -30,6 +30,7 @@ import static org.testng.Assert.fail
 
 /**
  * Tests for {@link AppendingConfigFactory}.
+ * @since 0.7.0
  */
 class AppendingConfigFactoryTest {
 

@@ -24,6 +24,9 @@ import org.apache.shiro.util.CollectionUtils;
 import javax.servlet.ServletContext;
 import java.util.Collection;
 
+/**
+ * @since 0.7.0
+ */
 public class AppendingConfigFactory extends DefaultConfigFactory {
 
     final public static String SHIRO_STORMPATH_ADDITIONAL_PROPERTIES_ATTRIBUTE = AppendingConfigFactory.class.getName() + "_SHIRO_STORMPATH_ADDITIONAL_PROPERTIES";

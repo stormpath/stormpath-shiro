@@ -19,6 +19,12 @@ import org.apache.shiro.SecurityUtils
 import org.apache.shiro.util.ThreadContext
 import org.testng.annotations.AfterMethod
 
+/**
+ * Test Support class that will clear ThreadContext and static SecurityUtils.securityManager.<BR/>
+ * NOTE: if you are using a static SecurityManager, you will need to add the annotation
+ * <code>@Test(singleThreaded = true)</code> to your test class.
+ * @since 0.7.0
+ */
 abstract class ShiroTestSupport {
 
     @AfterMethod

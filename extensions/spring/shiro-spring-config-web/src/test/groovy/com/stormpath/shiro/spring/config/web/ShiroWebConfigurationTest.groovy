@@ -29,6 +29,9 @@ import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
 import static org.testng.Assert.*
 
+/**
+ * @since 0.7.0
+ */
 @ContextConfiguration(classes = [RealmConfiguration, ShiroWebConfiguration, ShiroAnnotationProcessorConfiguration])
 public class ShiroWebConfigurationTest extends AbstractTestNGSpringContextTests {
 

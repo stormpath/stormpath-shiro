@@ -29,6 +29,7 @@ import static org.easymock.EasyMock.*
 
 /**
  * Tests for {@link ShiroIDSiteResultFilterFactory}.
+ * @since 0.7.0
  */
 class ShiroIDSiteResultFilterFactoryTest extends ShiroTestSupport {
 

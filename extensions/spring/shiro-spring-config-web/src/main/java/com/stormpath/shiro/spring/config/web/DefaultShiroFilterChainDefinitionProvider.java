@@ -19,6 +19,9 @@ package com.stormpath.shiro.spring.config.web;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @since 0.7.0
+ */
 public class DefaultShiroFilterChainDefinitionProvider implements ShiroFilterChainDefinitionProvider {
 
     final private Map<String, String> filterChainDefinitionMap = new HashMap<>();

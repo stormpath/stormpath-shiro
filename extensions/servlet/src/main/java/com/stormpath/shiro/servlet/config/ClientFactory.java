@@ -19,7 +19,13 @@ import com.stormpath.sdk.client.Client;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.util.Factory;
 
-
+/**
+ * TODO: Think about moving this to core, and replace {@link com.stormpath.shiro.client.ClientFactory} with a default
+ * implementation that conforms to the stormpath TCK spec (using hierarchical properties from environment variables,
+ * and system properties).
+ *
+ * @since 0.7.0
+ */
 public interface ClientFactory extends Factory<Client> {
 
     void setApiKeyFileLocation(String apiKeyFileLocation);

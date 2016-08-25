@@ -27,6 +27,7 @@ import static org.easymock.EasyMock.*
 
 /**
  * Tests for {@link ShiroIniConfigLoader}.
+ * @since 0.7.0
  */
 public class ShiroIniConfigLoaderTest {
 

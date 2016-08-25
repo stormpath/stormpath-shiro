@@ -21,7 +21,9 @@ import com.stormpath.sdk.servlet.mvc.IdSiteResultController;
 import com.stormpath.shiro.servlet.mvc.ShiroIDSiteResultController;
 import com.stormpath.shiro.servlet.mvc.ShiroLogoutController;
 
-
+/**
+ * @since 0.7.0
+ */
 public class ShiroIDSiteResultFilterFactory extends IDSiteResultFilterFactory {
 
     @Override
