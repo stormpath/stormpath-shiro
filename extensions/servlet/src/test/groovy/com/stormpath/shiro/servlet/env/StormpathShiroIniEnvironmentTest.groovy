@@ -61,7 +61,8 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
 
         expectConfigFromServletContext(servletContext, delayedInitMap, configKey).anyTimes()
 
-        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES)).andReturn(null)
+        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES)).andReturn(null).times(2)
+        expect(servletContext.setInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES, StormpathShiroIniEnvironment.SHIRO_STORMPATH_PROPERTIES_SOURCES)).andReturn(true)
         expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES)).andReturn(null)
         expect(servletContext.getResourceAsStream(anyObject())).andReturn(null).anyTimes()
         servletContext.setAttribute(eq(Client.getName()), capture(clientCapture))
@@ -73,7 +74,7 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
 
 
         def ini = new Ini()
-        doTestWithIni(ini, servletContext)
+        doTestWithIni(ini, servletContext, config)
     }
 
     @Test
@@ -100,7 +101,9 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
 
         expectConfigFromServletContext(servletContext, delayedInitMap, configKey).anyTimes()
 
-        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES)).andReturn(null)
+        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES)).andReturn(null).times(2)
+        expect(servletContext.setInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES, StormpathShiroIniEnvironment.SHIRO_STORMPATH_PROPERTIES_SOURCES)).andReturn(true)
+
         expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES)).andReturn(null)
         expect(servletContext.getResourceAsStream(anyObject())).andReturn(null).anyTimes()
         servletContext.setAttribute(eq(Client.getName()), capture(clientCapture))
@@ -112,7 +115,7 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
 
         def ini = new Ini()
 
-        doTestWithIni(ini, servletContext)
+        doTestWithIni(ini, servletContext, config)
     }
 
 
@@ -128,7 +131,8 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
 
         expectConfigFromServletContext(servletContext, delayedInitMap, configKey).anyTimes()
 
-        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES)).andReturn(null)
+        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES)).andReturn(null).times(2)
+        expect(servletContext.setInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES, StormpathShiroIniEnvironment.SHIRO_STORMPATH_PROPERTIES_SOURCES)).andReturn(true)
         expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES)).andReturn(null)
         expect(servletContext.getResourceAsStream(anyObject())).andReturn(null).anyTimes()
         servletContext.setAttribute(eq(Client.getName()), capture(clientCapture))
@@ -143,11 +147,12 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
         // we need to have at least one path defined for the filterChain to be configured.
         ini.setSectionProperty(IniFilterChainResolverFactory.URLS, "/foobar", "anon")
 
-        def configLoader = createNiceMock(ConfigLoader)
+        def configLoader = createMock(ConfigLoader)
         def filterChainResolverFactory = createNiceMock(Factory)
         def filterChainResolver = createNiceMock(FilterChainResolver)
 
         expect(filterChainResolverFactory.getInstance()).andReturn(filterChainResolver);
+        expect(configLoader.createConfig(servletContext)).andReturn(config)
 
         replay configLoader, filterChainResolverFactory, filterChainResolver
 
@@ -189,11 +194,12 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
         verify servletContext, configLoader
     }
 
-    private void doTestWithIni(Ini ini, ServletContext servletContext) {
+    private void doTestWithIni(Ini ini, ServletContext servletContext, Config config) {
 
         addStubApplicationResolvertoIni(ini)
 
-        def configLoader = createNiceMock(ConfigLoader)
+        def configLoader = createMock(ConfigLoader)
+        expect(configLoader.createConfig(servletContext)).andReturn(config)
 
         replay configLoader //, app, appResolver
 

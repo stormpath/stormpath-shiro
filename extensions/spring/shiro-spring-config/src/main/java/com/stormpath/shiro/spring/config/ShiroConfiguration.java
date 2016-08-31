@@ -28,7 +28,7 @@ import java.util.List;
  * @since 0.7.0
  */
 @Configuration
-@Import({ShiroBeanLifecycleConfiguration.class})
+@Import({ShiroBeanConfiguration.class})
 public class ShiroConfiguration extends AbstractShiroConfiguration {
 
     @Bean

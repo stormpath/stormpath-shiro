@@ -17,14 +17,15 @@ package com.stormpath.shiro.spring.boot.autoconfigure;
 
 import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.client.Client;
-import com.stormpath.sdk.servlet.mvc.WebHandler;
+import com.stormpath.sdk.servlet.event.RequestEventListener;
 import com.stormpath.shiro.realm.ApplicationRealm;
 import com.stormpath.shiro.realm.DefaultGroupRoleResolver;
 import com.stormpath.shiro.realm.GroupCustomDataPermissionResolver;
 import com.stormpath.shiro.realm.PassthroughApplicationRealm;
+import com.stormpath.shiro.servlet.event.LogoutEventListener;
+import com.stormpath.shiro.servlet.event.RequestEventListenerBridge;
 import com.stormpath.shiro.servlet.filter.ShiroPrioritizedFilterChainResolver;
 import com.stormpath.shiro.servlet.filter.StormpathShiroPassiveLoginFilter;
-import com.stormpath.shiro.servlet.mvc.ShiroLoginHandler;
 import com.stormpath.shiro.spring.config.web.DefaultShiroFilterChainDefinitionProvider;
 import com.stormpath.shiro.spring.config.web.ShiroFilterChainDefinitionProvider;
 import org.apache.shiro.config.ConfigurationException;
@@ -76,11 +77,6 @@ public class StormpathShiroWebAutoConfiguration  {
     }
 
     @Bean
-    public WebHandler loginPostHandler() {
-        return new ShiroLoginHandler();
-    }
-
-    @Bean
     @ConditionalOnMissingBean
     public ShiroFilterChainDefinitionProvider getShiroFilterChainDefinitionProvider() {
         return new DefaultShiroFilterChainDefinitionProvider();
@@ -89,7 +85,7 @@ public class StormpathShiroWebAutoConfiguration  {
 
     @Bean
     public ShiroPrioritizedFilterChainResolver shiroPrioritizedFilterChainResolver(
-            @Qualifier("filterShiroFilterRegistrationBean") FilterRegistrationBean filterShiroFilterRegistrationBean //) {//,
+            @Qualifier("filterShiroFilterRegistrationBean") FilterRegistrationBean filterShiroFilterRegistrationBean
             ,@Qualifier("stormpathFilter") FilterRegistrationBean stormpathFilter) {
 
         if (!(filterShiroFilterRegistrationBean.getFilter() instanceof AbstractShiroFilter)) {
@@ -110,5 +106,16 @@ public class StormpathShiroWebAutoConfiguration  {
         filter.setFilterChainResolver(prioritizedFilterChainResolver);
 
         return prioritizedFilterChainResolver;
+    }
+
+    @Bean
+    public RequestEventListener stormpathRequestEventListener() {
+        return new RequestEventListenerBridge();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    protected LogoutEventListener logoutEventListener() {
+        return new LogoutEventListener();
     }
 }

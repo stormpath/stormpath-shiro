@@ -26,7 +26,11 @@ import org.apache.shiro.config.ConfigurationException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+/**
+ * This will be removed before the 0.7.0 release, keeping for now as it was referenced in a support request ticket.
+ * @deprecated replaced with {@link com.stormpath.shiro.servlet.filter.StormpathShiroPassiveLoginFilter}.
+ */
+@Deprecated
 public class ShiroLoginHandler implements WebHandler {
     @Override
     public boolean handle(HttpServletRequest request, HttpServletResponse response, Account account) {

@@ -13,40 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stormpath.shiro.spring.config.web.autoconfigure;
+package com.stormpath.shiro.spring.boot.autoconfigure;
 
-import com.stormpath.shiro.spring.config.web.AbstractShiroWebConfiguration;
-import org.apache.shiro.mgt.SessionsSecurityManager;
-import org.apache.shiro.realm.Realm;
-import org.apache.shiro.session.mgt.SessionManager;
+import com.stormpath.shiro.spring.config.AbstractShiroBeanConfiguration;
+import com.stormpath.shiro.spring.config.ShiroEventBusBeanPostProcessor;
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-
-import java.util.List;
 
 /**
  * @since 0.7.0
  */
 @Configuration
-@Import(ShiroBeanAutoConfiguration.class)
-@ConditionalOnProperty(name = "shiro.web.enabled", matchIfMissing = true)
-public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
+@ConditionalOnProperty(name = "shiro.enabled", matchIfMissing = true)
+public class ShiroBeanAutoConfiguration extends AbstractShiroBeanConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @Override
-    protected SessionManager sessionManager() {
-        return super.sessionManager();
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+        return super.lifecycleBeanPostProcessor();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    @Override
-    protected SessionsSecurityManager securityManager(List<Realm> realms, SessionManager sessionManager) {
-        return super.securityManager(realms, sessionManager);
+    public EventBus eventBus() {
+        return super.eventBus();
     }
 
+    @Bean
+    @ConditionalOnMissingBean
+    public ShiroEventBusBeanPostProcessor shiroEventBusAwareBeanPostProcessor(EventBus eventBus) {
+        return super.shiroEventBusAwareBeanPostProcessor(eventBus);
+    }
 }

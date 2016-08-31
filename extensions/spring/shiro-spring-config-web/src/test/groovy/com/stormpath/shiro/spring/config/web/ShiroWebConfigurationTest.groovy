@@ -32,7 +32,7 @@ import static org.testng.Assert.*
 /**
  * @since 0.7.0
  */
-@ContextConfiguration(classes = [RealmConfiguration, ShiroWebConfiguration, ShiroAnnotationProcessorConfiguration])
+@ContextConfiguration(classes = [RealmConfiguration, ShiroWebConfiguration, ShiroAnnotationProcessorConfiguration, ShiroWebFilterConfiguration])
 public class ShiroWebConfigurationTest extends AbstractTestNGSpringContextTests {
 
     @Autowired

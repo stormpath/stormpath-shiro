@@ -30,7 +30,7 @@ import static org.hamcrest.Matchers.*
 /**
  * @since 0.7.0
  */
-@ContextConfiguration(classes = [RealmConfiguration, CacheManagerConfiguration, ShiroWebConfiguration, ShiroAnnotationProcessorConfiguration])
+@ContextConfiguration(classes = [RealmConfiguration, CacheManagerConfiguration, ShiroWebConfiguration, ShiroAnnotationProcessorConfiguration, ShiroWebFilterConfiguration])
 public class ShiroWebConfigurationWithCacheTest extends AbstractTestNGSpringContextTests {
 
     @Autowired

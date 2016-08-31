@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 0.7.0
  */
 @Configuration
-public abstract class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfiguration {
+public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfiguration {
 
     @Bean
     protected ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager, ShiroFilterChainDefinitionProvider shiroFilterChainDefinitionProvider) {

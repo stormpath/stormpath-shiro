@@ -23,7 +23,11 @@ import com.stormpath.shiro.servlet.mvc.ShiroLogoutController;
 
 /**
  * @since 0.7.0
+ *
+ * This will be removed before the 0.7.0 release, keeping for now as it was referenced in a support request ticket.
+ * @deprecated replaced with {@link com.stormpath.shiro.servlet.filter.StormpathShiroPassiveLoginFilter}.
  */
+@Deprecated
 public class ShiroIDSiteResultFilterFactory extends IDSiteResultFilterFactory {
 
     @Override

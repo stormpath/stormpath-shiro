@@ -16,12 +16,20 @@
 package com.stormpath.shiro.servlet.env;
 
 import com.stormpath.sdk.client.Client;
+import com.stormpath.sdk.impl.io.ClasspathResource;
+import com.stormpath.sdk.lang.Strings;
+import com.stormpath.sdk.servlet.config.Config;
 import com.stormpath.sdk.servlet.config.ConfigLoader;
+import com.stormpath.sdk.servlet.config.impl.DefaultConfigFactory;
+import com.stormpath.sdk.servlet.event.RequestEventListener;
+import com.stormpath.sdk.servlet.event.impl.EventPublisherFactory;
 import com.stormpath.shiro.servlet.config.ClientFactory;
 import com.stormpath.shiro.realm.PassthroughApplicationRealm;
 import com.stormpath.shiro.servlet.config.ShiroIniConfigLoader;
 import com.stormpath.shiro.servlet.config.StormpathWebClientFactory;
+import com.stormpath.shiro.servlet.event.LogoutEventListener;
 import com.stormpath.shiro.servlet.filter.StormpathShiroFilterChainResolverFactory;
+import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.util.CollectionUtils;
@@ -33,9 +41,10 @@ import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletException;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
+
 
 /**
  * {@link IniWebEnvironment} implementation that creates a default Stormpath {@link PassthroughApplicationRealm}.
@@ -65,6 +74,18 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
     final private Logger log = LoggerFactory.getLogger(StormpathShiroIniEnvironment.class);
 
     private ConfigLoader configLoader;
+
+    final private Map<String, Object> defaultEnvironmentObjects = new HashMap<>();
+
+    final private static String NL = "\n";
+    final private static String  SHIRO_STORMPATH_PROPERTIES_SOURCES =
+                    ClasspathResource.SCHEME_PREFIX + "com/stormpath/sdk/servlet/config/web." + DefaultConfigFactory.STORMPATH_PROPERTIES + NL +
+                    ClasspathResource.SCHEME_PREFIX + "com/stormpath/shiro/servlet/config/shiro." + DefaultConfigFactory.STORMPATH_PROPERTIES + NL +
+                    ClasspathResource.SCHEME_PREFIX + DefaultConfigFactory.STORMPATH_PROPERTIES + NL +
+                    "/WEB-INF/stormpath.properties" + NL +
+                    DefaultConfigFactory.CONTEXT_PARAM_TOKEN + NL +
+                    DefaultConfigFactory.ENVVARS_TOKEN + NL +
+                    DefaultConfigFactory.SYSPROPS_TOKEN;
 
     @Override
     @SuppressWarnings("PMD.AvoidReassigningParameters")
@@ -109,19 +130,21 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
         }
     }
 
-    private Map<String, ?> getDefaultEnvironmentObjects() {
-
-        Map<String, Object> defaults = new LinkedHashMap<String, Object>();
-        defaults.put("stormpathClient", new StormpathWebClientFactory(getServletContext()));
-        defaults.put("stormpathRealm", new PassthroughApplicationRealm());
-
-        return defaults;
-    }
-
     @Override
     protected void configure() {
 
-        configureStormpathEnvironment();
+        defaultEnvironmentObjects.put("stormpathClient", new StormpathWebClientFactory(getServletContext()));
+        defaultEnvironmentObjects.put("stormpathRealm", new PassthroughApplicationRealm());
+
+        Config stormpathConfig = configureStormpathEnvironment();
+        try {
+            RequestEventListener requestEventListener = stormpathConfig.getInstance(EventPublisherFactory.REQUEST_EVENT_LISTENER);
+            defaultEnvironmentObjects.put("stormpathRequestEventListener", requestEventListener);
+            defaultEnvironmentObjects.put("stormpathLogoutListener", new LogoutEventListener());
+        }
+        catch (ServletException e) {
+            throw new ConfigurationException("Could not get instance of Stormpath event listener. ", e);
+        }
 
         this.objects.clear();
 
@@ -139,8 +162,14 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
 
     }
 
-    protected void configureStormpathEnvironment() {
-        ensureConfigLoader().createConfig(getServletContext());
+    protected Config configureStormpathEnvironment() {
+
+        String sourceDefs = getServletContext().getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES);
+        if (!Strings.hasText(sourceDefs)) {
+            getServletContext().setInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES, SHIRO_STORMPATH_PROPERTIES_SOURCES);
+        }
+
+        return ensureConfigLoader().createConfig(getServletContext());
     }
 
     protected ConfigLoader ensureConfigLoader() {
@@ -197,7 +226,7 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
         // default implementation
 //        WebIniSecurityManagerFactory factory = new WebIniSecurityManagerFactory();
 
-        return new WebIniSecurityManagerFactoryWithDefaults(getDefaultEnvironmentObjects());
+        return new WebIniSecurityManagerFactoryWithDefaults(defaultEnvironmentObjects);
     }
 
     private static class WebIniSecurityManagerFactoryWithDefaults extends WebIniSecurityManagerFactory {

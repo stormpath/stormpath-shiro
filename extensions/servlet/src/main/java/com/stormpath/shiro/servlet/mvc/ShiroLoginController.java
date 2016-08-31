@@ -31,7 +31,11 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * A login controller that calls Shiro's Subject.login with the form fields <code>login</code> and <code>password</code>.
+ *
+ * This will be removed before the 0.7.0 release, keeping for now as it was referenced in a support request ticket.
+ * @deprecated replaced with {@link com.stormpath.shiro.servlet.filter.StormpathShiroPassiveLoginFilter}.
  */
+@Deprecated
 public class ShiroLoginController extends LoginController {
 
     @Override

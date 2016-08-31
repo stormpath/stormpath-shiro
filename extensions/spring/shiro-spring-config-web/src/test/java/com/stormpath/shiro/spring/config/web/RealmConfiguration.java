@@ -36,4 +36,9 @@ public class RealmConfiguration {
         realm.setCachingEnabled(true);
         return realm;
     }
+
+    @Bean
+    ShiroFilterChainDefinitionProvider getFilterChainDefinitionProvider() {
+        return new DefaultShiroFilterChainDefinitionProvider();
+    }
 }

@@ -15,7 +15,7 @@
  */
 package com.stormpath.shiro.spring.config.web;
 
-import com.stormpath.shiro.spring.config.ShiroBeanLifecycleConfiguration;
+import com.stormpath.shiro.spring.config.ShiroBeanConfiguration;
 import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
@@ -29,7 +29,7 @@ import java.util.List;
  * @since 0.7.0
  */
 @Configuration
-@Import({ShiroBeanLifecycleConfiguration.class})
+@Import({ShiroBeanConfiguration.class})
 public class ShiroWebConfiguration extends AbstractShiroWebConfiguration {
 
     @Bean

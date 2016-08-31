@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stormpath.shiro.spring.boot.autoconfigure;
+package com.stormpath.shiro.spring.config;
 
-import com.stormpath.shiro.spring.config.AbstractShiroBeanLifecycleConfiguration;
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.support.DefaultEventBus;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,11 +25,20 @@ import org.springframework.context.annotation.Configuration;
  * @since 0.7.0
  */
 @Configuration
-@ConditionalOnProperty(name = "shiro.enabled", matchIfMissing = true)
-public class ShiroBeanLifecycleAutoConfiguration extends AbstractShiroBeanLifecycleConfiguration {
+public class ShiroBeanConfiguration extends AbstractShiroBeanConfiguration {
 
     @Bean
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return super.lifecycleBeanPostProcessor();
+    }
+
+    @Bean
+    public EventBus eventBus() {
+        return new DefaultEventBus();
+    }
+
+    @Bean
+    public ShiroEventBusBeanPostProcessor shiroEventBusAwareBeanPostProcessor(EventBus eventBus) {
+        return new ShiroEventBusBeanPostProcessor(eventBus);
     }
 }
