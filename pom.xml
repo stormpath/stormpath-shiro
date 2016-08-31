@@ -86,6 +86,7 @@
         <module>extensions/servlet-plugin</module>
         <module>extensions/spring</module>
         <module>examples</module>
+        <module>archetypes/servlet-plugin</module>
     </modules>
 
     <properties>
@@ -424,6 +425,9 @@
                         <properties>
                             <organization.name>${project.organization.name}</organization.name>
                         </properties>
+                        <excludes>
+                            <exclude>**/*.txt</exclude>
+                        </excludes>
                     </configuration>
                 </plugin>
                 <plugin>
