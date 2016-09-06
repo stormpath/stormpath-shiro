@@ -18,13 +18,17 @@ package com.stormpath.shiro.spring.boot.autoconfigure;
 import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.shiro.realm.ApplicationRealm;
+import com.stormpath.shiro.realm.DefaultGroupRoleResolver;
 import org.apache.shiro.realm.Realm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Set;
 
 /**
  * @since 0.7.0
@@ -40,6 +44,9 @@ public class StormpathShiroAutoConfiguration {
 
     @Autowired
     private Application application;
+    
+    @Value("#{ (@environment['stormpath.shiro.realm.groupRoleResolverModes'] ?: 'HREF').split(',') }")
+    protected Set<String> groupRoleResolverModes;
 
     @Bean(name = "stormpathRealm")
     @ConditionalOnMissingBean
@@ -47,6 +54,11 @@ public class StormpathShiroAutoConfiguration {
         ApplicationRealm realm = new ApplicationRealm();
         realm.setApplicationRestUrl(application.getHref());
         realm.setClient(client);
+
+        DefaultGroupRoleResolver groupRoleResolver = new DefaultGroupRoleResolver();
+        groupRoleResolver.setModeNames(groupRoleResolverModes);
+        realm.setGroupRoleResolver(groupRoleResolver);
+
         return realm;
     }
 

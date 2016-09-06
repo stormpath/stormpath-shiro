@@ -20,7 +20,6 @@ import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.servlet.event.RequestEventListener;
 import com.stormpath.shiro.realm.ApplicationRealm;
 import com.stormpath.shiro.realm.DefaultGroupRoleResolver;
-import com.stormpath.shiro.realm.GroupCustomDataPermissionResolver;
 import com.stormpath.shiro.realm.PassthroughApplicationRealm;
 import com.stormpath.shiro.servlet.event.LogoutEventListener;
 import com.stormpath.shiro.servlet.event.RequestEventListenerBridge;
@@ -30,11 +29,11 @@ import com.stormpath.shiro.spring.config.web.DefaultShiroFilterChainDefinitionPr
 import com.stormpath.shiro.spring.config.web.ShiroFilterChainDefinitionProvider;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.realm.Realm;
-import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -44,6 +43,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.servlet.Filter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @since 0.7.0
@@ -59,6 +59,9 @@ public class StormpathShiroWebAutoConfiguration  {
     @Autowired
     private Application application;
 
+    @Value("#{ (@environment['stormpath.shiro.realm.groupRoleResolverModes'] ?: 'HREF').split(',') }")
+    protected Set<String> groupRoleResolverModes;
+
     @Bean(name = "stormpathRealm")
     @ConditionalOnMissingBean
     public Realm getRealm() {
@@ -67,11 +70,8 @@ public class StormpathShiroWebAutoConfiguration  {
         realm.setClient(client);
 
         DefaultGroupRoleResolver groupRoleResolver = new DefaultGroupRoleResolver();
-        groupRoleResolver.setModes(CollectionUtils.asSet(DefaultGroupRoleResolver.Mode.NAME));
+        groupRoleResolver.setModeNames(groupRoleResolverModes);
         realm.setGroupRoleResolver(groupRoleResolver);
-
-        GroupCustomDataPermissionResolver groupPermissionResolver = new GroupCustomDataPermissionResolver();
-        realm.setGroupPermissionResolver(groupPermissionResolver);
 
         return realm;
     }
