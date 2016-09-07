@@ -87,6 +87,10 @@
         <module>extensions/spring</module>
         <module>examples</module>
         <module>archetypes/servlet-plugin</module>
+        <module>tutorials/servlet/00-initial-app</module>
+        <module>tutorials/servlet/01-add-security</module>
+        <module>tutorials/servlet/02-add-roles</module>
+        <module>tutorials/servlet/03-use-permissions</module>
     </modules>
 
     <properties>
