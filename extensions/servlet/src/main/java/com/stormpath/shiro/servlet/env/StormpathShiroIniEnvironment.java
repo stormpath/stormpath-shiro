@@ -23,6 +23,7 @@ import com.stormpath.sdk.servlet.config.ConfigLoader;
 import com.stormpath.sdk.servlet.config.impl.DefaultConfigFactory;
 import com.stormpath.sdk.servlet.event.RequestEventListener;
 import com.stormpath.sdk.servlet.event.impl.EventPublisherFactory;
+import com.stormpath.shiro.realm.ApplicationRealm;
 import com.stormpath.shiro.servlet.config.ClientFactory;
 import com.stormpath.shiro.realm.PassthroughApplicationRealm;
 import com.stormpath.shiro.servlet.config.ShiroIniConfigLoader;
@@ -77,6 +78,9 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
 
     final private Map<String, Object> defaultEnvironmentObjects = new HashMap<>();
 
+    final private static String STORMPATH_APPLICATION_HREF_PROPERTY = "stormpath.application.href";
+    final private static String DEFAULTS_STORMPATH_CLIENT_PROPERTY = "stormpathClient";
+    final private static String DEFAULTS_STORMPATH_REALM_PROPERTY = "stormpathRealm";
     final private static String NL = "\n";
     final private static String  SHIRO_STORMPATH_PROPERTIES_SOURCES =
                     ClasspathResource.SCHEME_PREFIX + "com/stormpath/sdk/servlet/config/web." + DefaultConfigFactory.STORMPATH_PROPERTIES + NL +
@@ -133,10 +137,20 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
     @Override
     protected void configure() {
 
-        defaultEnvironmentObjects.put("stormpathClient", new StormpathWebClientFactory(getServletContext()));
-        defaultEnvironmentObjects.put("stormpathRealm", new PassthroughApplicationRealm());
-
+        // create the config object
         Config stormpathConfig = configureStormpathEnvironment();
+
+        // Chicken or egg problem. At this point we do NOT have a Stormpath Client, so we cannot use the
+        // ApplicationResolver because that will force the client to be created, and would load before the
+        // ReflectionBuilder had a chance to customize the client.
+        // To keep things simple for now: if the app href is set, we just pass it on to the realm.
+        ApplicationRealm realm = new PassthroughApplicationRealm();
+        if (stormpathConfig.containsKey(STORMPATH_APPLICATION_HREF_PROPERTY)) {
+            String appHref = stormpathConfig.get(STORMPATH_APPLICATION_HREF_PROPERTY);
+            realm.setApplicationRestUrl(appHref);
+        }
+        defaultEnvironmentObjects.put(DEFAULTS_STORMPATH_CLIENT_PROPERTY, new StormpathWebClientFactory(getServletContext()));
+        defaultEnvironmentObjects.put(DEFAULTS_STORMPATH_REALM_PROPERTY, realm);
         try {
             RequestEventListener requestEventListener = stormpathConfig.getInstance(EventPublisherFactory.REQUEST_EVENT_LISTENER);
             defaultEnvironmentObjects.put("stormpathRequestEventListener", requestEventListener);
@@ -151,7 +165,7 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
         WebSecurityManager securityManager = createWebSecurityManager();
         setWebSecurityManager(securityManager);
 
-        ClientFactory clientFactory = getObject("stormpathClient", ClientFactory.class);
+        ClientFactory clientFactory = getObject(DEFAULTS_STORMPATH_CLIENT_PROPERTY, ClientFactory.class);
         log.debug("Updating Client in ServletContext, with instance configured via shiro.ini");
         getServletContext().setAttribute(Client.class.getName(), clientFactory.getInstance());
 

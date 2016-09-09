@@ -39,6 +39,7 @@ import javax.servlet.ServletContext
 import static org.easymock.EasyMock.*
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
+import static org.testng.Assert.assertEquals
 import static org.testng.Assert.assertNotNull
 import static org.testng.Assert.assertSame
 
@@ -90,7 +91,7 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
     }
 
     @Test
-    public void testCreateWithIniAppHref() {
+    public void testCreateWithHref() {
 
         def servletContext = mock(ServletContext)
 
@@ -113,9 +114,11 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
         def config = new DefaultConfigFactory().createConfig(servletContext)
         delayedInitMap.put(configKey, config)
 
+        String appHref = "http://appHref"
+        config.put("stormpath.application.href", appHref)
         def ini = new Ini()
 
-        doTestWithIni(ini, servletContext, config)
+        doTestWithIni(ini, servletContext, config, appHref)
     }
 
 
@@ -194,7 +197,7 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
         verify servletContext, configLoader
     }
 
-    private void doTestWithIni(Ini ini, ServletContext servletContext, Config config) {
+    private void doTestWithIni(Ini ini, ServletContext servletContext, Config config, String appHref = null) {
 
         addStubApplicationResolvertoIni(ini)
 
@@ -220,6 +223,10 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
         assertThat clientObject, instanceOf(ClientFactory)
         def actualClient = ((ClientFactory) clientObject).getInstance()
         assertSame realm.getClient(), actualClient
+
+        if (appHref != null) {
+            assertEquals realm.getApplicationRestUrl(), appHref
+        }
     }
 
     private void addStubApplicationResolvertoIni(Ini ini, String sectionName = "main") {

@@ -43,13 +43,15 @@ public class WebApp { //NOPMD
     }
 
     @ExceptionHandler(AuthorizationException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleException(AuthorizationException e, Model model) {
 
-        log.debug("AuthorizationException was thrown, but setting status to 404, original exception below.", e);
+        // you could return a 404 here instead (this is how github handles 403, so the user does NOT know there is a
+        // resource at that location)
+        log.debug("AuthorizationException was thrown", e);
 
         Map<String, Object> map = new HashMap<>();
-        map.put("status", HttpStatus.NOT_FOUND.value());
+        map.put("status", HttpStatus.FORBIDDEN.value());
         map.put("message", "No message available");
         model.addAttribute("errors", map);
 
