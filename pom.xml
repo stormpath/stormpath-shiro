@@ -665,7 +665,6 @@
                             <execution>
                                 <id>aggregate-java-doc</id>
                                 <inherited>false</inherited>
-                                <phase>package</phase>
                                 <goals>
                                     <goal>aggregate</goal>
                                 </goals>

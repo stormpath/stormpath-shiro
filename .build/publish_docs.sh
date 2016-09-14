@@ -1,10 +1,13 @@
 #! /bin/bash
 
+GIT_AUTHOR_EMAIL="evangelists@stormpath.com"
+GIT_AUTHOR_NAME="stormpath-shiro Auto Doc Build"
+
 echo "publishing docs for: $PROJECT_VERSION"
-git config --global user.email "evangelists@stormpath.com"
-git config --global user.name "stormpath-sdk-java Auto Doc Build"
 git clone git@github.com:stormpath/stormpath.github.io.git
 cd stormpath.github.io
+git config user.email "$GIT_AUTHOR_EMAIL"
+git config user.name "$GIT_AUTHOR_NAME"
 git fetch origin source:source
 git checkout source
 
@@ -28,6 +31,8 @@ gem install bundler
 bundle install
 rake setup_github_pages[git@github.com:stormpath/stormpath.github.io.git]
 cd _deploy
+git config user.email "$GIT_AUTHOR_EMAIL"
+git config user.name "$GIT_AUTHOR_NAME"
 git pull --no-edit -s recursive -X theirs https://github.com/stormpath/stormpath.github.io.git
 cd ..
 rake generate > /tmp/docs_generate.log

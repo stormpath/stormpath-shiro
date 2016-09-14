@@ -12,7 +12,7 @@ install:
 - test -z "$BUILD_DOCS" || pip -q install --user sphinx
 script:
 - test -n "$BUILD_DOCS" || mvn install
-- test -z "$BUILD_DOCS" || mvn install -q -Psphinx-docs -Pdocs
+- test -z "$BUILD_DOCS" || mvn package javadoc:aggregate@aggregate-java-doc -Psphinx-docs -Pdocs
 after_success:
 - test -z "$BUILD_DOCS" || test -z "$IS_RELEASE" || ./publish_docs.sh
 
