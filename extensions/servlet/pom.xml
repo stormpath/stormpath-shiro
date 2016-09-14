@@ -75,8 +75,6 @@
             <scope>test</scope>
         </dependency>
 
-
-
         <dependency>
             <groupId>com.stormpath.sdk</groupId>
             <artifactId>stormpath-sdk-httpclient</artifactId>
@@ -90,5 +88,50 @@
         </dependency>
 
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>sphinx-docs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <configuration>
+                            <executable>make</executable>
+                            <workingDirectory>${basedir}/docs</workingDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sphinx-build-clean</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>
+                                        <argument>clean</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>sphinx-build-html</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>
+                                        <argument>html</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+
+        </profile>
+    </profiles>
 
 </project>

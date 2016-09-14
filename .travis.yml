@@ -1,13 +1,20 @@
 # https://travis-ci.org/stormpath/stormpath-shiro
 language: java
-
 jdk:
-  - openjdk7
-  - oraclejdk7
-  - oraclejdk8
-
-install: echo "No need to run mvn install -DskipTests then mvn install.  Running mvn install."
-script: mvn install
+- openjdk7
+- oraclejdk7
+- oraclejdk8
+before_install:
+- export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
+- export BUILD_DOCS="$([ $TRAVIS_JDK_VERSION == 'oraclejdk8' ] && echo 'true')"
+- export IS_RELEASE="$([ ${PROJECT_VERSION/SNAPSHOT} == PROJECT_VERSION ] && echo 'true')"
+install:
+- test -z "$BUILD_DOCS" || pip -q install --user sphinx
+script:
+- test -n "$BUILD_DOCS" || mvn install
+- test -z "$BUILD_DOCS" || mvn install -q -Psphinx-docs -Pdocs
+after_success:
+- test -z "$BUILD_DOCS" || test -z "$IS_RELEASE" || ./publish_docs.sh
 
 # Stormpath API Key configuration.
 #
@@ -27,5 +34,8 @@ script: mvn install
 # value below with the output of that command.
 env:
   global:
-    - STORMPATH_API_KEY_ID=CN5D6CEHMI7M1HVSBW74N626X
-    - secure: "W7X8AjOaQRmrzfZ3G2wn5rxld1aw5osYLKWY98U6hU5jy148HLzJ1s+v/RdydAAB2d4xuYvr5WrUEaF/eHJ4AF0zBNDwst84VHUxT3yTzBFVHgnd/rbn8AMpITQtwIiXEr+hMK3cAVXwZtZ+mLmkllyf48Myk75QDxwwJnKS2UA="
+  - STORMPATH_API_KEY_ID=CN5D6CEHMI7M1HVSBW74N626X
+  - secure: W7X8AjOaQRmrzfZ3G2wn5rxld1aw5osYLKWY98U6hU5jy148HLzJ1s+v/RdydAAB2d4xuYvr5WrUEaF/eHJ4AF0zBNDwst84VHUxT3yTzBFVHgnd/rbn8AMpITQtwIiXEr+hMK3cAVXwZtZ+mLmkllyf48Myk75QDxwwJnKS2UA=
+notifications:
+  slack:
+    secure: X3mBxrLqpqzlqytMhWxDzE7tLQ7xpZGGL7UuEL02h0l7VyYRJuWpn1PR50kWOAiulLTIYsXN6Q/ByEjjgcAUT/8Z1ataA44xDRNe6AbhPtrHg3sjhVeAcz4cPfDog30v/qLljKYTdazPeu7/WMmjCKYzxK32LBJx111GASFl0mA=

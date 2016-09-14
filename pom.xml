@@ -444,6 +444,16 @@
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>${spring.boot.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.10.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.5.0</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -640,23 +650,27 @@
             </modules>
 
             <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-javadoc-plugin</artifactId>
-                            <version>2.9.1</version>
-                            <executions>
-                                <execution>
-                                    <id>attach-api-docs</id>
-                                    <goals>
-                                        <goal>jar</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                            <inherited>true</inherited>
-                            <configuration>
-                                <top><![CDATA[
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-api-docs</id>
+                                <inherited>true</inherited>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>aggregate-java-doc</id>
+                                <inherited>false</inherited>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>aggregate</goal>
+                                </goals>
+                                <configuration>
+                                    <top><![CDATA[
     <script type="text/javascript">
 
   var _gaq = _gaq || [];
@@ -690,21 +704,13 @@
 
 <!-- Optimizely -->
 <script src="//cdn.optimizely.com/js/225847041.js"></script>
-                                ]]></top>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-api-docs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
+                                    ]]></top>
+                                    <excludePackageNames>
+                                        *.examples:
+                                        *.tutorial.*:
+                                        *quickstart
+                                    </excludePackageNames>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
