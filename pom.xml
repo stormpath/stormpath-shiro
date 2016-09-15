@@ -662,14 +662,51 @@
                                     <goal>jar</goal>
                                 </goals>
                             </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.1.2</version>
+                        <executions>
                             <execution>
-                                <id>aggregate-java-doc</id>
-                                <inherited>false</inherited>
+                                <id>attach-sources</id>
                                 <goals>
-                                    <goal>aggregate</goal>
+                                    <goal>jar-no-fork</goal>
                                 </goals>
-                                <configuration>
-                                    <top><![CDATA[
+                            </execution>
+                        </executions>
+                        <inherited>true</inherited>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jdk8</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <!-- Needed for the javadoc plugin when using JDK 1.8 -->
+                <additionalparam>-Xdoclint:none</additionalparam>
+            </properties>
+        </profile>
+        <profile>
+            <id>skip-checks</id>
+            <properties>
+                <pmd.skip>true</pmd.skip>
+                <findbugs.skip>true</findbugs.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>aggregate-docs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <top><![CDATA[
     <script type="text/javascript">
 
   var _gaq = _gaq || [];
@@ -704,28 +741,28 @@
 <!-- Optimizely -->
 <script src="//cdn.optimizely.com/js/225847041.js"></script>
                                     ]]></top>
-                                    <excludePackageNames>
-                                        *.examples:
-                                        *.tutorial.*:
-                                        *quickstart
-                                    </excludePackageNames>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>2.1.2</version>
+                            <excludePackageNames>
+                                *.examples:
+                                *.tutorial.*:
+                                *quickstart
+                            </excludePackageNames>
+                        </configuration>
                         <executions>
                             <execution>
-                                <id>attach-sources</id>
+                                <id>attach-api-docs</id>
+                                <inherited>true</inherited>
                                 <goals>
-                                    <goal>jar-no-fork</goal>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>aggregate-java-doc</id>
+                                <inherited>false</inherited>
+                                <goals>
+                                    <goal>aggregate</goal>
                                 </goals>
                             </execution>
                         </executions>
-                        <inherited>true</inherited>
                     </plugin>
                 </plugins>
             </build>
@@ -744,23 +781,6 @@
                     </plugin>
                 </plugins>
             </reporting>
-        </profile>
-        <profile>
-            <id>jdk8</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <properties>
-                <!-- Needed for the javadoc plugin when using JDK 1.8 -->
-                <additionalparam>-Xdoclint:none</additionalparam>
-            </properties>
-        </profile>
-        <profile>
-            <id>skip-checks</id>
-            <properties>
-                <pmd.skip>true</pmd.skip>
-                <findbugs.skip>true</findbugs.skip>
-            </properties>
         </profile>
     </profiles>
 
