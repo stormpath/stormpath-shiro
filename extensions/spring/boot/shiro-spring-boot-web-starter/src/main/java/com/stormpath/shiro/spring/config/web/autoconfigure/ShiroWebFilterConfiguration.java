@@ -16,7 +16,7 @@
 package com.stormpath.shiro.spring.config.web.autoconfigure;
 
 import com.stormpath.shiro.spring.config.web.AbstractShiroWebFilterConfiguration;
-import com.stormpath.shiro.spring.config.web.ShiroFilterChainDefinitionProvider;
+import com.stormpath.shiro.spring.config.web.ShiroFilterChainDefinition;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
@@ -35,8 +35,8 @@ public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfigura
 
     @Bean
     @ConditionalOnMissingBean
-    protected ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager, ShiroFilterChainDefinitionProvider shiroFilterChainDefinitionProvider) {
-        return super.shiroFilterFactoryBean(securityManager, shiroFilterChainDefinitionProvider);
+    protected ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager, ShiroFilterChainDefinition shiroFilterChainDefinition) {
+        return super.shiroFilterFactoryBean(securityManager, shiroFilterChainDefinition);
     }
 
     @Bean

@@ -25,10 +25,11 @@ import com.stormpath.shiro.servlet.event.LogoutEventListener;
 import com.stormpath.shiro.servlet.event.RequestEventListenerBridge;
 import com.stormpath.shiro.servlet.filter.ShiroPrioritizedFilterChainResolver;
 import com.stormpath.shiro.servlet.filter.StormpathShiroPassiveLoginFilter;
-import com.stormpath.shiro.spring.config.web.DefaultShiroFilterChainDefinitionProvider;
-import com.stormpath.shiro.spring.config.web.ShiroFilterChainDefinitionProvider;
+import com.stormpath.shiro.spring.config.web.DefaultShiroFilterChainDefinition;
+import com.stormpath.shiro.spring.config.web.ShiroFilterChainDefinition;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,8 +79,11 @@ public class StormpathShiroWebAutoConfiguration  {
 
     @Bean
     @ConditionalOnMissingBean
-    public ShiroFilterChainDefinitionProvider getShiroFilterChainDefinitionProvider() {
-        return new DefaultShiroFilterChainDefinitionProvider();
+    public ShiroFilterChainDefinition shiroFilterChainDefinition() {
+        DefaultShiroFilterChainDefinition filterChainDefinition = new DefaultShiroFilterChainDefinition();
+        filterChainDefinition.addPathDefinition("/assets/**", DefaultFilter.anon.name());
+        filterChainDefinition.addPathDefinition("/**", DefaultFilter.authc.name());
+        return filterChainDefinition;
     }
 
 

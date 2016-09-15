@@ -15,11 +15,15 @@
  */
 package com.stormpath.shiro.spring.boot.examples;
 
+import com.stormpath.shiro.spring.config.web.DefaultShiroFilterChainDefinition;
+import com.stormpath.shiro.spring.config.web.ShiroFilterChainDefinition;
 import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
@@ -56,5 +60,14 @@ public class WebApp { //NOPMD
         model.addAttribute("errors", map);
 
         return "error";
+    }
+
+    @Bean
+    public ShiroFilterChainDefinition shiroFilterChainDefinition() {
+        DefaultShiroFilterChainDefinition filterChainDefinition = new DefaultShiroFilterChainDefinition();
+        filterChainDefinition.addPathDefinition("/assets/**", DefaultFilter.anon.name()); // static web resources
+        filterChainDefinition.addPathDefinition("/", DefaultFilter.anon.name());  // the welcome page allows guest or logged in users
+        filterChainDefinition.addPathDefinition("/**", DefaultFilter.authc.name());
+        return filterChainDefinition;
     }
 }

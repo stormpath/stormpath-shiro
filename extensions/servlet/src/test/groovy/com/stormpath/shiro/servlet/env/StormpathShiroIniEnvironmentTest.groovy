@@ -22,7 +22,9 @@ import com.stormpath.sdk.servlet.config.impl.DefaultConfigFactory
 import com.stormpath.shiro.servlet.config.ClientFactory
 import com.stormpath.shiro.realm.ApplicationRealm
 import com.stormpath.shiro.servlet.ShiroTestSupportWithSystemProperties
+import com.stormpath.shiro.servlet.filter.StormpathShiroFilterChainResolverFactory
 import com.stormpath.shiro.stubs.StubApplicationResolver
+import com.stormpath.shiro.stubs.StubFilter
 import org.apache.shiro.config.Ini
 import org.apache.shiro.util.Factory
 import org.apache.shiro.web.config.IniFilterChainResolverFactory
@@ -51,6 +53,17 @@ import static org.testng.Assert.assertSame
 class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemProperties {
 
     @Test
+    public void testGetDefaultIni() {
+
+        def ini = new StormpathShiroIniEnvironment().defaultIni
+
+        // The DEFAULT section name is ""
+        assertThat(ini.getSectionNames(), allOf(hasItem("urls"), hasItem(""), hasSize(2)))
+        assertThat(ini.getSection("urls"), allOf(hasEntry("/**", "authc"), aMapWithSize(1)))
+        assertThat(ini.getSection(""), allOf(hasEntry("stormpathRealm.client", '$stormpathClient'), hasEntry("shiro.loginUrl", "/login"), aMapWithSize(2)))
+    }
+
+    @Test
     public void testDefaultCreate() {
 
         def servletContext = mock(ServletContext)
@@ -66,6 +79,7 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
         expect(servletContext.setInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES, StormpathShiroIniEnvironment.SHIRO_STORMPATH_PROPERTIES_SOURCES)).andReturn(true)
         expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES)).andReturn(null)
         expect(servletContext.getResourceAsStream(anyObject())).andReturn(null).anyTimes()
+        expect(servletContext.getInitParameter(StormpathShiroFilterChainResolverFactory.PRIORITY_FILTER_CLASSES_PARAMETER)).andReturn(StubFilter.getName())
         servletContext.setAttribute(eq(Client.getName()), capture(clientCapture))
 
         replay servletContext
@@ -107,6 +121,7 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
 
         expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES)).andReturn(null)
         expect(servletContext.getResourceAsStream(anyObject())).andReturn(null).anyTimes()
+        expect(servletContext.getInitParameter(StormpathShiroFilterChainResolverFactory.PRIORITY_FILTER_CLASSES_PARAMETER)).andReturn(StubFilter.getName())
         servletContext.setAttribute(eq(Client.getName()), capture(clientCapture))
 
         replay servletContext

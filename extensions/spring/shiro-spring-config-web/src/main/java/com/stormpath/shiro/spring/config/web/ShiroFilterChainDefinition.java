@@ -15,19 +15,12 @@
  */
 package com.stormpath.shiro.spring.config.web;
 
-import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import java.util.Map;
 
 /**
  * @since 0.7.0
  */
-@Configuration
-public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfiguration {
+public interface ShiroFilterChainDefinition {
 
-    @Bean
-    protected ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager, ShiroFilterChainDefinition shiroFilterChainDefinition) {
-        return super.shiroFilterFactoryBean(securityManager, shiroFilterChainDefinition);
-    }
+    Map<String, String> getFilterChainMap();
 }

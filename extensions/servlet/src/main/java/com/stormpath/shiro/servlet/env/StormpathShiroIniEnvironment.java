@@ -35,8 +35,10 @@ import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.Factory;
+import org.apache.shiro.web.config.IniFilterChainResolverFactory;
 import org.apache.shiro.web.config.WebIniSecurityManagerFactory;
 import org.apache.shiro.web.env.IniWebEnvironment;
+import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.slf4j.Logger;
@@ -91,6 +93,19 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
                     DefaultConfigFactory.ENVVARS_TOKEN + NL +
                     DefaultConfigFactory.SYSPROPS_TOKEN;
 
+    protected Ini getDefaultIni() {
+        Ini ini = super.getDefaultIni();
+        if (ini == null) {
+            ini = new Ini();
+        }
+
+        // we MUST return a non empty Ini object
+        if (CollectionUtils.isEmpty(ini)) {
+            addDefaultsToIni(ini);
+        }
+        return ini;
+    }
+
     @Override
     @SuppressWarnings("PMD.AvoidReassigningParameters")
     public void setIni(Ini ini) {
@@ -132,6 +147,14 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
         if (!configSection.containsKey("shiro.loginUrl")) {
             configSection.put("shiro.loginUrl", "/login");
         }
+
+        // protect the world if the URL section is missing
+        Ini.Section urls = ini.getSection(IniFilterChainResolverFactory.URLS);
+        Ini.Section filters = ini.getSection(IniFilterChainResolverFactory.FILTERS); // deprecated behavior
+        if (CollectionUtils.isEmpty(urls) && CollectionUtils.isEmpty(filters)) {
+            ini.setSectionProperty(IniFilterChainResolverFactory.URLS, "/**", DefaultFilter.authc.name());
+        }
+
     }
 
     @Override

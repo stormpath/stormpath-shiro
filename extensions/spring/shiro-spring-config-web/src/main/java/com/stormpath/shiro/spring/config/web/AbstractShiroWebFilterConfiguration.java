@@ -18,17 +18,33 @@ package com.stormpath.shiro.spring.config.web;
 
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * @since 0.7.0
  */
 public class AbstractShiroWebFilterConfiguration {
 
-    protected ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager, ShiroFilterChainDefinitionProvider shiroFilterChainDefinitionProvider) {
+
+    @Value("#{ @environment['shiro.loginUrl'] ?: '/login.jsp' }")
+    protected String loginUrl;
+
+    @Value("#{ @environment['shiro.successUrl'] ?: '/' }")
+    protected String successUrl;
+
+    @Value("#{ @environment['shiro.unauthorizedUrl'] ?: null }")
+    protected String unauthorizedUrl;
+
+    protected ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager, ShiroFilterChainDefinition shiroFilterChainDefinition) {
 
         ShiroFilterFactoryBean filterFactoryBean = new ShiroFilterFactoryBean();
+
+        filterFactoryBean.setLoginUrl(loginUrl);
+        filterFactoryBean.setSuccessUrl(successUrl);
+        filterFactoryBean.setUnauthorizedUrl(unauthorizedUrl);
+
         filterFactoryBean.setSecurityManager(securityManager);
-        filterFactoryBean.setFilterChainDefinitionMap(shiroFilterChainDefinitionProvider.getFilterChainDefinition());
+        filterFactoryBean.setFilterChainDefinitionMap(shiroFilterChainDefinition.getFilterChainMap());
 
         return filterFactoryBean;
     }

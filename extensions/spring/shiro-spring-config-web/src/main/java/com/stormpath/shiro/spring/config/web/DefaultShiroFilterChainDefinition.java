@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * @since 0.7.0
  */
-public class DefaultShiroFilterChainDefinitionProvider implements ShiroFilterChainDefinitionProvider {
+public class DefaultShiroFilterChainDefinition implements ShiroFilterChainDefinition {
 
     final private Map<String, String> filterChainDefinitionMap = new HashMap<>();
 
@@ -35,7 +35,7 @@ public class DefaultShiroFilterChainDefinitionProvider implements ShiroFilterCha
     }
 
     @Override
-    public Map<String, String> getFilterChainDefinition() {
+    public Map<String, String> getFilterChainMap() {
         return filterChainDefinitionMap;
     }
 }

@@ -20,11 +20,18 @@ import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * @since 0.7.0
  */
 public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
+
+    @Value("#{ @environment['shiro.sessionManager.sessionIdCookieEnabled'] ?: true }")
+    protected boolean sessionIdCookieEnabled;
+
+    @Value("#{ @environment['shiro.sessionManager.sessionIdUrlRewritingEnabled'] ?: true }")
+    protected boolean sessionIdUrlRewritingEnabled;
 
     protected SessionsSecurityManager createSecurityManager() {
 
@@ -33,8 +40,8 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
 
     protected SessionManager sessionManager() {
         DefaultWebSessionManager webSessionManager = new DefaultWebSessionManager();
-        webSessionManager.setSessionIdCookieEnabled(false);
-        webSessionManager.setSessionIdUrlRewritingEnabled(false);
+        webSessionManager.setSessionIdCookieEnabled(sessionIdCookieEnabled);
+        webSessionManager.setSessionIdUrlRewritingEnabled(sessionIdUrlRewritingEnabled);
         return webSessionManager;
     }
 }

@@ -38,7 +38,7 @@ public class RealmConfiguration {
     }
 
     @Bean
-    ShiroFilterChainDefinitionProvider getFilterChainDefinitionProvider() {
-        return new DefaultShiroFilterChainDefinitionProvider();
+    ShiroFilterChainDefinition getFilterChainDefinition() {
+        return new DefaultShiroFilterChainDefinition();
     }
 }

@@ -16,8 +16,8 @@
 package com.stormpath.shiro.spring.boot.autoconfigure.web;
 
 
-import com.stormpath.shiro.spring.config.web.DefaultShiroFilterChainDefinitionProvider;
-import com.stormpath.shiro.spring.config.web.ShiroFilterChainDefinitionProvider;
+import com.stormpath.shiro.spring.config.web.DefaultShiroFilterChainDefinition;
+import com.stormpath.shiro.spring.config.web.ShiroFilterChainDefinition;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.realm.text.TextConfigurationRealm;
 import org.springframework.boot.SpringApplication;
@@ -48,7 +48,7 @@ public class ShiroWebAutoConfigurationTestApplication {
     }
 
     @Bean
-    ShiroFilterChainDefinitionProvider getFilterChainDefinitionProvider() {
-        return new DefaultShiroFilterChainDefinitionProvider();
+    ShiroFilterChainDefinition shiroFilterChainDefinition() {
+        return new DefaultShiroFilterChainDefinition();
     }
 }

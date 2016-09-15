@@ -13,14 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stormpath.shiro.spring.config.web;
+body {
+    margin: 15px 0 0 15px;
+    padding: 1px; /*background: #2370cf;*/
+    font: 12px 'Lucida Grande', Geneva, Verdana, Arial, sans-serif;
+    color: #000;
+}
 
-import java.util.Map;
+table, td {
+    font: 12px 'Lucida Grande', Geneva, Verdana, Arial, sans-serif;
+    color: #000;
+}
 
-/**
- * @since 0.7.0
- */
-public interface ShiroFilterChainDefinitionProvider {
+h1 {
+    font: 24px;
+}
 
-    Map<String, String> getFilterChainDefinition();
+img {
+    border: thin black solid;
+}
+
+#contentBox {
+    text-align: center;
+    width: 50%;
+    margin: auto;
+    margin-top: 50px;
+    color: black;
+    background: #eee;
+    border: thick black solid;
 }

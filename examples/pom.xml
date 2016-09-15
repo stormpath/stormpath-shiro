@@ -32,6 +32,7 @@
     <modules>
         <module>quickstart</module>
         <module>servlet</module>
+        <module>servlet-zero-config</module>
         <module>spring-boot</module>
         <module>spring-boot-web</module>
     </modules>
