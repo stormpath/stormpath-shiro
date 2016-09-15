@@ -67,7 +67,7 @@ public class WebApp { //NOPMD
         DefaultShiroFilterChainDefinition filterChainDefinition = new DefaultShiroFilterChainDefinition();
         filterChainDefinition.addPathDefinition("/assets/**", DefaultFilter.anon.name()); // static web resources
         filterChainDefinition.addPathDefinition("/", DefaultFilter.anon.name());  // the welcome page allows guest or logged in users
-        filterChainDefinition.addPathDefinition("/**", DefaultFilter.authc.name());
+        filterChainDefinition.addPathDefinition("/account-info", DefaultFilter.authc.name()); // the account-info page requires a user
         return filterChainDefinition;
     }
 }

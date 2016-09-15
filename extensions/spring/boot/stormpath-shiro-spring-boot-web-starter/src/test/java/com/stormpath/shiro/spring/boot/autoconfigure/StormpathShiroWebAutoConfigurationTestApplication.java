@@ -30,8 +30,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.*;
 
 @Configuration
 @EnableAutoConfiguration
@@ -63,7 +62,7 @@ public class StormpathShiroWebAutoConfigurationTestApplication {
         expect(application.getDefaultAccountStore()).andReturn(accountStore);
 
         expect(client.getApplications()).andReturn(applicationList);
-        expect(client.getResource(appHref, Application.class)).andReturn(application);
+        expect(client.getResource(anyString(), eq(Application.class))).andReturn(application).anyTimes();
         expect(client.getCacheManager()).andReturn(new DisabledCacheManager());
         expect(client.getApiKey()).andReturn(new ClientApiKey("id", "secret"));
 
