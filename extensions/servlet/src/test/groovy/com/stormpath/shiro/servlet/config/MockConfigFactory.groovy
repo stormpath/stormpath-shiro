@@ -18,15 +18,19 @@ package com.stormpath.shiro.servlet.config;
 
 import com.stormpath.sdk.servlet.config.Config
 import com.stormpath.sdk.servlet.config.ConfigFactory
-import org.easymock.EasyMock
 
 import javax.servlet.ServletContext;
+
+import static org.easymock.EasyMock.*
 
 public class MockConfigFactory implements ConfigFactory {
 
     @Override
     public Config createConfig(ServletContext servletContext) {
 
-        return EasyMock.createMock(Config)
+        def config = createNiceMock(Config)
+        expect(config.isStormpathEnabled()).andReturn(true).anyTimes()
+        replay config
+        return config
     }
 }
