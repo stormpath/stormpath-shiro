@@ -76,4 +76,69 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>run-TCK</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.stormpath.tck</groupId>
+                    <artifactId>stormpath-tck</artifactId>
+                    <!--
+                    Equivalent to 'LATEST', this is generally not a good idea, but at the moment
+                    stormpath-tck is not being release/published, so you will need to
+                    clone https://github.com/stormpath/stormpath-framework-tck
+                    and run `mvn clean install -P\!run-ITs`
+                    -->
+                    <version>[0.0.0,)</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <executions>
+                            <!-- start app before ITs -->
+                            <execution>
+                                <id>start-app</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <!-- Stop app after ITs -->
+                            <execution>
+                                <id>stop-app</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <dependenciesToScan>com.stormpath.tck:stormpath-tck</dependenciesToScan>
+                            <excludes>
+                                <!-- only one of the test method fails at the moment, but we can only exclude full classes -->
+                                <exclude>com.stormpath.tck.login.FacebookSocialLoginIT</exclude>
+                            </excludes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

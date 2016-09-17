@@ -15,9 +15,33 @@ Usage documentation [is in the wiki](https://github.com/stormpath/stormpath-shir
 
 ### Build Instructions ###
 
-This project requires Maven 3 to build.  Run the following from a command prompt:
+This project requires Maven 3 to build.  
+
+#### Basic Build ####
+
+Run the following from a command prompt:
 
 `mvn install`
+
+#### Build with Docs #### 
+
+Install sphinx: `pip install sphinx` or using virtualenv:
+```bash
+pushd extensions/servlet/docs
+virtualenv docs
+source docs/bin/activate
+pip install -r requirements.txt
+popd
+```
+
+Then run:
+`mvn install -Pdocs -Psphinx-docs`
+
+#### Run the TCK ####
+
+Clone the https://github.com/stormpath/stormpath-framework-tck project and run `mvn clean install -P\!run-ITs`
+Then run `mvn install -Prun-TCK`
+
 
 ## Change Log
 
