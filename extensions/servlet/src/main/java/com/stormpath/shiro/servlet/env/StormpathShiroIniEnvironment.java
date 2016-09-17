@@ -24,7 +24,6 @@ import com.stormpath.sdk.servlet.config.impl.DefaultConfigFactory;
 import com.stormpath.sdk.servlet.event.RequestEventListener;
 import com.stormpath.sdk.servlet.event.impl.EventPublisherFactory;
 import com.stormpath.shiro.realm.ApplicationRealm;
-import com.stormpath.shiro.servlet.config.ClientFactory;
 import com.stormpath.shiro.realm.PassthroughApplicationRealm;
 import com.stormpath.shiro.servlet.config.ShiroIniConfigLoader;
 import com.stormpath.shiro.servlet.config.StormpathWebClientFactory;
@@ -139,8 +138,8 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
         Ini.Section configSection = getConfigSection(ini);
 
         // lazy associate the client with the realm, so changes can be made if needed.
-        if (!configSection.containsKey("stormpathRealm.client")) {
-            configSection.put("stormpathRealm.client", "$stormpathClient");
+        if (!configSection.containsKey(DEFAULTS_STORMPATH_REALM_PROPERTY+".client")) {
+            configSection.put(DEFAULTS_STORMPATH_REALM_PROPERTY+".client", "$"+DEFAULTS_STORMPATH_CLIENT_PROPERTY);
         }
 
         // global properties 'shiro.*' are not loaded from the defaults, we must set it in the ini.
@@ -188,7 +187,7 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
         WebSecurityManager securityManager = createWebSecurityManager();
         setWebSecurityManager(securityManager);
 
-        ClientFactory clientFactory = getObject(DEFAULTS_STORMPATH_CLIENT_PROPERTY, ClientFactory.class);
+        Factory clientFactory = getObject(DEFAULTS_STORMPATH_CLIENT_PROPERTY, Factory.class);
         log.debug("Updating Client in ServletContext, with instance configured via shiro.ini");
         getServletContext().setAttribute(Client.class.getName(), clientFactory.getInstance());
 
