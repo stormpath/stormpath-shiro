@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
-        <version>7</version>
+        <version>9</version>
     </parent>
 
     <groupId>com.stormpath.shiro</groupId>
@@ -90,6 +90,7 @@
         <module>tutorials/servlet/01-add-security</module>
         <module>tutorials/servlet/02-add-roles</module>
         <module>tutorials/servlet/03-use-permissions</module>
+        <module>test-coverage</module>
     </modules>
 
     <properties>
@@ -474,6 +475,17 @@
         </pluginManagement>
         <plugins>
             <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <plugin>
                 <!-- For unit tests: -->
                 <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
@@ -647,11 +659,6 @@
         </profile>
         <profile>
             <id>docs</id>
-
-            <modules>
-                <module>test-coverage</module>
-            </modules>
-
             <build>
                 <plugins>
                     <plugin>
