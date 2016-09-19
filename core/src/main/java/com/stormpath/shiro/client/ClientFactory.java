@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Stormpath, Inc.
+ * Copyright 2012 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package com.stormpath.shiro.client;
 
-import com.stormpath.sdk.client.ApiKeys;
+import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.client.ClientBuilder;
 import com.stormpath.sdk.client.Clients;
@@ -57,8 +57,8 @@ import java.util.Properties;
  * </pre>
  *
  * @see ClientBuilder
- * @see ClientBuilder#setApiKey(com.stormpath.sdk.client.ApiKey)
- * @see com.stormpath.sdk.client.ApiKeyBuilder#setFileLocation(String)
+ * @see ClientBuilder#setApiKey(com.stormpath.sdk.api.ApiKey)
+ * @see com.stormpath.sdk.api.ApiKeyBuilder#setFileLocation(String)
  * @since 0.1
  */
 public class ClientFactory extends AbstractFactory<Client> {
@@ -84,13 +84,13 @@ public class ClientFactory extends AbstractFactory<Client> {
     }
 
     /**
-     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.client.ApiKeyBuilder#setFileLocation(String) setFileLocation(apiKeyFileLocation)}{@code .build())}.
+     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.api.ApiKeyBuilder#setFileLocation(String) setFileLocation(apiKeyFileLocation)}{@code .build())}.
      * See that JavaDoc for expected syntax/format.
      *
      * @param apiKeyFileLocation the file, classpath or url location of the API Key {@code .properties} file to load when
      *                           constructing the API Key to use for communicating with the Stormpath REST API.
-     * @see ClientBuilder#setApiKey(com.stormpath.sdk.client.ApiKey)
-     * @see com.stormpath.sdk.client.ApiKeyBuilder#setFileLocation(String)
+     * @see ClientBuilder#setApiKey(com.stormpath.sdk.api.ApiKey)
+     * @see com.stormpath.sdk.api.ApiKeyBuilder#setFileLocation(String)
      * @since 0.2
      */
     public void setApiKeyFileLocation(String apiKeyFileLocation) {
@@ -98,11 +98,11 @@ public class ClientFactory extends AbstractFactory<Client> {
     }
 
     /**
-     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.client.ApiKeyBuilder#setInputStream(java.io.InputStream) setInputStream(apiKeyInputStream)}{@code .build())}.
+     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.api.ApiKeyBuilder#setInputStream(java.io.InputStream) setInputStream(apiKeyInputStream)}{@code .build())}.
      *
      * @param apiKeyInputStream the InputStream to use to construct a configuration Properties instance.
-     * @see ClientBuilder#setApiKey(com.stormpath.sdk.client.ApiKey)
-     * @see com.stormpath.sdk.client.ApiKeyBuilder#setInputStream(java.io.InputStream)
+     * @see ClientBuilder#setApiKey(com.stormpath.sdk.api.ApiKey)
+     * @see com.stormpath.sdk.api.ApiKeyBuilder#setInputStream(java.io.InputStream)
      * @since 0.2
      */
     public void setApiKeyInputStream(InputStream apiKeyInputStream) {
@@ -110,11 +110,11 @@ public class ClientFactory extends AbstractFactory<Client> {
     }
 
     /**
-     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.client.ApiKeyBuilder#setReader(java.io.Reader) setReader(apiKeyReader)}{@code .build())}.
+     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.api.ApiKeyBuilder#setReader(java.io.Reader) setReader(apiKeyReader)}{@code .build())}.
      *
      * @param apiKeyReader the reader to use to construct a configuration Properties instance.
-     * @see ClientBuilder#setApiKey(com.stormpath.sdk.client.ApiKey)
-     * @see com.stormpath.sdk.client.ApiKeyBuilder#setReader(java.io.Reader)
+     * @see ClientBuilder#setApiKey(com.stormpath.sdk.api.ApiKey)
+     * @see com.stormpath.sdk.api.ApiKeyBuilder#setReader(java.io.Reader)
      * @since 0.2
      */
     public void setApiKeyReader(Reader apiKeyReader) {
@@ -122,11 +122,11 @@ public class ClientFactory extends AbstractFactory<Client> {
     }
 
     /**
-     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.client.ApiKeyBuilder#setProperties(java.util.Properties) setProperties(properties)}{@code .build())}.
+     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.api.ApiKeyBuilder#setProperties(java.util.Properties) setProperties(properties)}{@code .build())}.
      *
      * @param properties the properties instance to use to load the API Key ID and Secret.
-     * @see ClientBuilder#setApiKey(com.stormpath.sdk.client.ApiKey)
-     * @see com.stormpath.sdk.client.ApiKeyBuilder#setProperties(java.util.Properties)
+     * @see ClientBuilder#setApiKey(com.stormpath.sdk.api.ApiKey)
+     * @see com.stormpath.sdk.api.ApiKeyBuilder#setProperties(java.util.Properties)
      * @since 0.2
      */
     public void setApiKeyProperties(Properties properties) {
@@ -134,11 +134,11 @@ public class ClientFactory extends AbstractFactory<Client> {
     }
 
     /**
-     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.client.ApiKeyBuilder#setIdPropertyName(String) setIdPropertyName(apiKeyIdPropertyName)}{@code .build())}.
+     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.api.ApiKeyBuilder#setIdPropertyName(String) setIdPropertyName(apiKeyIdPropertyName)}{@code .build())}.
      *
      * @param apiKeyIdPropertyName the name used to query for the API Key ID from a Properties instance.
-     * @see ClientBuilder#setApiKey(com.stormpath.sdk.client.ApiKey)
-     * @see com.stormpath.sdk.client.ApiKeyBuilder#setIdPropertyName(String)
+     * @see ClientBuilder#setApiKey(com.stormpath.sdk.api.ApiKey)
+     * @see com.stormpath.sdk.api.ApiKeyBuilder#setIdPropertyName(String)
      * @since 0.2
      */
     public void setApiKeyIdPropertyName(String apiKeyIdPropertyName) {
@@ -146,11 +146,11 @@ public class ClientFactory extends AbstractFactory<Client> {
     }
 
     /**
-     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.client.ApiKeyBuilder#setSecretPropertyName(String) setSecretPropertyName(apiKeySecretPropertyName)}{@code .build())}.
+     * Calls {@code clientBuilder.setApiKey(ApiKeys.builder().}{@link com.stormpath.sdk.api.ApiKeyBuilder#setSecretPropertyName(String) setSecretPropertyName(apiKeySecretPropertyName)}{@code .build())}.
      *
      * @param apiKeySecretPropertyName the name used to query for the API Key Secret from a Properties instance.
-     * @see ClientBuilder#setApiKey(com.stormpath.sdk.client.ApiKey)
-     * @see com.stormpath.sdk.client.ApiKeyBuilder#setSecretPropertyName(String)
+     * @see ClientBuilder#setApiKey(com.stormpath.sdk.api.ApiKey)
+     * @see com.stormpath.sdk.api.ApiKeyBuilder#setSecretPropertyName(String)
      * @since 0.2
      */
     public void setApiKeySecretPropertyName(String apiKeySecretPropertyName) {

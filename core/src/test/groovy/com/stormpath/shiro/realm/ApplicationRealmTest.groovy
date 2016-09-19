@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Stormpath, Inc.
+ * Copyright 2012 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,25 +36,20 @@ import org.apache.shiro.subject.SimplePrincipalCollection
 import org.apache.shiro.subject.Subject
 import org.easymock.IAnswer
 import org.easymock.IArgumentMatcher
-import org.junit.Before
-import org.junit.Test
-import static org.junit.Assert.*
+import org.testng.annotations.Test
+
 import static org.easymock.EasyMock.*
+import static org.testng.Assert.*
 
 /**
  * @since 0.3
  */
 class ApplicationRealmTest {
 
-    ApplicationRealm realm
-
-    @Before
-    void setUp() {
-        realm = new ApplicationRealm()
-    }
-
     @Test
     void testDefaultInstance() {
+
+        def realm = new ApplicationRealm()
         assertTrue realm.getCredentialsMatcher() instanceof AllowAllCredentialsMatcher //allow all - Stormpath will do the credentials comparison as necessary
         assertTrue realm.getGroupRoleResolver() instanceof DefaultGroupRoleResolver
         assertTrue realm.getGroupPermissionResolver() instanceof GroupCustomDataPermissionResolver
@@ -62,44 +57,61 @@ class ApplicationRealmTest {
         assertNull realm.getAccountRoleResolver()
     }
 
-    @Test(expected = IllegalStateException)
+    @Test(expectedExceptions = IllegalStateException)
     void testInitWithoutClient() {
+
+        def realm = new ApplicationRealm()
         realm.init() //needs client and applicationUrl properties
     }
 
-    @Test(expected = IllegalStateException)
+    @Test(expectedExceptions = IllegalStateException)
     void testInitWithoutApplicationUrl() {
-        def client = createStrictMock(Client)
 
-        replay client
+        def realm = new ApplicationRealm()
+        def client = createStrictMock(Client)
+        def appResolver = createStrictMock(ApplicationResolver)
+
+        expect(appResolver.getApplication(client, null)).andReturn(null)
+
+        replay client, appResolver
 
         realm.client = client
+        realm.applicationResolver = appResolver
+
         try {
             realm.init()
         } finally {
-            verify client
+            verify client, appResolver
         }
     }
 
     @Test
     void testWorkingInit() {
 
+        def realm = new ApplicationRealm()
         def client = createStrictMock(Client)
         def href = 'https://api.stormpath.com/v1/applications/foo'
+        def app = createStrictMock(Application)
+        def appResolver = createStrictMock(ApplicationResolver)
 
-        replay client
+        expect(appResolver.getApplication(client, href)).andReturn(app)
+
+        replay client, app, appResolver
 
         realm.client = client
         realm.applicationRestUrl = href
+        realm.applicationResolver = appResolver
 
         realm.init()
 
 
-        verify client
+        verify client, app, appResolver
     }
 
     @Test
     void testSetClient() {
+
+        def realm = new ApplicationRealm()
         def client = createStrictMock(Client)
 
         replay client
@@ -113,6 +125,8 @@ class ApplicationRealmTest {
 
     @Test
     void testSetAccountRoleResolver() {
+
+        def realm = new ApplicationRealm()
         def r = createStrictMock(AccountRoleResolver)
 
         replay r
@@ -126,6 +140,7 @@ class ApplicationRealmTest {
     @Test
     void testDoGetAuthenticationInfoSuccess() {
 
+        def realm = new ApplicationRealm()
         def appHref = 'https://api.stormpath.com/v1/applications/foo'
         def username = 'jsmith'
         def password = 'secret'
@@ -142,9 +157,10 @@ class ApplicationRealmTest {
         def app = createStrictMock(Application)
         def authcResult = createStrictMock(AuthenticationResult)
         def account = createStrictMock(Account)
+        def appResolver = createStrictMock(ApplicationResolver)
 
         expect(client.dataStore).andStubReturn(ds)
-        expect(ds.getResource(eq(appHref), same(Application))).andReturn(app)
+        expect(appResolver.getApplication(client, appHref)).andReturn(app)
         expect(app.authenticateAccount(anyObject() as AuthenticationRequest)).andAnswer( new IAnswer<AuthenticationResult>() {
             AuthenticationResult answer() throws Throwable {
                 def authcRequest = getCurrentArguments()[0] as AuthenticationRequest
@@ -165,10 +181,11 @@ class ApplicationRealmTest {
         expect(account.middleName).andReturn(acctMiddleName)
         expect(account.surname).andReturn(acctSurname)
 
-        replay client, ds, app, authcResult, account
+        replay client, ds, app, authcResult, account, appResolver
 
         realm.client = client
         realm.applicationRestUrl = appHref
+        realm.applicationResolver = appResolver
 
         def upToken = new UsernamePasswordToken(username, password, host)
         def info = realm.doGetAuthenticationInfo(upToken)
@@ -189,16 +206,19 @@ class ApplicationRealmTest {
         assertEquals acctMiddleName, m.middleName
         assertEquals acctSurname, m.surname
 
-        verify client, ds, app, authcResult, account
+        verify client, ds, app, authcResult, account, appResolver
     }
 
-    @Test(expected=AuthenticationException)
+    @Test(expectedExceptions = AuthenticationException)
     void testDoGetAuthenticationInfoResourceException() {
+
+        def realm = new ApplicationRealm()
 
         def appHref = 'https://api.stormpath.com/v1/applications/foo'
         def client = createStrictMock(Client)
         def ds = createStrictMock(DataStore)
         def app = createStrictMock(Application)
+        def appResolver = createStrictMock(ApplicationResolver)
 
         int status = 400
         int code = 400
@@ -207,23 +227,24 @@ class ApplicationRealmTest {
         def moreInfo = 'mailto:support@stormpath.com'
 
         expect(client.dataStore).andStubReturn(ds)
+        expect(appResolver.getApplication(client, appHref)).andReturn(app)
 
         def error = new SimpleError(status:status, code:code, message: msg, developerMessage: devMsg, moreInfo: moreInfo)
 
-        expect(ds.getResource(eq(appHref), same(Application))).andReturn app
         expect(app.authenticateAccount(anyObject() as AuthenticationRequest)).andThrow(new ResourceException(error))
 
-        replay client, ds, app
+        replay client, ds, app, appResolver
 
         realm.client = client
         realm.applicationRestUrl = appHref
+        realm.applicationResolver = appResolver
 
         def upToken = new UsernamePasswordToken('foo', 'bar', 'baz')
         try {
             realm.doGetAuthenticationInfo(upToken)
         }
         finally {
-            verify client, ds, app
+            verify client, ds, app, appResolver
         }
     }
 
@@ -242,8 +263,8 @@ class ApplicationRealmTest {
         def acctSurname = 'Smith'
 
         def client = createStrictMock(Client)
-        def dataStore = createStrictMock(DataStore)
         def app = createStrictMock(Application)
+        def appResolver = createStrictMock(ApplicationResolver)
         def authcResult = createStrictMock(AuthenticationResult)
         def account = createStrictMock(Account)
         def cacheManager = createStrictMock(MemoryConstrainedCacheManager)
@@ -253,9 +274,8 @@ class ApplicationRealmTest {
 
         expect(cacheManager.getCache(contains("com.stormpath.shiro.realm.ApplicationRealm.authenticationCache"))).andReturn(authcCache)
         expect(cacheManager.getCache(contains("com.stormpath.shiro.realm.ApplicationRealm.authorizationCache"))).andReturn(authzCache)
-        expect(dataStore.getResource(appHref, Application)).andStubReturn(app)
+        expect(appResolver.getApplication(client, appHref)).andReturn(app)
         expect(app.authenticateAccount(anyObject() as AuthenticationRequest)).andReturn(authcResult)
-        expect(client.getDataStore()).andReturn(dataStore)
         expect(authcResult.getAccount()).andReturn(account)
         expect(account.href).andReturn(accountHref)
         expect(account.username).andReturn(username)
@@ -268,12 +288,13 @@ class ApplicationRealmTest {
         expect(authcCache.remove(email)).andReturn(null)
         expect(authzCache.remove((AuthenticationInfo) reportMatcher(authenticationInfoEquals))).andReturn(null)
 
-        replay client, dataStore, app, authcResult, account, cacheManager, authcCache, authzCache
+        replay client, app, authcResult, account, cacheManager, authcCache, authzCache, appResolver
 
         def realm = new ApplicationRealm()
         realm.client = client
         realm.applicationRestUrl = appHref
         realm.authenticationCachingEnabled = true
+        realm.applicationResolver = appResolver
 
         def securityManager = new DefaultSecurityManager(realm)
         securityManager.cacheManager = cacheManager
@@ -284,7 +305,7 @@ class ApplicationRealmTest {
         Subject subject = new Subject.Builder(securityManager).principals(returnedAuthenticationInfo.principals).buildSubject()
         securityManager.logout(subject)
 
-        verify client, dataStore, app, authcResult, account, cacheManager, authcCache, authzCache
+        verify client, app, authcResult, account, cacheManager, authcCache, authzCache, appResolver
     }
 
 
@@ -303,8 +324,8 @@ class ApplicationRealmTest {
         def acctSurname = 'Smith'
 
         def client = createStrictMock(Client)
-        def dataStore = createStrictMock(DataStore)
         def app = createStrictMock(Application)
+        def appResolver = createStrictMock(ApplicationResolver)
         def authcResult = createStrictMock(AuthenticationResult)
         def account = createStrictMock(Account)
         def cacheManager = createStrictMock(MemoryConstrainedCacheManager)
@@ -314,9 +335,8 @@ class ApplicationRealmTest {
 
         expect(cacheManager.getCache(contains("com.stormpath.shiro.realm.ApplicationRealm.authenticationCache"))).andReturn(authcCache)
         expect(cacheManager.getCache(contains("com.stormpath.shiro.realm.ApplicationRealm.authorizationCache"))).andReturn(authzCache)
-        expect(dataStore.getResource(appHref, Application)).andStubReturn(app)
+        expect(appResolver.getApplication(client, appHref)).andStubReturn(app)
         expect(app.authenticateAccount(anyObject() as AuthenticationRequest)).andReturn(authcResult)
-        expect(client.getDataStore()).andReturn(dataStore)
         expect(authcResult.getAccount()).andReturn(account)
         expect(account.href).andReturn(accountHref)
         expect(account.username).andReturn(username)
@@ -329,12 +349,13 @@ class ApplicationRealmTest {
         expect(authcCache.remove(username)).andReturn(null)
         expect(authzCache.remove((AuthenticationInfo) reportMatcher(authenticationInfoEquals))).andReturn(null)
 
-        replay client, dataStore, app, authcResult, account, cacheManager, authcCache, authzCache
+        replay client, app, authcResult, account, cacheManager, authcCache, authzCache, appResolver
 
         def realm = new ApplicationRealm()
         realm.client = client
         realm.applicationRestUrl = appHref
         realm.authenticationCachingEnabled = true
+        realm.applicationResolver = appResolver
 
         def securityManager = new DefaultSecurityManager(realm)
         securityManager.cacheManager = cacheManager
@@ -345,7 +366,7 @@ class ApplicationRealmTest {
         Subject subject = new Subject.Builder(securityManager).principals(returnedAuthenticationInfo.principals).buildSubject()
         securityManager.logout(subject)
 
-        verify client, dataStore, app, authcResult, account, cacheManager, authcCache, authzCache
+        verify client, app, authcResult, account, cacheManager, authcCache, authzCache, appResolver
     }
 
     /**
@@ -353,6 +374,8 @@ class ApplicationRealmTest {
      */
     @Test
     void testGetAuthenticationCacheKeyNullPrincipals() {
+
+        def realm = new ApplicationRealm()
         assertNull(realm.getAuthenticationCacheKey((PrincipalCollection) null))
     }
 
@@ -361,6 +384,8 @@ class ApplicationRealmTest {
      */
     @Test
     void testGetAuthenticationCacheKeyEmptyPrincipals() {
+
+        def realm = new ApplicationRealm()
         def principals  = createStrictMock(PrincipalCollection)
         def primaryPrincipal  = createStrictMock(Object)
 

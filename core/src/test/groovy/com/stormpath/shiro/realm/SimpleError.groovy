@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Stormpath, Inc.
+ * Copyright 2012 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,4 +25,5 @@ class SimpleError implements com.stormpath.sdk.error.Error {
     String message
     String developerMessage
     String moreInfo
+    String requestId
 }

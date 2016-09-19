@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2012 Stormpath, Inc.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.stormpath.shiro</groupId>
+        <artifactId>stormpath-shiro-examples</artifactId>
+        <version>0.7.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>stormpath-shiro-spring-boot-web-example</artifactId>
+
+    <name>Stormpath :: Shiro :: Spring Boot Web Example</name>
+    <description>A Spring Boot (non-web) application that uses Stormpath and Shiro.</description>
+
+    <properties>
+        <spring.boot.version>1.4.0.RELEASE</spring.boot.version>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.stormpath.spring</groupId>
+            <artifactId>stormpath-thymeleaf-spring-boot-starter</artifactId>
+            <version>${stormpath.sdk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.stormpath.shiro</groupId>
+            <artifactId>stormpath-shiro-spring-boot-web-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>run-TCK</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.stormpath.tck</groupId>
+                    <artifactId>stormpath-tck</artifactId>
+                    <!--
+                    Equivalent to 'LATEST', this is generally not a good idea, but at the moment
+                    stormpath-tck is not being release/published, so you will need to
+                    clone https://github.com/stormpath/stormpath-framework-tck
+                    and run `mvn clean install -P\!run-ITs`
+                    -->
+                    <version>[0.0.0,)</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <executions>
+                            <!-- start app before ITs -->
+                            <execution>
+                                <id>start-app</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <!-- Stop app after ITs -->
+                            <execution>
+                                <id>stop-app</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <dependenciesToScan>com.stormpath.tck:stormpath-tck</dependenciesToScan>
+                            <excludes>
+                                <!-- only one of the test method fails at the moment, but we can only exclude full classes -->
+                                <exclude>com.stormpath.tck.login.FacebookSocialLoginIT</exclude>
+                            </excludes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Stormpath, Inc.
+ * Copyright 2012 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 package com.stormpath.shiro.realm
 
 import com.stormpath.sdk.group.Group
-import org.junit.Before
-import org.junit.Test
+import org.testng.annotations.BeforeTest
+import org.testng.annotations.Test
 
-import static org.junit.Assert.*
 import static org.easymock.EasyMock.*
+import static org.testng.Assert.*
 
 /**
  * @since 0.3
@@ -29,7 +29,7 @@ class DefaultGroupRoleResolverTest {
 
     DefaultGroupRoleResolver resolver
 
-    @Before
+    @BeforeTest
     void setUp() {
         resolver = new DefaultGroupRoleResolver()
     }
@@ -50,12 +50,12 @@ class DefaultGroupRoleResolverTest {
         assertSame DefaultGroupRoleResolver.Mode.ID, resolver.modes.iterator().next()
     }
 
-    @Test(expected=IllegalArgumentException)
+    @Test(expectedExceptions=IllegalArgumentException)
     void testSetNullModes() {
         resolver.setModes(null)
     }
 
-    @Test(expected=IllegalArgumentException)
+    @Test(expectedExceptions=IllegalArgumentException)
     void testSetEmptyModes() {
         resolver.setModes(Collections.emptySet())
     }
@@ -74,17 +74,17 @@ class DefaultGroupRoleResolverTest {
         assertSame DefaultGroupRoleResolver.Mode.ID, resolver.modes.iterator().next()
     }
 
-    @Test(expected=IllegalArgumentException)
+    @Test(expectedExceptions=IllegalArgumentException)
     void testSetNullModeNames() {
         resolver.setModeNames(null)
     }
 
-    @Test(expected=IllegalArgumentException)
+    @Test(expectedExceptions=IllegalArgumentException)
     void testSetEmptyModeNames() {
         resolver.setModeNames(Collections.emptySet())
     }
 
-    @Test(expected=IllegalArgumentException)
+    @Test(expectedExceptions=IllegalArgumentException)
     void testSetInvalidModeName() {
         resolver.setModeNames(['foo'] as Set)
     }
@@ -108,7 +108,7 @@ class DefaultGroupRoleResolverTest {
         verify group
     }
 
-    @Test(expected=IllegalStateException)
+    @Test(expectedExceptions=IllegalStateException)
     void testResolveRolesWithMissingHref() {
 
         def group = createStrictMock(Group)

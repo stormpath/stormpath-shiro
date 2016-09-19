@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Stormpath, Inc.
+ * Copyright 2012 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,18 @@
  */
 package com.stormpath.shiro.cache
 
-import org.junit.Test
+import org.testng.annotations.Test
 
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.testng.Assert.assertNotNull
+import static org.testng.Assert.assertSame
 
 /**
  * @since 0.4.0
  */
 class ShiroCacheManagerTest {
 
-    @Test(expected = IllegalArgumentException)
+    @Test(expectedExceptions = IllegalArgumentException)
     void testNullCacheManager() {
         new ShiroCacheManager(null)
     }

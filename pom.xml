@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
-  ~ Copyright 2013 Stormpath, Inc.
+  ~ Copyright 2012 Stormpath, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -39,7 +38,7 @@
     <url>https://github.com/stormpath/stormpath-shiro/wiki</url>
 
     <organization>
-        <name>Stormpath</name>
+        <name>Stormpath, Inc.</name>
         <url>http://www.stormpath.com</url>
     </organization>
 
@@ -62,6 +61,13 @@
         <url>http://github.com/stormpath/stormpath-shiro/issues</url>
     </issueManagement>
 
+    <distributionManagement>
+        <site>
+            <id>stormpath.github</id>
+            <url>scm:git:git@github.com:stormpath/stormpath-shiro.git</url>
+        </site>
+    </distributionManagement>
+
     <developers>
         <developer>
             <id>lhazlewood</id>
@@ -76,37 +82,59 @@
 
     <modules>
         <module>core</module>
+        <module>extensions/servlet</module>
+        <module>extensions/servlet-plugin</module>
+        <module>extensions/spring</module>
+        <module>examples</module>
+        <module>archetypes/servlet-plugin</module>
+        <module>tutorials/servlet/00-initial-app</module>
+        <module>tutorials/servlet/01-add-security</module>
+        <module>tutorials/servlet/02-add-roles</module>
+        <module>tutorials/servlet/03-use-permissions</module>
     </modules>
 
     <properties>
 
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
+
         <!-- Standard Dependencies: -->
-        <shiro.version>1.2.3</shiro.version>
-        <slf4j.version>1.6.6</slf4j.version>
-        <stormpath.sdk.version>1.0.RC2</stormpath.sdk.version>
+        <shiro.version>1.3.2</shiro.version>
+        <slf4j.version>1.7.16</slf4j.version>
+        <stormpath.sdk.version>1.0.4</stormpath.sdk.version>
+
+        <spring.version>4.3.2.RELEASE</spring.version>
+        <spring-boot.version>1.4.0.RELEASE</spring-boot.version>
 
         <!-- Test Dependencies: -->
-        <easymock.version>3.0</easymock.version>
-        <groovy.version>2.1.6</groovy.version>
-        <junit.version>4.8.2</junit.version>
-        <logback.version>0.9.29</logback.version>
+        <easymock.version>3.4</easymock.version>
+        <groovy.version>2.4.6</groovy.version>
+        <logback.version>1.1.7</logback.version>
         <jackson.version>1.9.13</jackson.version>
+        <testng.version>6.9.10</testng.version>
 
+        <root.dir>${session.executionRootDirectory}</root.dir>
+        <!-- site staging path needs to be absolute, this allows for that:
+             http://stackoverflow.com/questions/1012402/maven2-property-that-indicates-the-parent-directory -->
+        <stagingDirectory>${root.dir}/target/staging/static</stagingDirectory>
     </properties>
 
     <dependencies>
 
         <!-- Test Dependencies: -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>${groovy.version}</version>
+            <classifier>indy</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -140,18 +168,141 @@
                 <artifactId>stormpath-shiro-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.stormpath.shiro</groupId>
+                <artifactId>stormpath-shiro-servlet</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.stormpath.shiro</groupId>
+                <artifactId>stormpath-shiro-servlet-plugin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.stormpath.shiro</groupId>
+                <artifactId>shiro-spring-boot-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.stormpath.shiro</groupId>
+                <artifactId>shiro-spring-boot-web-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.stormpath.shiro</groupId>
+                <artifactId>stormpath-shiro-spring-boot-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.stormpath.shiro</groupId>
+                <artifactId>stormpath-shiro-spring-boot-web-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.stormpath.shiro</groupId>
+                <artifactId>shiro-spring-config</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.stormpath.shiro</groupId>
+                <artifactId>shiro-spring-config-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
-            <!-- 3rd party dependencies: -->
+
+            <!-- Shiro dependencies: -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-core</artifactId>
                 <version>${shiro.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-web</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-spring</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>com.stormpath.sdk</groupId>
                 <artifactId>stormpath-sdk-api</artifactId>
                 <version>${stormpath.sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.stormpath.sdk</groupId>
+                <artifactId>stormpath-sdk-httpclient</artifactId>
+                <version>${stormpath.sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.stormpath.spring</groupId>
+                <artifactId>stormpath-spring</artifactId>
+                <version>${stormpath.sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.stormpath.sdk</groupId>
+                <artifactId>stormpath-sdk-impl</artifactId>
+                <version>${stormpath.sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.stormpath.spring</groupId>
+                <artifactId>stormpath-spring-boot-starter</artifactId>
+                <version>${stormpath.sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.stormpath.spring</groupId>
+                <artifactId>stormpath-webmvc-spring-boot-starter</artifactId>
+                <version>${stormpath.sdk.version}</version>
+            </dependency>
+
+            <!-- 3rd party dependencies: -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.1.0</version>
+            </dependency>
+
+            <!-- Spring -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <!-- Spring Boot-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-configuration-processor</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-test</artifactId>
+                <version>${spring-boot.version}</version>
             </dependency>
 
             <!-- Logging: -->
@@ -162,12 +313,6 @@
             </dependency>
 
             <!-- Test Libraries: -->
-            <dependency>
-                <groupId>com.stormpath.sdk</groupId>
-                <artifactId>stormpath-sdk-httpclient</artifactId>
-                <version>${stormpath.sdk.version}</version>
-                <scope>test</scope>
-            </dependency>
             <dependency>
                 <!-- Required for any libraries that expect to call the commons logging APIs -->
                 <groupId>org.slf4j</groupId>
@@ -181,23 +326,154 @@
                 <version>${logback.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>java-hamcrest</artifactId>
+                <version>2.0.0.0</version>
+            </dependency>
 
         </dependencies>
 
     </dependencyManagement>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.7.7.201606060606</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>3.6</version>
+                    <configuration>
+                        <skipEmptyReport>false</skipEmptyReport>
+
+                        <rulesets>
+                            <!-- defaults -->
+                            <ruleset>/rulesets/java/basic.xml</ruleset>
+                            <ruleset>/rulesets/java/unusedcode.xml</ruleset>
+                            <ruleset>/rulesets/java/imports.xml</ruleset>
+
+                            <!-- additional checks -->
+                            <ruleset>/rulesets/java/sunsecure.xml</ruleset>
+                            <ruleset>/rulesets/java/strings.xml</ruleset>
+                            <ruleset>/rulesets/java/empty.xml</ruleset>
+                            <ruleset>/rulesets/java/codesize.xml</ruleset>
+                            <ruleset>/rulesets/java/design.xml</ruleset>
+                            <ruleset>/rulesets/java/j2ee.xml</ruleset>
+                        </rulesets>
+                        <excludes>
+                            <!-- ignore the examples -->
+                            <exclude>**/examples/**</exclude>
+                        </excludes>
+
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>3.0.4</version>
+                    <configuration>
+                        <plugins>
+                            <plugin>
+                                <groupId>com.h3xstream.findsecbugs</groupId>
+                                <artifactId>findsecbugs-plugin</artifactId>
+                                <version>1.4.6 </version>
+                            </plugin>
+                        </plugins>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.5.1</version>
+                    <configuration>
+                        <skipDeploy>true</skipDeploy>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-publish-plugin</artifactId>
+                    <version>1.1</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <checkinComment>Publishing Site Docs for ${project.artifactId}:${project.version}</checkinComment>
+                        <!-- do not delete files, we are publishing the static files in a subdirectory -->
+                        <skipDeletedFiles>true</skipDeletedFiles>
+                        <!-- special github branch for sites -->
+                        <scmBranch>gh-pages</scmBranch>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>3.0</version>
+                    <configuration>
+                        <aggregate>true</aggregate>
+                        <header>${root.dir}/src/license/header.txt</header>
+                        <headerDefinitions>
+                            <headerDefinition>${root.dir}/src/license/header_format.xml</headerDefinition>
+                        </headerDefinitions>
+                        <properties>
+                            <organization.name>${project.organization.name}</organization.name>
+                        </properties>
+                        <excludes>
+                            <exclude>**/*.txt</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-maven-plugin</artifactId>
+                    <version>9.4.0.M0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.10.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.5.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.19.1</version>
+                    <configuration>
+                        <includes>
+                            <include>**/*IT.java</include>
+                            <include>**/*IT.groovy</include>
+                            <include>**/*ITCase.java</include>
+                            <include>**/*ITCase.groovy</include>
+                        </includes>
+                        <excludes>
+                            <exclude>**/*ManualIT.java</exclude>
+                            <exclude>**/*ManualIT.groovy</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
             <plugin>
                 <!-- For unit tests: -->
                 <groupId>org.codehaus.gmaven</groupId>
@@ -235,21 +511,28 @@
                 </dependencies>
             </plugin>
             <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>prepare-agent-integration</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>prepare-agent-integration</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.16</version>
-                <configuration>
-                    <includes>
-                        <include>**/*IT.java</include>
-                        <include>**/*IT.groovy</include>
-                        <include>**/*ITCase.java</include>
-                        <include>**/*ITCase.groovy</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/*ManualIT.java</exclude>
-                        <exclude>**/*ManualIT.groovy</exclude>
-                    </excludes>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -277,8 +560,69 @@
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <id>aggregate-jacoco</id>
+                        <reports>
+                            <report>report</report>
+                            <report>report-integration</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <aggregate>true</aggregate>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-pmd-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.19.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </reporting>
 
     <profiles>
         <profile>
@@ -304,21 +648,67 @@
         </profile>
         <profile>
             <id>docs</id>
+
+            <modules>
+                <module>test-coverage</module>
+            </modules>
+
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.9.1</version>
                         <executions>
                             <execution>
                                 <id>attach-api-docs</id>
+                                <inherited>true</inherited>
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.1.2</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                         <inherited>true</inherited>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jdk8</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <!-- Needed for the javadoc plugin when using JDK 1.8 -->
+                <additionalparam>-Xdoclint:none</additionalparam>
+            </properties>
+        </profile>
+        <profile>
+            <id>skip-checks</id>
+            <properties>
+                <pmd.skip>true</pmd.skip>
+                <findbugs.skip>true</findbugs.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>aggregate-docs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
                             <top><![CDATA[
     <script type="text/javascript">
@@ -354,25 +744,47 @@
 
 <!-- Optimizely -->
 <script src="//cdn.optimizely.com/js/225847041.js"></script>
-                                ]]></top>
+                                    ]]></top>
+                            <excludePackageNames>
+                                *.examples:
+                                *.tutorial.*:
+                                *quickstart
+                            </excludePackageNames>
                         </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>2.1.2</version>
                         <executions>
                             <execution>
-                                <id>attach-sources</id>
+                                <id>attach-api-docs</id>
+                                <inherited>true</inherited>
                                 <goals>
-                                    <goal>jar-no-fork</goal>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>aggregate-java-doc</id>
+                                <inherited>false</inherited>
+                                <goals>
+                                    <goal>aggregate</goal>
                                 </goals>
                             </execution>
                         </executions>
-                        <inherited>true</inherited>
                     </plugin>
                 </plugins>
             </build>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <reportSets>
+                            <reportSet>
+                                <id>javadoc-aggregate</id>
+                                <reports>
+                                    <report>aggregate</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+                </plugins>
+            </reporting>
         </profile>
     </profiles>
 

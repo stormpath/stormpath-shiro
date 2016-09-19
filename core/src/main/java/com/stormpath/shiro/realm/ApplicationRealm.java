@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Stormpath, Inc.
+ * Copyright 2012 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ package com.stormpath.shiro.realm;
 import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.authc.AuthenticationRequest;
-import com.stormpath.sdk.authc.UsernamePasswordRequest;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.group.Group;
 import com.stormpath.sdk.group.GroupList;
+import com.stormpath.sdk.impl.authc.DefaultUsernamePasswordRequest;
 import com.stormpath.sdk.resource.ResourceException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -133,6 +133,7 @@ import java.util.*;
  * @see AccountRoleResolver
  * @since 0.1
  */
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.GodClass"})
 public class ApplicationRealm extends AuthorizingRealm {
 
     private Client client;
@@ -141,6 +142,7 @@ public class ApplicationRealm extends AuthorizingRealm {
     private GroupPermissionResolver groupPermissionResolver;
     private AccountPermissionResolver accountPermissionResolver;
     private AccountRoleResolver accountRoleResolver;
+    private ApplicationResolver applicationResolver;
 
     private Application application; //acquired via the client at runtime, not configurable by the Realm user
 
@@ -150,6 +152,7 @@ public class ApplicationRealm extends AuthorizingRealm {
         setGroupRoleResolver(new DefaultGroupRoleResolver());
         setGroupPermissionResolver(new GroupCustomDataPermissionResolver());
         setAccountPermissionResolver(new AccountCustomDataPermissionResolver());
+        setApplicationResolver(new DefaultApplicationResolver());
     }
 
     /**
@@ -305,31 +308,40 @@ public class ApplicationRealm extends AuthorizingRealm {
         this.accountRoleResolver = accountRoleResolver;
     }
 
+    public ApplicationResolver getApplicationResolver() {
+        return applicationResolver;
+    }
+
+    public void setApplicationResolver(ApplicationResolver applicationResolver) {
+        this.applicationResolver = applicationResolver;
+    }
+
     @Override
     protected void onInit() {
         super.onInit();
         assertState();
+        if (application == null) {
+            this.application = ensureApplicationReference();
+        }
     }
 
     private void assertState() {
         if (this.client == null) {
             throw new IllegalStateException("Stormpath SDK Client instance must be configured.");
         }
-        if (this.applicationRestUrl == null) {
-            throw new IllegalStateException("\n\nThis application's Stormpath REST URL must be configured.\n\n  " +
-                    "You may get your application's Stormpath REST URL as shown here:\n\n " +
-                    "http://www.stormpath.com/docs/application-rest-url\n\n" +
-                    "Copy and paste the 'REST URL' value as the 'applicationRestUrl' property of this class.");
-        }
     }
+
 
     //this is not thread safe, but the Client is, and this is only executed during initial Application
     //acquisition, so it is negligible if this executes a few times instead of just once.
     protected final Application ensureApplicationReference() {
         if (this.application == null) {
             assertState();
-            String href = getApplicationRestUrl();
-            this.application = client.getDataStore().getResource(href, Application.class);
+            Application tmpApp = applicationResolver.getApplication(client, applicationRestUrl);
+            if (tmpApp == null) {
+                throw new IllegalStateException("ApplicationResolver returned 'null' Application, this is likely a configuration error.");
+            }
+            this.application = tmpApp;
         }
         return this.application;
     }
@@ -376,7 +388,14 @@ public class ApplicationRealm extends AuthorizingRealm {
         String username = token.getUsername();
         char[] password = token.getPassword();
         String host = token.getHost();
-        return new UsernamePasswordRequest(username, password, host);
+
+        DefaultUsernamePasswordRequest usernamePasswordRequest = new DefaultUsernamePasswordRequest(username, password);
+
+        if (host != null) {
+            usernamePasswordRequest.setHost(host);
+        }
+
+        return usernamePasswordRequest;
     }
 
     protected PrincipalCollection createPrincipals(Account account) {
@@ -398,9 +417,9 @@ public class ApplicationRealm extends AuthorizingRealm {
     }
 
     private void nullSafePut(Map<String, String> props, String propName, String value) {
-        value = StringUtils.clean(value);
-        if (value != null) {
-            props.put(propName, value);
+        String cleanValue = StringUtils.clean(value);
+        if (cleanValue != null) {
+            props.put(propName, cleanValue);
         }
     }
 
@@ -507,7 +526,11 @@ public class ApplicationRealm extends AuthorizingRealm {
     protected Object getAuthenticationCacheKey(PrincipalCollection principals) {
         if (!CollectionUtils.isEmpty(principals)) {
             Collection thisPrincipals = principals.fromRealm(getName());
-            if (!CollectionUtils.isEmpty(thisPrincipals)) {
+            if (CollectionUtils.isEmpty(thisPrincipals)) {
+                //no principals attributed to this particular realm.  Fall back to the 'master' primary:
+                return principals.getPrimaryPrincipal();
+
+            } else {
                 Iterator iterator = thisPrincipals.iterator();
                 iterator.next(); //First item is the Stormpath' account href
                 //Second item is Stormpath' account map
@@ -519,9 +542,6 @@ public class ApplicationRealm extends AuthorizingRealm {
                     return email;
                 }
                 return accountInfo.get("username");
-            } else {
-                //no principals attributed to this particular realm.  Fall back to the 'master' primary:
-                return principals.getPrimaryPrincipal();
             }
         }
         return null;

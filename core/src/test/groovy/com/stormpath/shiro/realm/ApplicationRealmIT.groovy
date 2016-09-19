@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Stormpath, Inc.
+ * Copyright 2012 Stormpath, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,16 @@ import com.stormpath.sdk.account.Accounts
 import com.stormpath.sdk.application.Application
 import com.stormpath.sdk.group.Group
 import com.stormpath.sdk.resource.Deletable
+import com.stormpath.shiro.ClientIT
 import com.stormpath.shiro.authz.CustomDataPermissionsEditor
 import org.apache.shiro.authc.UsernamePasswordToken
 import org.apache.shiro.cache.MemoryConstrainedCacheManager
 import org.apache.shiro.mgt.DefaultSecurityManager
 import org.apache.shiro.subject.Subject
+import org.testng.annotations.Test
 
-import static com.stormpath.sdk.application.Applications.*
-import com.stormpath.shiro.ClientIT
-import org.junit.Test
-import static org.junit.Assert.*
+import static com.stormpath.sdk.application.Applications.newCreateRequestFor
+import static org.testng.Assert.assertTrue
 
 
 class ApplicationRealmIT extends ClientIT {
