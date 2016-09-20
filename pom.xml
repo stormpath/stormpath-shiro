@@ -26,7 +26,7 @@
 
     <groupId>com.stormpath.shiro</groupId>
     <artifactId>stormpath-shiro-root</artifactId>
-    <version>0.7.2-SNAPSHOT</version>
+    <version>0.7.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Stormpath Shiro</name>
@@ -101,7 +101,7 @@
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
 
         <!-- Standard Dependencies: -->
-        <shiro.version>1.4.0-SNAPSHOT</shiro.version>
+        <shiro.version>1.3.2</shiro.version>
         <slf4j.version>1.7.16</slf4j.version>
         <stormpath.sdk.version>1.1.1</stormpath.sdk.version>
 
@@ -166,28 +166,29 @@
             <dependency>
                 <groupId>com.stormpath.shiro</groupId>
                 <artifactId>stormpath-shiro-core</artifactId>
-                <version>${project.version}</version>
+                <version>0.7.3-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.stormpath.shiro</groupId>
                 <artifactId>stormpath-shiro-servlet</artifactId>
-                <version>${project.version}</version>
+                <version>0.7.3-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.stormpath.shiro</groupId>
                 <artifactId>stormpath-shiro-servlet-plugin</artifactId>
-                <version>${project.version}</version>
+                <version>0.7.3-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.stormpath.shiro</groupId>
                 <artifactId>stormpath-shiro-spring-boot-starter</artifactId>
-                <version>${project.version}</version>
+                <version>0.7.3-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.stormpath.shiro</groupId>
                 <artifactId>stormpath-shiro-spring-boot-web-starter</artifactId>
-                <version>${project.version}</version>
+                <version>0.7.3-SNAPSHOT</version>
             </dependency>
+
 
             <!-- Shiro dependencies: -->
             <dependency>
