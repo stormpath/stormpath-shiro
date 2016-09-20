@@ -101,7 +101,7 @@
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
 
         <!-- Standard Dependencies: -->
-        <shiro.version>1.3.2</shiro.version>
+        <shiro.version>1.4.0-SNAPSHOT</shiro.version>
         <slf4j.version>1.7.16</slf4j.version>
         <stormpath.sdk.version>1.0.4</stormpath.sdk.version>
 
@@ -180,16 +180,6 @@
             </dependency>
             <dependency>
                 <groupId>com.stormpath.shiro</groupId>
-                <artifactId>shiro-spring-boot-starter</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.stormpath.shiro</groupId>
-                <artifactId>shiro-spring-boot-web-starter</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.stormpath.shiro</groupId>
                 <artifactId>stormpath-shiro-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -198,17 +188,6 @@
                 <artifactId>stormpath-shiro-spring-boot-web-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.stormpath.shiro</groupId>
-                <artifactId>shiro-spring-config</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.stormpath.shiro</groupId>
-                <artifactId>shiro-spring-config-web</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
 
             <!-- Shiro dependencies: -->
             <dependency>
@@ -226,7 +205,16 @@
                 <artifactId>shiro-spring</artifactId>
                 <version>${shiro.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-spring-boot-starter</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-spring-boot-web-starter</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.stormpath.sdk</groupId>

@@ -25,16 +25,19 @@ import com.stormpath.shiro.servlet.event.LogoutEventListener;
 import com.stormpath.shiro.servlet.event.RequestEventListenerBridge;
 import com.stormpath.shiro.servlet.filter.ShiroPrioritizedFilterChainResolver;
 import com.stormpath.shiro.servlet.filter.StormpathShiroPassiveLoginFilter;
-import com.stormpath.shiro.spring.config.web.DefaultShiroFilterChainDefinition;
-import com.stormpath.shiro.spring.config.web.ShiroFilterChainDefinition;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.spring.config.web.autoconfigure.ShiroWebAutoConfiguration;
+import org.apache.shiro.spring.config.web.autoconfigure.ShiroWebFilterConfiguration;
+import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
+import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -51,6 +54,7 @@ import java.util.Set;
  */
 @SuppressWarnings("SpringFacetCodeInspection")
 @Configuration
+@ImportAutoConfiguration({ShiroWebAutoConfiguration.class, ShiroWebFilterConfiguration.class})
 @ConditionalOnProperty(name = "stormpath.shiro.web.enabled", matchIfMissing = true)
 public class StormpathShiroWebAutoConfiguration  {
 

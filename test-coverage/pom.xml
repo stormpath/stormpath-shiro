@@ -38,24 +38,6 @@
             <groupId>com.stormpath.shiro</groupId>
             <artifactId>stormpath-shiro-servlet</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>com.stormpath.shiro</groupId>
-            <artifactId>shiro-spring-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.stormpath.shiro</groupId>
-            <artifactId>shiro-spring-config-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.stormpath.shiro</groupId>
-            <artifactId>shiro-spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.stormpath.shiro</groupId>
-            <artifactId>shiro-spring-boot-web-starter</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.stormpath.shiro</groupId>
             <artifactId>stormpath-shiro-spring-boot-starter</artifactId>
