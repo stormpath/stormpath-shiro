@@ -22,7 +22,7 @@
     <parent>
         <groupId>com.stormpath.shiro</groupId>
         <artifactId>stormpath-shiro-examples</artifactId>
-        <version>0.7.1-SNAPSHOT</version>
+        <version>0.7.1</version>
     </parent>
 
     <artifactId>stormpath-shiro-servlet-example</artifactId>
