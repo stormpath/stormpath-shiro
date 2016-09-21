@@ -45,6 +45,10 @@ Then run `mvn install -Prun-TCK`
 
 ## Change Log
 
+### 0.7.1
+- Corrected Spring test dependencies scope
+- Spring modules now correctly set the `EventBus` instance on the `SecurityManager` 
+
 ### 0.7.0
 - Upgraded Shiro dependency to latest stable release of 1.3.2
 - Upgraded Stormpath SDK dependency to latest released version: 1.0.4
