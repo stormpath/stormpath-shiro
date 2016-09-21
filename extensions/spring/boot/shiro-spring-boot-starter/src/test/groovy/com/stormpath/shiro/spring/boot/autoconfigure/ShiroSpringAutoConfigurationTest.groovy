@@ -15,7 +15,11 @@
  */
 package com.stormpath.shiro.spring.boot.autoconfigure
 
+import com.stormpath.shiro.spring.boot.autoconfigure.ShiroAutoConfigurationTestApplication.EventBusAwareObject
+import com.stormpath.shiro.spring.boot.autoconfigure.ShiroAutoConfigurationTestApplication.SubscribedListener
 import org.apache.shiro.authc.UsernamePasswordToken
+import org.apache.shiro.event.EventBus
+import org.apache.shiro.mgt.DefaultSecurityManager
 import org.apache.shiro.mgt.SecurityManager
 import org.apache.shiro.subject.Subject
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,11 +38,28 @@ public class ShiroSpringAutoConfigurationTest extends AbstractTestNGSpringContex
     @Autowired
     private SecurityManager securityManager
 
+    @Autowired
+    private EventBus eventBus;
+
+    @Autowired
+    private EventBusAwareObject eventBusAwareObject;
+
+    @Autowired
+    private SubscribedListener subscribedListener;
+
     @Test
     public void testMinimalConfiguration() {
 
         // first do a quick check of the injected objects
         assertNotNull securityManager
+        assertTrue(securityManager instanceof DefaultSecurityManager)
+
+        assertNotNull eventBusAwareObject
+        assertNotNull eventBus
+        assertTrue(eventBus.registry.containsKey(subscribedListener))
+        assertSame(eventBusAwareObject.getEventBus(), eventBus)
+        assertSame(((DefaultSecurityManager)securityManager).getEventBus(), eventBus)
+
 
         // now lets do a couple quick permission tests to make sure everything has been initialized correctly.
         Subject joeCoder = new Subject.Builder(securityManager).buildSubject()

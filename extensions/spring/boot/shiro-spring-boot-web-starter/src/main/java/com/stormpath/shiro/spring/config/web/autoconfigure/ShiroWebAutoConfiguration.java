@@ -23,7 +23,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
@@ -31,7 +30,6 @@ import java.util.List;
  * @since 0.7.0
  */
 @Configuration
-@Import(ShiroBeanAutoConfiguration.class)
 @ConditionalOnProperty(name = "shiro.web.enabled", matchIfMissing = true)
 public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
 

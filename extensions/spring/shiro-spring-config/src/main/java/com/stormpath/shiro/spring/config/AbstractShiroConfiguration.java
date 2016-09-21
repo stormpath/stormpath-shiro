@@ -16,6 +16,7 @@
 package com.stormpath.shiro.spring.config;
 
 import org.apache.shiro.cache.CacheManager;
+import org.apache.shiro.event.EventBus;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.realm.Realm;
@@ -33,10 +34,14 @@ public class AbstractShiroConfiguration {
     @Autowired(required = false)
     private CacheManager cacheManager;
 
+    @Autowired
+    private EventBus eventBus;
+
     protected SessionsSecurityManager securityManager(List<Realm> realms, SessionManager sessionManager) {
         SessionsSecurityManager securityManager = createSecurityManager();
         securityManager.setRealms(realms);
         securityManager.setSessionManager(sessionManager);
+        securityManager.setEventBus(eventBus);
 
         if (cacheManager != null) {
             securityManager.setCacheManager(cacheManager);

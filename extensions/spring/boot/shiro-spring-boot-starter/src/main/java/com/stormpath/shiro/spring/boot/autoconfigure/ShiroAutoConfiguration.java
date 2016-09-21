@@ -16,7 +16,6 @@
 package com.stormpath.shiro.spring.boot.autoconfigure;
 
 import com.stormpath.shiro.spring.config.AbstractShiroConfiguration;
-import com.stormpath.shiro.spring.config.ShiroBeanConfiguration;
 import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
@@ -24,7 +23,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
@@ -32,7 +30,6 @@ import java.util.List;
  * @since 0.7.0
  */
 @Configuration
-@Import(ShiroBeanConfiguration.class)
 @SuppressWarnings("SpringFacetCodeInspection")
 @ConditionalOnProperty(name = "shiro.enabled", matchIfMissing = true)
 public class ShiroAutoConfiguration extends AbstractShiroConfiguration {

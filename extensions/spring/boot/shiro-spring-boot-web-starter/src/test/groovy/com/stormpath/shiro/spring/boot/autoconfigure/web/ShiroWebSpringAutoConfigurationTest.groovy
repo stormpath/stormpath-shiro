@@ -15,6 +15,11 @@
  */
 package com.stormpath.shiro.spring.boot.autoconfigure.web
 
+
+import com.stormpath.shiro.spring.boot.autoconfigure.web.ShiroWebAutoConfigurationTestApplication.SubscribedListener
+import com.stormpath.shiro.spring.boot.autoconfigure.web.ShiroWebAutoConfigurationTestApplication.EventBusAwareObject
+
+import org.apache.shiro.event.EventBus
 import org.apache.shiro.mgt.SecurityManager
 import org.apache.shiro.web.mgt.WebSecurityManager
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,6 +30,8 @@ import org.testng.annotations.Test
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.instanceOf
 import static org.testng.Assert.assertNotNull
+import static org.testng.Assert.assertSame
+import static org.testng.Assert.assertTrue
 
 /**
  * @since 0.7.0
@@ -35,12 +42,26 @@ public class ShiroWebSpringAutoConfigurationTest extends AbstractTestNGSpringCon
     @Autowired
     private SecurityManager securityManager
 
+    @Autowired
+    private EventBus eventBus;
+
+    @Autowired
+    private EventBusAwareObject eventBusAwareObject;
+
+    @Autowired
+    private SubscribedListener subscribedListener;
+
     @Test
     public void testMinimalConfiguration() {
 
         // first do a quick check of the injected objects
         assertNotNull securityManager
         assertThat securityManager, instanceOf(WebSecurityManager)
+
+        assertNotNull eventBusAwareObject
+        assertNotNull eventBus
+        assertTrue(eventBus.registry.containsKey(subscribedListener))
+        assertSame(eventBusAwareObject.getEventBus(), eventBus)
 
 //        // now lets do a couple quick permission tests to make sure everything has been initialized correctly.
 //        Subject joeCoder = new Subject.Builder(securityManager).buildSubject()

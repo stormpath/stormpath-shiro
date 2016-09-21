@@ -16,7 +16,6 @@
 package com.stormpath.shiro.spring.config;
 
 import org.apache.shiro.event.EventBus;
-import org.apache.shiro.event.support.DefaultEventBus;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,17 +27,20 @@ import org.springframework.context.annotation.Configuration;
 public class ShiroBeanConfiguration extends AbstractShiroBeanConfiguration {
 
     @Bean
+    @Override
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return super.lifecycleBeanPostProcessor();
     }
 
     @Bean
+    @Override
     public EventBus eventBus() {
-        return new DefaultEventBus();
+        return super.eventBus();
     }
 
     @Bean
+    @Override
     public ShiroEventBusBeanPostProcessor shiroEventBusAwareBeanPostProcessor(EventBus eventBus) {
-        return new ShiroEventBusBeanPostProcessor(eventBus);
+        return super.shiroEventBusAwareBeanPostProcessor(eventBus);
     }
 }

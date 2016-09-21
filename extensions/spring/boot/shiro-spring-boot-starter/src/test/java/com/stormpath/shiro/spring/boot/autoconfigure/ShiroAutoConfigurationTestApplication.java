@@ -16,6 +16,9 @@
 package com.stormpath.shiro.spring.boot.autoconfigure;
 
 
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.EventBusAware;
+import org.apache.shiro.event.Subscribe;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.realm.text.TextConfigurationRealm;
 import org.springframework.boot.SpringApplication;
@@ -43,5 +46,36 @@ public class ShiroAutoConfigurationTestApplication {
                                  "user=read");
         realm.setCachingEnabled(true);
         return realm;
+    }
+
+    @Bean
+    EventBusAwareObject eventBusAwareObject() {
+        return new EventBusAwareObject();
+    }
+
+    @Bean
+    SubscribedListener subscribedListener() {
+        return new SubscribedListener();
+    }
+
+
+    public static class EventBusAwareObject implements EventBusAware {
+
+        private EventBus eventBus;
+
+        @Override
+        public void setEventBus(EventBus bus) {
+            this.eventBus = bus;
+        }
+
+        public EventBus getEventBus() {
+            return eventBus;
+        }
+    }
+
+    public static class SubscribedListener {
+
+        @Subscribe
+        public void onEvent(Object object) {}
     }
 }
