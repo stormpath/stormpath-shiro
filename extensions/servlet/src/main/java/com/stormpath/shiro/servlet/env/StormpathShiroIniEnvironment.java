@@ -91,60 +91,27 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
                     DefaultConfigFactory.ENVVARS_TOKEN + NL +
                     DefaultConfigFactory.SYSPROPS_TOKEN;
 
-    protected Ini getDefaultIni() {
-        Ini ini = super.getDefaultIni();
-        if (ini == null) {
-            ini = new Ini();
-        }
 
-        // we MUST return a non empty Ini object
-        if (CollectionUtils.isEmpty(ini)) {
-            addDefaultsToIni(ini);
-        }
-        return ini;
+
+    @Override
+    protected Ini parseConfig() {
+        return addDefaultsToIni(super.parseConfig());
     }
 
     @Override
-    @SuppressWarnings("PMD.AvoidReassigningParameters")
-    public void setIni(Ini ini) {
-
-        if (ini == null) {
-            ini = new Ini();
-        }
-
-        addDefaultsToIni(ini);
-
-        super.setIni(ini);
-    }
-
-    private Ini.Section getConfigSection(Ini ini) {
-
-        Ini.Section configSection = ini.getSection(IniSecurityManagerFactory.MAIN_SECTION_NAME);
-        if (CollectionUtils.isEmpty(configSection)) {
-            configSection = ini.getSection(Ini.DEFAULT_SECTION_NAME);
-            if (configSection == null) {
-                configSection = ini.addSection(Ini.DEFAULT_SECTION_NAME);
-            }
-        }
-
-        return configSection;
-    }
-
-    private void addDefaultsToIni(Ini ini) {
-
-        // TODO: this is not ideal, we need to make shiro a bit more flexible
-        // and this is tightly coupled with the following method
-        Ini.Section configSection = getConfigSection(ini);
+    protected Ini getFrameworkIni() {
+        Ini ini = new Ini();
 
         // lazy associate the client with the realm, so changes can be made if needed.
-        if (!configSection.containsKey(DEFAULTS_STORMPATH_REALM_PROPERTY+".client")) {
-            configSection.put(DEFAULTS_STORMPATH_REALM_PROPERTY+".client", "$"+DEFAULTS_STORMPATH_CLIENT_PROPERTY);
-        }
+        ini.setSectionProperty(IniSecurityManagerFactory.MAIN_SECTION_NAME, DEFAULTS_STORMPATH_REALM_PROPERTY+".client", "$"+DEFAULTS_STORMPATH_CLIENT_PROPERTY);
 
         // global properties 'shiro.*' are not loaded from the defaults, we must set it in the ini.
-        if (!configSection.containsKey("shiro.loginUrl")) {
-            configSection.put("shiro.loginUrl", "/login");
-        }
+        ini.setSectionProperty(IniSecurityManagerFactory.MAIN_SECTION_NAME, "shiro.loginUrl", "/login");
+
+        return ini;
+    }
+
+    private Ini addDefaultsToIni(Ini ini) {
 
         // protect the world if the URL section is missing
         Ini.Section urls = ini.getSection(IniFilterChainResolverFactory.URLS);
@@ -152,7 +119,7 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
         if (CollectionUtils.isEmpty(urls) && CollectionUtils.isEmpty(filters)) {
             ini.setSectionProperty(IniFilterChainResolverFactory.URLS, "/**", DefaultFilter.authc.name());
         }
-
+        return ini;
     }
 
     @Override
