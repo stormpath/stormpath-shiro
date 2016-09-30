@@ -35,7 +35,6 @@ import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.Factory;
 import org.apache.shiro.web.config.IniFilterChainResolverFactory;
-import org.apache.shiro.web.config.WebIniSecurityManagerFactory;
 import org.apache.shiro.web.env.IniWebEnvironment;
 import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
@@ -239,47 +238,10 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
         return new StormpathShiroFilterChainResolverFactory(originalFilterChainResolver, getServletContext());
     }
 
-// TODO think about putting these in Shiro proper
-
     @Override
-    protected WebSecurityManager createWebSecurityManager() {
-        WebIniSecurityManagerFactory factory = getSecurityManagerFactory();
-        factory.setIni(getIni());
-
-        WebSecurityManager wsm = (WebSecurityManager)factory.getInstance();
-
-        //SHIRO-306 - get beans after they've been created (the call was before the factory.getInstance() call,
-        //which always returned null.
-        Map<String, ?> beans = factory.getBeans();
-        if (!CollectionUtils.isEmpty(beans)) {
-            this.objects.putAll(beans);
-        }
-
-        return wsm;
+    protected Map<String, Object> getDefaults() {
+        Map<String, Object> defaults = super.getDefaults();
+        defaults.putAll(defaultEnvironmentObjects);
+        return defaults;
     }
-
-    protected WebIniSecurityManagerFactory getSecurityManagerFactory() {
-        // default implementation
-//        WebIniSecurityManagerFactory factory = new WebIniSecurityManagerFactory();
-
-        return new WebIniSecurityManagerFactoryWithDefaults(defaultEnvironmentObjects);
-    }
-
-    private static class WebIniSecurityManagerFactoryWithDefaults extends WebIniSecurityManagerFactory {
-
-        final private Map<String, ?> environmentDefaults;
-
-        public WebIniSecurityManagerFactoryWithDefaults(Map<String, ?> environmentDefaults) {
-            super();
-            this.environmentDefaults = environmentDefaults;
-        }
-
-        @Override
-        protected Map<String, ?> createDefaults(Ini ini, Ini.Section mainSection) {
-            Map<String, Object> defaults = new HashMap<String, Object>(super.createDefaults(ini, mainSection));
-            defaults.putAll(environmentDefaults);
-            return defaults;
-        }
-    }
-
 }
