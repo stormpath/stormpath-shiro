@@ -55,12 +55,12 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
     @Test
     public void testGetDefaultIni() {
 
-        def ini = new StormpathShiroIniEnvironment().defaultIni
+        def ini = new StormpathShiroIniEnvironment().parseConfig()
 
         // The DEFAULT section name is ""
-        assertThat(ini.getSectionNames(), allOf(hasItem("urls"), hasItem(""), hasSize(2)))
+        assertThat(ini.getSectionNames(), allOf(hasItem("urls"), hasItem("main"), hasSize(2)))
         assertThat(ini.getSection("urls"), allOf(hasEntry("/**", "authc"), aMapWithSize(1)))
-        assertThat(ini.getSection(""), allOf(hasEntry("stormpathRealm.client", '$stormpathClient'), hasEntry("shiro.loginUrl", "/login"), aMapWithSize(2)))
+        assertThat(ini.getSection("main"), allOf(hasEntry("stormpathRealm.client", '$stormpathClient'), hasEntry("shiro.loginUrl", "/login"), aMapWithSize(2)))
     }
 
     @Test
@@ -98,9 +98,9 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
         def environment = new StormpathShiroIniEnvironment()
         environment.setIni(null)
 
-        def ini = environment.getIni()
+        def ini = environment.parseConfig()
         assertNotNull ini
-        assertThat(ini.getSection(Ini.DEFAULT_SECTION_NAME), (allOf(hasEntry("shiro.loginUrl", "/login"),
+        assertThat(ini.getSection("main"), (allOf(hasEntry("shiro.loginUrl", "/login"),
                                                                     hasEntry("stormpathRealm.client", "\$stormpathClient"))))
     }
 
