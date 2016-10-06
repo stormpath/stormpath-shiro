@@ -26,7 +26,7 @@
 
     <groupId>com.stormpath.shiro.tutorial</groupId>
     <artifactId>stormpath-shiro-servlet-tutorial-step-2</artifactId>
-    <name>Stormpath+Shiro Application :: Step 2</name>
+    <name>Stormpath :: Shiro Servlet Tutorial :: Step 2</name>
     <packaging>war</packaging>
 
     <dependencies>

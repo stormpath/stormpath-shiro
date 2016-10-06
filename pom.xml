@@ -86,10 +86,7 @@
         <module>extensions/servlet-plugin</module>
         <module>extensions/spring</module>
         <module>examples</module>
-        <module>tutorials/servlet/00-initial-app</module>
-        <module>tutorials/servlet/01-add-security</module>
-        <module>tutorials/servlet/02-add-roles</module>
-        <module>tutorials/servlet/03-use-permissions</module>
+        <module>tutorials</module>
         <module>test-coverage</module>
     </modules>
 

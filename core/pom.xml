@@ -26,7 +26,7 @@
     </parent>
 
     <artifactId>stormpath-shiro-core</artifactId>
-    <name>Stormpath Shiro :: Core</name>
+    <name>Stormpath :: Shiro :: Core</name>
     <packaging>jar</packaging>
 
     <dependencies>

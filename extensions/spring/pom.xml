@@ -28,7 +28,7 @@
     <artifactId>stormpath-shiro-spring-parent</artifactId>
     <packaging>pom</packaging>
 
-    <name>Stormpath Shiro :: Spring Parent</name>
+    <name>Stormpath :: Shiro :: Spring Parent</name>
 
     <modules>
         <module>boot/stormpath-shiro-spring-boot-starter</module>
