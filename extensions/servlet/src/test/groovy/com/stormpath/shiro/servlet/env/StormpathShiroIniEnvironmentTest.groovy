@@ -19,9 +19,11 @@ import com.stormpath.sdk.client.Client
 import com.stormpath.sdk.servlet.config.Config
 import com.stormpath.sdk.servlet.config.ConfigLoader
 import com.stormpath.sdk.servlet.config.impl.DefaultConfigFactory
+import com.stormpath.sdk.servlet.event.impl.EventPublisherFactory
 import com.stormpath.shiro.servlet.config.ClientFactory
 import com.stormpath.shiro.realm.ApplicationRealm
 import com.stormpath.shiro.servlet.ShiroTestSupportWithSystemProperties
+import com.stormpath.shiro.servlet.event.RequestEventListenerBridge
 import com.stormpath.shiro.servlet.filter.StormpathShiroFilterChainResolverFactory
 import com.stormpath.shiro.stubs.StubApplicationResolver
 import com.stormpath.shiro.stubs.StubFilter
@@ -58,9 +60,18 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
         def ini = new StormpathShiroIniEnvironment().parseConfig()
 
         // The DEFAULT section name is ""
-        assertThat(ini.getSectionNames(), allOf(hasItem("urls"), hasItem("main"), hasSize(2)))
+        assertThat(ini.getSectionNames(), allOf(hasItem("urls"), hasItem("main"), hasItem("stormpath"), hasSize(3)))
         assertThat(ini.getSection("urls"), allOf(hasEntry("/**", "authc"), aMapWithSize(1)))
-        assertThat(ini.getSection("main"), allOf(hasEntry("stormpathRealm.client", '$stormpathClient'), hasEntry("shiro.loginUrl", "/login"), aMapWithSize(2)))
+        assertThat(ini.getSection("main"),
+                allOf(
+                        hasEntry("stormpathRealm.client", '$stormpathClient'),
+                        hasEntry("shiro.loginUrl", "\${stormpath.web.login.uri}")
+                ))
+        assertThat(ini.getSection("stormpath"),
+                allOf(
+                        hasEntry(EventPublisherFactory.REQUEST_EVENT_LISTENER, 'com.stormpath.shiro.servlet.event.RequestEventListenerBridge'),
+                        aMapWithSize(1)
+                ))
     }
 
     @Test
@@ -75,8 +86,7 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
 
         expectConfigFromServletContext(servletContext, delayedInitMap, configKey).anyTimes()
 
-        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES)).andReturn(null).times(2)
-        expect(servletContext.setInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES, StormpathShiroIniEnvironment.SHIRO_STORMPATH_PROPERTIES_SOURCES)).andReturn(true)
+        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES)).andReturn(null)
         expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES)).andReturn(null)
         expect(servletContext.getResourceAsStream(anyObject())).andReturn(null).anyTimes()
         expect(servletContext.getInitParameter(StormpathShiroFilterChainResolverFactory.PRIORITY_FILTER_CLASSES_PARAMETER)).andReturn(StubFilter.getName())
@@ -100,7 +110,7 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
 
         def ini = environment.parseConfig()
         assertNotNull ini
-        assertThat(ini.getSection("main"), (allOf(hasEntry("shiro.loginUrl", "/login"),
+        assertThat(ini.getSection("main"), (allOf(hasEntry("shiro.loginUrl", "\${stormpath.web.login.uri}"),
                                                                     hasEntry("stormpathRealm.client", "\$stormpathClient"))))
     }
 
@@ -116,9 +126,7 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
 
         expectConfigFromServletContext(servletContext, delayedInitMap, configKey).anyTimes()
 
-        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES)).andReturn(null).times(2)
-        expect(servletContext.setInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES, StormpathShiroIniEnvironment.SHIRO_STORMPATH_PROPERTIES_SOURCES)).andReturn(true)
-
+        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES)).andReturn(null)
         expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES)).andReturn(null)
         expect(servletContext.getResourceAsStream(anyObject())).andReturn(null).anyTimes()
         expect(servletContext.getInitParameter(StormpathShiroFilterChainResolverFactory.PRIORITY_FILTER_CLASSES_PARAMETER)).andReturn(StubFilter.getName())
@@ -149,8 +157,7 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
 
         expectConfigFromServletContext(servletContext, delayedInitMap, configKey).anyTimes()
 
-        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES)).andReturn(null).times(2)
-        expect(servletContext.setInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES, StormpathShiroIniEnvironment.SHIRO_STORMPATH_PROPERTIES_SOURCES)).andReturn(true)
+        expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES)).andReturn(null)
         expect(servletContext.getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES)).andReturn(null)
         expect(servletContext.getResourceAsStream(anyObject())).andReturn(null).anyTimes()
         servletContext.setAttribute(eq(Client.getName()), capture(clientCapture))

@@ -17,7 +17,9 @@ package com.stormpath.shiro.spring.boot.autoconfigure
 
 import com.stormpath.sdk.application.Application
 import com.stormpath.sdk.client.Client
+import com.stormpath.sdk.servlet.event.RequestEventListener
 import com.stormpath.shiro.realm.PassthroughApplicationRealm
+import com.stormpath.shiro.servlet.event.RequestEventListenerBridge
 import org.apache.shiro.mgt.SecurityManager
 import org.apache.shiro.web.mgt.WebSecurityManager
 import org.springframework.beans.factory.annotation.Autowired
@@ -44,6 +46,9 @@ public class StormpathShiroWebSpringAutoConfigurationTest extends AbstractTestNG
     @Autowired
     Application application
 
+    @Autowired
+    RequestEventListener requestEventListener
+
     @Test
     public void testMinimalConfiguration() {
 
@@ -51,7 +56,10 @@ public class StormpathShiroWebSpringAutoConfigurationTest extends AbstractTestNG
         assertThat securityManager, instanceOf(WebSecurityManager)
         assertNotNull client
         assertNotNull application
+        assertNotNull requestEventListener
 
         assertThat securityManager.realms, allOf(hasSize(1), hasItem(instanceOf(PassthroughApplicationRealm)))
+
+        assertThat requestEventListener, instanceOf(RequestEventListenerBridge)
     }
 }

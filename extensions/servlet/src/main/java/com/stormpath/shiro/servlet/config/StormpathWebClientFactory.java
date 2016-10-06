@@ -69,11 +69,21 @@ public class StormpathWebClientFactory extends AbstractFactory<Client> implement
     private String apiKeyId = null;
     private String apiKeySecret = null;
 
-
-
-    final private ServletContext servletContext;
+    private ServletContext servletContext;
 
     public StormpathWebClientFactory(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
+
+    public StormpathWebClientFactory() {
+        super();
+    }
+
+    public ServletContext getServletContext() {
+        return servletContext;
+    }
+
+    public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
 

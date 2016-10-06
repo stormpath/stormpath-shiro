@@ -31,6 +31,17 @@ import java.util.Collections;
 import java.util.List;
 
 
+/**
+ * This {@link FilterChainResolver} factory creates a new ShiroPrioritizedFilterChainResolver which wraps
+ * the <code>delegateFilterChainResolver</code>.  The prioritized filters will always execute first, after which the
+ * filter chain from the <code>delegateFilterChainResolver</code> (if any) will execute.
+ * By default, the {@link SelfConfiguredStormpathFilter} will execute first, which handles ALL Stormpath authentication, then
+ * {@link StormpathShiroPassiveLoginFilter} will detect if the previous filter logged in a Stormpath {@link com.stormpath.sdk.account.Account},
+ * if so, the Account will be used to login the Shiro API.
+ *<p><strong>NOTE:</strong> This class is what bridges the Stormpath and Apache Shiro APIs.</p>
+ *
+ * @since 0.7
+ */
 public class StormpathShiroFilterChainResolverFactory extends AbstractFactory<FilterChainResolver> {
 
     final private FilterChainResolver delegateFilterChainResolver;
@@ -40,6 +51,7 @@ public class StormpathShiroFilterChainResolverFactory extends AbstractFactory<Fi
     final public static String PRIORITY_FILTER_CLASSES_PARAMETER = StormpathShiroFilterChainResolverFactory.class.getName() + "_PRIORITY_FILTER_CLASSES";
 
     final private static Class[] DEFAULT_PRIORITY_FILTER_CLASSES = {SelfConfiguredStormpathFilter.class, StormpathShiroPassiveLoginFilter.class};
+
 
     public StormpathShiroFilterChainResolverFactory(FilterChainResolver delegateFilterChainResolver, ServletContext servletContext) {
         this.delegateFilterChainResolver = delegateFilterChainResolver;

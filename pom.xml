@@ -254,6 +254,19 @@
                 <version>3.1.0</version>
             </dependency>
 
+            <dependency>
+                <!-- optional dep for the reflection builder -->
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-configuration2</artifactId>
+                <version>2.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
             <!-- Spring -->
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -419,6 +432,7 @@
                         </properties>
                         <excludes>
                             <exclude>**/*.txt</exclude>
+                            <exclude>**/extensions/servlet/docs/**/*</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
