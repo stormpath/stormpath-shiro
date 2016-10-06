@@ -27,7 +27,7 @@
     <artifactId>stormpath-shiro-test-coverage</artifactId>
     <packaging>pom</packaging>
 
-    <name>Stormpath Shiro :: Test Coverage</name>
+    <name>Stormpath :: Shiro :: Test Coverage</name>
 
     <dependencies>
         <dependency>

@@ -24,17 +24,16 @@
         <version>0.7.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>stormpath-shiro-examples</artifactId>
+    <artifactId>stormpath-shiro-tutorials</artifactId>
     <packaging>pom</packaging>
 
-    <name>Stormpath :: Shiro :: Examples</name>
+    <name>Stormpath Shiro :: Tutorials</name>
 
     <modules>
-        <module>quickstart</module>
-        <module>servlet</module>
-        <module>servlet-zero-config</module>
-        <module>spring-boot</module>
-        <module>spring-boot-web</module>
+        <module>servlet/00-initial-app</module>
+        <module>servlet/01-add-security</module>
+        <module>servlet/02-add-roles</module>
+        <module>servlet/03-use-permissions</module>
     </modules>
 
 </project>
