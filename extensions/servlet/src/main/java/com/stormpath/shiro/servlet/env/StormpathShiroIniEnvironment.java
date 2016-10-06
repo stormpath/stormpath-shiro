@@ -16,25 +16,21 @@
 package com.stormpath.shiro.servlet.env;
 
 import com.stormpath.sdk.client.Client;
-import com.stormpath.sdk.impl.io.ClasspathResource;
-import com.stormpath.sdk.lang.Strings;
 import com.stormpath.sdk.servlet.config.Config;
 import com.stormpath.sdk.servlet.config.ConfigLoader;
-import com.stormpath.sdk.servlet.config.impl.DefaultConfigFactory;
 import com.stormpath.sdk.servlet.event.RequestEventListener;
 import com.stormpath.sdk.servlet.event.impl.EventPublisherFactory;
-import com.stormpath.shiro.realm.ApplicationRealm;
 import com.stormpath.shiro.realm.PassthroughApplicationRealm;
+import com.stormpath.shiro.servlet.config.MapLookup;
 import com.stormpath.shiro.servlet.config.ShiroIniConfigLoader;
-import com.stormpath.shiro.servlet.config.StormpathWebClientFactory;
-import com.stormpath.shiro.servlet.event.LogoutEventListener;
 import com.stormpath.shiro.servlet.filter.StormpathShiroFilterChainResolverFactory;
+import org.apache.shiro.config.CommonsInterpolator;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.config.Ini;
-import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.Factory;
 import org.apache.shiro.web.config.IniFilterChainResolverFactory;
+import org.apache.shiro.web.config.WebIniSecurityManagerFactory;
 import org.apache.shiro.web.env.IniWebEnvironment;
 import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
@@ -50,24 +46,8 @@ import java.util.Map;
 /**
  * {@link IniWebEnvironment} implementation that creates a default Stormpath {@link PassthroughApplicationRealm}.
  *<BR/><BR/>
- * The default objects can be over written, the defaults for these are equivalent to:
+ * The default objects can be over written, the defaults can be found in <code>com.stormpath.shiro.servlet.config.stormpath-shiro.ini</code>
  *
- * <code><pre>
- * [main]
- * stormpathClient = com.stormpath.shiro.web.servlet.config.StormpathWebClientFactory
- * stormpathRealm = com.stormpath.shiro.realm.PassthroughApplicationRealm
- * stormpathRealm.client = $stormpathClient
- * </pre></code>
- * <BR/>
- * Further <code>stormpath.*</code> properties are used to provide defaults.<BR/>
- * <code><pre>
- * stormpathClient.baseUrl = stormpath.client.baseUrl
- * stormpathClient.apiKeyFileLocation = stormpath.client.apiKey.file
- * stormpathClient.apiKeyId = stormpath.client.apiKey.id
- * stormpathClient.apiKeySecret = stormpath.client.apiKey.secret
- *
- * stormpathRealm.applicationRestUrl = stormpath.application.href
- * </pre></code>
  * @since 0.7.0
  */
 public class StormpathShiroIniEnvironment extends IniWebEnvironment {
@@ -78,20 +58,20 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
 
     final private Map<String, Object> defaultEnvironmentObjects = new HashMap<>();
 
-    final private static String STORMPATH_APPLICATION_HREF_PROPERTY = "stormpath.application.href";
     final private static String DEFAULTS_STORMPATH_CLIENT_PROPERTY = "stormpathClient";
-    final private static String DEFAULTS_STORMPATH_REALM_PROPERTY = "stormpathRealm";
-    final private static String NL = "\n";
-    final private static String  SHIRO_STORMPATH_PROPERTIES_SOURCES =
-                    ClasspathResource.SCHEME_PREFIX + "com/stormpath/sdk/servlet/config/web." + DefaultConfigFactory.STORMPATH_PROPERTIES + NL +
-                    ClasspathResource.SCHEME_PREFIX + "com/stormpath/shiro/servlet/config/shiro." + DefaultConfigFactory.STORMPATH_PROPERTIES + NL +
-                    ClasspathResource.SCHEME_PREFIX + DefaultConfigFactory.STORMPATH_PROPERTIES + NL +
-                    "/WEB-INF/stormpath.properties" + NL +
-                    DefaultConfigFactory.CONTEXT_PARAM_TOKEN + NL +
-                    DefaultConfigFactory.ENVVARS_TOKEN + NL +
-                    DefaultConfigFactory.SYSPROPS_TOKEN;
 
+    final private Map<String, String> stormpathInterpolationMap = new HashMap<>();
 
+    public StormpathShiroIniEnvironment() {
+
+        WebIniSecurityManagerFactory factory = new WebIniSecurityManagerFactory();
+        CommonsInterpolator interpolator = new CommonsInterpolator();
+        // allow for ini files to contain ${stormpath.*} keys to be interpolated after config is loaded
+        interpolator.getConfigurationInterpolator().addDefaultLookup(new MapLookup(stormpathInterpolationMap));
+
+        factory.getReflectionBuilder().setInterpolator(interpolator);
+        setSecurityManagerFactory(factory);
+    }
 
     @Override
     protected Ini parseConfig() {
@@ -100,17 +80,16 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
 
     @Override
     protected Ini getFrameworkIni() {
-        Ini ini = new Ini();
-
-        // lazy associate the client with the realm, so changes can be made if needed.
-        ini.setSectionProperty(IniSecurityManagerFactory.MAIN_SECTION_NAME, DEFAULTS_STORMPATH_REALM_PROPERTY+".client", "$"+DEFAULTS_STORMPATH_CLIENT_PROPERTY);
-
-        // global properties 'shiro.*' are not loaded from the defaults, we must set it in the ini.
-        ini.setSectionProperty(IniSecurityManagerFactory.MAIN_SECTION_NAME, "shiro.loginUrl", "/login");
-
-        return ini;
+        return Ini.fromResourcePath("classpath:com/stormpath/shiro/servlet/config/stormpath-shiro.ini");
     }
 
+    /**
+     * Adds a default filter chain path <code>/** = authc</code> if one is not found in the Ini file, otherwise
+     * returns the <code>ini</code> object untouched.
+     *
+     * @param ini The configuration Ini object to be updated
+     * @return an updated configuration Ini.
+     */
     private Ini addDefaultsToIni(Ini ini) {
 
         // protect the world if the URL section is missing
@@ -126,23 +105,16 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
     protected void configure() {
 
         // create the config object
-        Config stormpathConfig = configureStormpathEnvironment();
+        Config stormpathConfig = configureStormpathEnvironment(); // pull values from the [stormpath] section
+        stormpathInterpolationMap.putAll(stormpathConfig); // values from the shiro.ini files will be interpolated
 
-        // Chicken or egg problem. At this point we do NOT have a Stormpath Client, so we cannot use the
-        // ApplicationResolver because that will force the client to be created, and would load before the
-        // ReflectionBuilder had a chance to customize the client.
-        // To keep things simple for now: if the app href is set, we just pass it on to the realm.
-        ApplicationRealm realm = new PassthroughApplicationRealm();
-        if (stormpathConfig.containsKey(STORMPATH_APPLICATION_HREF_PROPERTY)) {
-            String appHref = stormpathConfig.get(STORMPATH_APPLICATION_HREF_PROPERTY);
-            realm.setApplicationRestUrl(appHref);
-        }
-        defaultEnvironmentObjects.put(DEFAULTS_STORMPATH_CLIENT_PROPERTY, new StormpathWebClientFactory(getServletContext()));
-        defaultEnvironmentObjects.put(DEFAULTS_STORMPATH_REALM_PROPERTY, realm);
+        // Make the servlet context available to beans
+        defaultEnvironmentObjects.put("servletContext", getServletContext());
+
         try {
+            // Put the Stormpath Event Listener in the environment map, so the EventBus can be configured if needed.
             RequestEventListener requestEventListener = stormpathConfig.getInstance(EventPublisherFactory.REQUEST_EVENT_LISTENER);
             defaultEnvironmentObjects.put("stormpathRequestEventListener", requestEventListener);
-            defaultEnvironmentObjects.put("stormpathLogoutListener", new LogoutEventListener());
         }
         catch (ServletException e) {
             throw new ConfigurationException("Could not get instance of Stormpath event listener. ", e);
@@ -150,37 +122,33 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
 
         this.objects.clear();
 
+        // this causes the ReflectionBuilder to parse the config
         WebSecurityManager securityManager = createWebSecurityManager();
         setWebSecurityManager(securityManager);
 
+        // After the ReflectionBuilder parse the config, we nee to pull out the Stormpath Client
+        // and make it available in the ServletContext.  This is needed for other parts of the Stormpath API.
         Factory clientFactory = getObject(DEFAULTS_STORMPATH_CLIENT_PROPERTY, Factory.class);
         log.debug("Updating Client in ServletContext, with instance configured via shiro.ini");
         getServletContext().setAttribute(Client.class.getName(), clientFactory.getInstance());
 
+        // and finally get the FilterChainResolver
         FilterChainResolver resolver = createFilterChainResolver();
         if (resolver != null) {
             setFilterChainResolver(resolver);
         }
-
     }
 
-    protected Config configureStormpathEnvironment() {
-
-        String sourceDefs = getServletContext().getInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES);
-        if (!Strings.hasText(sourceDefs)) {
-            getServletContext().setInitParameter(DefaultConfigFactory.STORMPATH_PROPERTIES_SOURCES, SHIRO_STORMPATH_PROPERTIES_SOURCES);
-        }
-
+    private Config configureStormpathEnvironment() {
         return ensureConfigLoader().createConfig(getServletContext());
     }
 
-    protected ConfigLoader ensureConfigLoader() {
+    ConfigLoader ensureConfigLoader() {
         if (configLoader == null) {
             configLoader = new ShiroIniConfigLoader(getIni());
         }
         return configLoader;
     }
-
 
     @Override
     public void destroy() throws Exception {
@@ -189,6 +157,11 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
         super.destroy();
     }
 
+    /**
+     * Wraps the original FilterChainResolver in a priority based instance, which will detect Stormpath API based logins
+     * (form, auth headers, etc).
+     * @return
+     */
     @Override
     protected FilterChainResolver createFilterChainResolver() {
 
@@ -201,7 +174,10 @@ public class StormpathShiroIniEnvironment extends IniWebEnvironment {
         return getFilterChainResolverFactory(originalFilterChainResolver).getInstance();
     }
 
-    protected Factory<? extends FilterChainResolver> getFilterChainResolverFactory(FilterChainResolver originalFilterChainResolver) {
+    /*
+     * Exposed to facilitate testing.
+     */
+    Factory<? extends FilterChainResolver> getFilterChainResolverFactory(FilterChainResolver originalFilterChainResolver) {
         return new StormpathShiroFilterChainResolverFactory(originalFilterChainResolver, getServletContext());
     }
 
