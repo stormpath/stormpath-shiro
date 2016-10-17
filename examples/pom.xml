@@ -35,6 +35,8 @@
         <module>servlet-zero-config</module>
         <module>spring-boot</module>
         <module>spring-boot-web</module>
-    </modules>
+        <module>jaxrs</module>
+
+  </modules>
 
 </project>
