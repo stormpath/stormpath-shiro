@@ -45,4 +45,33 @@
 
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>xml-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <configuration>
+                    <validationSets>
+                        <validationSet>
+                            <dir>src/main/resources/META-INF</dir>
+                            <systemId>http://java.sun.com/xml/ns/javaee/web-fragment_3_0.xsd</systemId>
+                        </validationSet>
+                    </validationSets>
+                    <catalogs>
+                        <catalog>src/test/resources/catalog.xml</catalog>
+                    </catalogs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <goals>
+                            <goal>validate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
