@@ -22,7 +22,7 @@
     <parent>
         <groupId>com.stormpath.shiro</groupId>
         <artifactId>stormpath-shiro-spring-parent</artifactId>
-        <version>0.7.2-SNAPSHOT</version>
+        <version>0.7.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
