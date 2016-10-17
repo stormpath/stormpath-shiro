@@ -84,6 +84,7 @@
         <module>core</module>
         <module>extensions/servlet</module>
         <module>extensions/servlet-plugin</module>
+        <module>extensions/jaxrs</module>
         <module>extensions/spring</module>
         <module>examples</module>
         <module>tutorials</module>
@@ -168,6 +169,11 @@
             <dependency>
                 <groupId>com.stormpath.shiro</groupId>
                 <artifactId>stormpath-shiro-servlet</artifactId>
+                <version>0.7.3-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.stormpath.shiro</groupId>
+                <artifactId>stormpath-shiro-jaxrs</artifactId>
                 <version>0.7.3-SNAPSHOT</version>
             </dependency>
             <dependency>
