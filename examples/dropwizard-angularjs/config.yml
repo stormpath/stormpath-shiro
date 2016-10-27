@@ -1,0 +1,8 @@
+logging:
+  level: INFO
+  loggers:
+    org.apache.shiro: INFO
+
+# To support angularjs html5 routes, we need to redirect them to index.html
+angularjsRoutes:
+  - /profile

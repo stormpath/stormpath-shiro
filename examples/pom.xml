@@ -36,6 +36,7 @@
         <module>spring-boot</module>
         <module>spring-boot-web</module>
         <module>jaxrs</module>
+        <module>dropwizard-angularjs</module>
     </modules>
 
 </project>
