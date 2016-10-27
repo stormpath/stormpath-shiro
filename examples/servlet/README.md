@@ -9,3 +9,8 @@ To run the example, use the following Apache Maven command:
 ```
 mvn jetty:run
 ```
+
+
+Testing usage of Heroku button:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/bdemers/heroku-wrapper-test&env\[GROUP_ID\]=com.stormpath.shiro&env\[ARTIFACT_ID\]=stormpath-shiro-servlet-example)
