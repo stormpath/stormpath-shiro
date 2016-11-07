@@ -40,6 +40,7 @@ public class ShiroLogoutControllerTest extends ShiroTestSupport {
         def request = createMock(HttpServletRequest)
         def response = createMock(HttpServletResponse)
         def subject = createMock(Subject)
+        def principal = createMock(Object.class)
         def userAgent = createMock(DefaultUserAgent)
         def contentNegotiationResolver = createMock(ContentNegotiationResolver)
         subject.logout()
@@ -47,8 +48,9 @@ public class ShiroLogoutControllerTest extends ShiroTestSupport {
         expect(request.getSession(false)).andReturn(null)
         expect(contentNegotiationResolver.getContentType(anyObject(HttpServletRequest), anyObject(HttpServletResponse), anyObject())).andReturn(MediaType.APPLICATION_JSON)
         response.setStatus(200)
+        expect(subject.getPrincipal()).andReturn(principal)
 
-        replay request, response, subject, userAgent, contentNegotiationResolver
+        replay request, response, subject, userAgent, contentNegotiationResolver, principal
 
         // bind a subject, this will be the subject that will be logged out.
         ThreadContext.bind(subject)
@@ -57,7 +59,7 @@ public class ShiroLogoutControllerTest extends ShiroTestSupport {
         controller.setContentNegotiationResolver(contentNegotiationResolver)
         controller.doPost(request, response)
 
-        verify request, response, subject, userAgent, contentNegotiationResolver
+        verify request, response, subject, userAgent, contentNegotiationResolver, principal
     }
 
     /**
@@ -69,6 +71,7 @@ public class ShiroLogoutControllerTest extends ShiroTestSupport {
         def request = createMock(HttpServletRequest)
         def response = createMock(HttpServletResponse)
         def subject = createMock(Subject)
+        def principal = createMock(Object.class)
         def userAgent = createMock(DefaultUserAgent)
         def contentNegotiationResolver = createMock(ContentNegotiationResolver)
         subject.logout()
@@ -77,8 +80,9 @@ public class ShiroLogoutControllerTest extends ShiroTestSupport {
         expect(request.getSession(false)).andReturn(null)
         expect(contentNegotiationResolver.getContentType(anyObject(HttpServletRequest), anyObject(HttpServletResponse), anyObject())).andReturn(MediaType.APPLICATION_JSON)
         response.setStatus(200)
+        expect(subject.getPrincipal()).andReturn(principal)
 
-        replay request, response, subject, userAgent, contentNegotiationResolver
+        replay request, response, subject, userAgent, contentNegotiationResolver, principal
 
         // bind a subject, this will be the subject that will be logged out.
         ThreadContext.bind(subject)
@@ -87,6 +91,6 @@ public class ShiroLogoutControllerTest extends ShiroTestSupport {
         controller.setContentNegotiationResolver(contentNegotiationResolver)
         controller.doPost(request, response)
 
-        verify request, response, subject, userAgent, contentNegotiationResolver
+        verify request, response, subject, userAgent, contentNegotiationResolver, principal
     }
 }

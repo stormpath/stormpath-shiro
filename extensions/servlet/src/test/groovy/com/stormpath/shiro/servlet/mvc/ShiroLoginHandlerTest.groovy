@@ -46,6 +46,7 @@ public class ShiroLoginHandlerTest extends ShiroTestSupport {
         def account = createMock(Account)
         def securityManager = createMock(SecurityManager)
         def subject = createMock(Subject)
+        def principal = createMock(Object.class)
 
         def request = createMock(HttpServletRequest)
         def response = createMock(HttpServletResponse)
@@ -54,15 +55,16 @@ public class ShiroLoginHandlerTest extends ShiroTestSupport {
 
         expect(securityManager.createSubject(anyObject(SubjectContext))).andReturn(subject)
         subject.login(capture(loginCapture))
+        expect(subject.getPrincipal()).andReturn(principal)
 
-        replay request, response, securityManager, subject, account
+        replay request, response, securityManager, subject, account, principal
 
         SecurityUtils.setSecurityManager(securityManager)
 
         ShiroLoginHandler loginHandler = new ShiroLoginHandler()
         loginHandler.handle(request, response, account)
 
-        verify request, response, securityManager, subject, account
+        verify request, response, securityManager, subject, account, principal
 
         def actualToken = loginCapture.value
         assertSame account, actualToken.account
@@ -75,14 +77,16 @@ public class ShiroLoginHandlerTest extends ShiroTestSupport {
         def account = createMock(Account)
         def securityManager = createMock(SecurityManager)
         def subject = createMock(Subject)
+        def principal = createMock(Object.class)
 
         def request = createMock(HttpServletRequest)
         def response = createMock(HttpServletResponse)
 
         expect(securityManager.createSubject(anyObject(SubjectContext))).andReturn(subject)
         expect(subject.login(anyObject(AuthenticationToken))).andThrow(new AuthenticationException("Expected test exception"))
+        expect(subject.getPrincipal()).andReturn(principal)
 
-        replay request, response, securityManager, subject, account
+        replay request, response, securityManager, subject, account, principal
 
         SecurityUtils.setSecurityManager(securityManager)
 
@@ -95,6 +99,6 @@ public class ShiroLoginHandlerTest extends ShiroTestSupport {
         catch(ConfigurationException e) {
             // expected
         }
-        verify request, response, securityManager, subject, account
+        verify request, response, securityManager, subject, account, principal
     }
 }

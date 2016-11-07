@@ -49,6 +49,7 @@ public class ShiroLoginControllerTest extends ShiroTestSupport {
 
         def securityManager = createMock(SecurityManager)
         def subject = createMock(Subject)
+        def principal = createMock(Object.class)
 
         def request = createMock(HttpServletRequest)
         def response = createMock(HttpServletResponse)
@@ -64,15 +65,16 @@ public class ShiroLoginControllerTest extends ShiroTestSupport {
 
         expect(securityManager.createSubject(anyObject(SubjectContext))).andReturn(subject)
         subject.login(capture(loginCapture))
+        expect(subject.getPrincipal()).andReturn(principal)
 
-        replay request, response, form, securityManager, subject
+        replay request, response, form, securityManager, subject, principal
 
         SecurityUtils.setSecurityManager(securityManager)
 
         ShiroLoginController controller = new ShiroLoginController()
         controller.onValidSubmit(request, response, form)
 
-        verify request, response, form, securityManager, subject
+        verify request, response, form, securityManager, subject, principal
 
         def actualUsernamePasswordToken = loginCapture.value
         assertEquals username, actualUsernamePasswordToken.principal
@@ -91,6 +93,7 @@ public class ShiroLoginControllerTest extends ShiroTestSupport {
 
         def securityManager = createMock(SecurityManager)
         def subject = createMock(Subject)
+        def principal = createMock(Object.class)
 
         def request = createMock(HttpServletRequest)
         def response = createMock(HttpServletResponse)
@@ -103,8 +106,9 @@ public class ShiroLoginControllerTest extends ShiroTestSupport {
 
         expect(securityManager.createSubject(anyObject(SubjectContext))).andReturn(subject)
         expect(subject.login(anyObject(AuthenticationToken))).andThrow(new AuthenticationException("Expected test exception"))
+        expect(subject.getPrincipal()).andReturn(principal)
 
-        replay request, response, form, securityManager, subject
+        replay request, response, form, securityManager, subject, principal
 
         SecurityUtils.setSecurityManager(securityManager)
 
@@ -117,6 +121,6 @@ public class ShiroLoginControllerTest extends ShiroTestSupport {
         catch(ServletException e) {
             // expected
         }
-        verify request, response, form, securityManager, subject
+        verify request, response, form, securityManager, subject, principal
     }
 }
