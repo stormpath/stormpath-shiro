@@ -51,7 +51,6 @@ class ShiroIDSiteResultControllerTest extends ShiroTestSupport {
         Saver<com.stormpath.sdk.authc.AuthenticationResult> saver = createMock(Saver)
 
         expect(authResult.getAccount()).andReturn(account).times(2)
-        expect(authResult.getState()).andReturn(null)
         saver.set(eq(request), eq(response), anyObject())
         publisher.publish(anyObject())
         subject.login(anyObject(PassthroughApplicationRealm.AccountAuthenticationToken))
@@ -80,7 +79,6 @@ class ShiroIDSiteResultControllerTest extends ShiroTestSupport {
         Saver<com.stormpath.sdk.authc.AuthenticationResult> saver = createMock(Saver)
 
         expect(authResult.getAccount()).andReturn(account).times(2)
-        expect(authResult.getState()).andReturn(null)
         saver.set(eq(request), eq(response), anyObject())
         publisher.publish(anyObject())
         subject.login(anyObject(PassthroughApplicationRealm.AccountAuthenticationToken))
