@@ -40,6 +40,10 @@
         </dependency>
         <dependency>
             <groupId>com.stormpath.shiro</groupId>
+            <artifactId>stormpath-shiro-jaxrs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.stormpath.shiro</groupId>
             <artifactId>stormpath-shiro-spring-boot-starter</artifactId>
         </dependency>
         <dependency>

@@ -16,11 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.sample.jaxrs;
+package com.stormpath.shiro.samples.jaxrs;
 
-import org.apache.shiro.sample.jaxrs.resources.HelloResource;
-import org.apache.shiro.sample.jaxrs.resources.SecureResource;
-import org.apache.shiro.web.jaxrs.ShiroFeature;
+import com.stormpath.shiro.jaxrs.StormpathShiroFeature;
+import com.stormpath.shiro.samples.jaxrs.resources.HelloResource;
+import com.stormpath.shiro.samples.jaxrs.resources.SecureResource;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -29,9 +29,9 @@ import java.util.Set;
 
 /**
  * Simple JAX-RS {@link Application} that is implementation agnostic.
- * @since 1.4
+ * @since 0.8
  */
-@ApplicationPath("/")
+@ApplicationPath("/api")
 public class SampleApplication extends Application {
 
     @Override
@@ -39,7 +39,7 @@ public class SampleApplication extends Application {
         Set<Class<?>> classes = new HashSet<Class<?>>();
 
         // register Shiro
-        classes.add(ShiroFeature.class);
+        classes.add(StormpathShiroFeature.class);
 
         // register resources
         classes.add(HelloResource.class);
