@@ -42,17 +42,15 @@ class StormpathShiroPassiveLoginFilterTest extends ShiroTestSupport {
         def response = createMock(HttpServletResponse)
         def chain = createMock(FilterChain)
         def subject = createMock(Subject)
-        def principal = createMock(Object.class)
 
         expect(subject.isAuthenticated()).andReturn(true)
         chain.doFilter(request, response)
-        expect(subject.getPrincipal()).andReturn(principal)
-        replay request, response, chain, subject, principal
+        replay request, response, chain, subject
 
         ThreadContext.bind(subject)
         new StormpathShiroPassiveLoginFilter().doFilterInternal(request, response, chain)
 
-        verify request, response, chain, subject, principal
+        verify request, response, chain, subject
     }
 
     @Test
@@ -62,19 +60,17 @@ class StormpathShiroPassiveLoginFilterTest extends ShiroTestSupport {
         def response = createMock(HttpServletResponse)
         def chain = createMock(FilterChain)
         def subject = createMock(Subject)
-        def principal = createMock(Object.class)
 
-        expect(subject.getPrincipal()).andReturn(principal)
         expect(subject.isAuthenticated()).andReturn(false)
         expect(request.getAttribute(Account.getName())).andReturn(null)
         expect(request.getSession(false)).andReturn(null)
         chain.doFilter(request, response)
-        replay request, response, chain, subject, principal
+        replay request, response, chain, subject
 
         ThreadContext.bind(subject)
         new StormpathShiroPassiveLoginFilter().doFilterInternal(request, response, chain)
 
-        verify request, response, chain, subject, principal
+        verify request, response, chain, subject
     }
 
     @Test
@@ -84,20 +80,18 @@ class StormpathShiroPassiveLoginFilterTest extends ShiroTestSupport {
         def response = createMock(HttpServletResponse)
         def chain = createMock(FilterChain)
         def subject = createMock(Subject)
-        def principal = createMock(Object.class)
         def account = createMock(Account)
         def tokenCapture = new Capture<AccountAuthenticationToken>()
 
-        expect(subject.getPrincipal()).andReturn(principal)
         expect(subject.isAuthenticated()).andReturn(false)
         expect(request.getAttribute(Account.getName())).andReturn(account)
         subject.login(capture(tokenCapture))
         chain.doFilter(request, response)
-        replay request, response, chain, subject, account, principal
+        replay request, response, chain, subject, account
 
         ThreadContext.bind(subject)
         new StormpathShiroPassiveLoginFilter().doFilterInternal(request, response, chain)
 
-        verify request, response, chain, subject, account, principal
+        verify request, response, chain, subject, account
     }
 }

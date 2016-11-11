@@ -39,14 +39,12 @@ class LogoutEventListenerTest extends ShiroTestSupport {
 
         def subject = createMock(Subject)
         subject.logout()
-        def principal = createMock(Object.class)
-        expect(subject.getPrincipal()).andReturn(principal);
-        replay subject, principal
+        replay subject
 
         ThreadContext.bind(subject)
         def logoutEventListener = new LogoutEventListener()
         logoutEventListener.onLogout(null)
 
-        verify subject, principal
+        verify subject
     }
 }

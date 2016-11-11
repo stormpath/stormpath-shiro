@@ -47,7 +47,6 @@ class ShiroIDSiteResultControllerTest extends ShiroTestSupport {
         def authResult = createMock(AuthenticationResult)
         def account = createMock(Account)
         def subject = createMock(Subject)
-        def principal = createMock(Object.class)
         Publisher<RequestEvent> publisher = createMock(Publisher)
         Saver<com.stormpath.sdk.authc.AuthenticationResult> saver = createMock(Saver)
 
@@ -55,9 +54,8 @@ class ShiroIDSiteResultControllerTest extends ShiroTestSupport {
         saver.set(eq(request), eq(response), anyObject())
         publisher.publish(anyObject())
         subject.login(anyObject(PassthroughApplicationRealm.AccountAuthenticationToken))
-        expect(subject.getPrincipal()).andReturn(principal)
 
-        replay request, response, authResult, account, saver, publisher, subject, principal
+        replay request, response, authResult, account, saver, publisher, subject
 
         ThreadContext.bind(subject)
 
@@ -66,7 +64,7 @@ class ShiroIDSiteResultControllerTest extends ShiroTestSupport {
         shiroIDSiteResultController.eventPublisher = publisher
         shiroIDSiteResultController.onAuthentication(request, response, authResult)
 
-        verify request, response, authResult, account, saver, publisher, subject, principal
+        verify request, response, authResult, account, saver, publisher, subject
     }
 
     @Test
@@ -77,18 +75,16 @@ class ShiroIDSiteResultControllerTest extends ShiroTestSupport {
         def authResult = createMock(AuthenticationResult)
         def account = createMock(Account)
         def subject = createMock(Subject)
-        def principal = createMock(Object.class)
         Publisher<RequestEvent> publisher = createMock(Publisher)
         Saver<com.stormpath.sdk.authc.AuthenticationResult> saver = createMock(Saver)
 
-        expect(subject.getPrincipal()).andReturn(principal)
         expect(authResult.getAccount()).andReturn(account).times(2)
         saver.set(eq(request), eq(response), anyObject())
         publisher.publish(anyObject())
         subject.login(anyObject(PassthroughApplicationRealm.AccountAuthenticationToken))
         expectLastCall().andThrow(new AuthenticationException("Expected test exception"))
 
-        replay request, response, authResult, account, saver, publisher, subject, principal
+        replay request, response, authResult, account, saver, publisher, subject
 
         ThreadContext.bind(subject)
 
@@ -104,6 +100,6 @@ class ShiroIDSiteResultControllerTest extends ShiroTestSupport {
             // expected
         }
 
-        verify request, response, authResult, account, saver, publisher, subject, principal
+        verify request, response, authResult, account, saver, publisher, subject
     }
 }
