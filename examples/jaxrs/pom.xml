@@ -79,6 +79,12 @@
             <artifactId>junit-servers-jetty</artifactId>
             <version>0.4.2</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish</groupId>
+                    <artifactId>javax.el</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
