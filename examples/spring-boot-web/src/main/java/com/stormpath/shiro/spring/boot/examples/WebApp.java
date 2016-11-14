@@ -15,9 +15,9 @@
  */
 package com.stormpath.shiro.spring.boot.examples;
 
-import com.stormpath.shiro.spring.config.web.DefaultShiroFilterChainDefinition;
-import com.stormpath.shiro.spring.config.web.ShiroFilterChainDefinition;
 import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
+import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

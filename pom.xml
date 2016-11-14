@@ -101,7 +101,7 @@
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
 
         <!-- Standard Dependencies: -->
-        <shiro.version>1.3.2</shiro.version>
+        <shiro.version>1.4.0-RC2</shiro.version>
         <slf4j.version>1.7.16</slf4j.version>
         <stormpath.sdk.version>1.1.1</stormpath.sdk.version>
 
@@ -198,17 +198,6 @@
                 <artifactId>stormpath-shiro-spring-boot-web-starter</artifactId>
                 <version>0.7.3-SNAPSHOT</version>
             </dependency>
-            <dependency>
-                <groupId>com.stormpath.shiro</groupId>
-                <artifactId>shiro-spring-config</artifactId>
-                <version>0.7.3-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>com.stormpath.shiro</groupId>
-                <artifactId>shiro-spring-config-web</artifactId>
-                <version>0.7.3-SNAPSHOT</version>
-            </dependency>
-
 
             <!-- Shiro dependencies: -->
             <dependency>
@@ -226,7 +215,16 @@
                 <artifactId>shiro-spring</artifactId>
                 <version>${shiro.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-spring-boot-starter</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-spring-boot-web-starter</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.stormpath.sdk</groupId>
@@ -264,6 +262,19 @@
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>3.1.0</version>
+            </dependency>
+
+            <dependency>
+                <!-- optional dep for the reflection builder -->
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-configuration2</artifactId>
+                <version>2.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- Spring -->
@@ -431,6 +442,7 @@
                         </properties>
                         <excludes>
                             <exclude>**/*.txt</exclude>
+                            <exclude>**/extensions/servlet/docs/**/*</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
@@ -470,6 +482,11 @@
                             <exclude>**/*ManualIT.groovy</exclude>
                         </excludes>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>3.0.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>

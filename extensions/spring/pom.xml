@@ -31,10 +31,6 @@
     <name>Stormpath Shiro :: Spring Parent</name>
 
     <modules>
-        <module>shiro-spring-config</module>
-        <module>shiro-spring-config-web</module>
-        <module>boot/shiro-spring-boot-starter</module>
-        <module>boot/shiro-spring-boot-web-starter</module>
         <module>boot/stormpath-shiro-spring-boot-starter</module>
         <module>boot/stormpath-shiro-spring-boot-web-starter</module>
     </modules>

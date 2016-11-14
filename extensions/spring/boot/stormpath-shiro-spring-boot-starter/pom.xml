@@ -32,17 +32,13 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.stormpath.shiro</groupId>
+            <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring-boot-starter</artifactId>
         </dependency>
 
         <dependency>
             <groupId>com.stormpath.shiro</groupId>
             <artifactId>stormpath-shiro-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.stormpath.shiro</groupId>
-            <artifactId>shiro-spring-config</artifactId>
         </dependency>
         <dependency>
             <groupId>com.stormpath.spring</groupId>
@@ -80,6 +76,16 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>java-hamcrest</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
 
