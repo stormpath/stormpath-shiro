@@ -7,7 +7,11 @@ import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.ext.Provider;
 
-
+/**
+ * JAX-RS feature which configures Apache Shiro annotations, Shiro backed SecurityContext, and exception handling.
+ *
+ * @since 0.8.0
+ */
 @Provider // NOTE: Apache CXF requires this annotation on this feature (jersey and resteasy do not)
 public class StormpathShiroFeature implements Feature {
 

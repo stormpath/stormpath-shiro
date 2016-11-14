@@ -10,7 +10,10 @@ import java.util.Date;
 
 
 /**
- * This @{link {@link HttpServletResponseWrapper}, wraps a
+ * This @{link {@link HttpServletResponseWrapper}, wraps a JAX-RS {@link javax.ws.rs.core.Response.ResponseBuilder ResponseBuilder}, serves as a
+ * bridge between JAX-RS API and Stormpath API, with regards to redirects.  This is NOT a general use implementation.
+ *
+ * @since 0.8.0
  */
 public class ResponseProxy extends HttpServletResponseWrapper {
 

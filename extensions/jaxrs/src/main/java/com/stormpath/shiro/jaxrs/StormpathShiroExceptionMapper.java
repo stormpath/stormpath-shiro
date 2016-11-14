@@ -19,9 +19,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
 /**
- * JAX-RS exception mapper used to map Shiro {@link AuthorizationException}s to HTTP status codes.
- * {@link UnauthorizedException} will be mapped to 403, all others 401.
- * @since 1.4
+ * JAX-RS exception mapper used to map Shiro {@link AuthorizationException}s to Stormpath {@link UnauthenticatedHandler} and
+ * {@link UnauthenticatedHandler}.
+ * @since 0.8.0
  */
 public class StormpathShiroExceptionMapper implements ExceptionMapper<AuthorizationException> {
 
