@@ -13,8 +13,8 @@ install:
 script:
 - test -n "$BUILD_DOCS" || mvn install
 - test -z "$BUILD_DOCS" || mvn install -Psphinx-docs -Pdocs && mvn javadoc:javadoc javadoc:aggregate -Paggregate-docs
-after_success:
-- test -z "$BUILD_DOCS" || test -z "$IS_RELEASE" || ./publish_docs.sh
+#after_success:
+#- test -z "$BUILD_DOCS" || test -z "$IS_RELEASE" || ./publish_docs.sh
 
 # Stormpath API Key configuration.
 #
