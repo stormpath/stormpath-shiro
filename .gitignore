@@ -1,6 +1,7 @@
 *.iml
 *.iws
 *.ipr
+dependency-reduced-pom.xml
 target
 .idea/
 build/
