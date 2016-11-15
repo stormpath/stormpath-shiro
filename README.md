@@ -1,5 +1,5 @@
 [![Build Status](https://api.travis-ci.org/stormpath/stormpath-shiro.png?branch=master)](https://travis-ci.org/stormpath/stormpath-shiro)
-[![Maven Central](https://img.shields.io/maven-central/v/org.apache.shiro/shiro-core.svg)]()
+[![Maven Central](https://img.shields.io/maven-central/v/com.stormpath.shiro/stormpath-shiro-core.svg)]()
 [![codecov](https://codecov.io/gh/stormpath/stormpath-shiro/branch/master/graph/badge.svg)](https://codecov.io/gh/stormpath/stormpath-shiro)
 [![license](https://img.shields.io/github/license/stormpath/stormpath-shiro.svg)]()
 
@@ -47,6 +47,15 @@ Then run `mvn install -Prun-TCK`
 
 
 ## Change Log
+
+### 0.8.0 RC1
+- Upgraded Shiro dependency to latest release candidate: 1.4.0-RC2
+- Upgraded Stormpath SDK dependency to latest released version: 1.1.4
+- Moved Shiro specific code to the Apache Shiro Repository
+- Moved default configuration to [stormpath-shiro.ini](https://github.com/stormpath/stormpath-shiro/blob/master/extensions/servlet/src/main/resources/com/stormpath/shiro/servlet/config/stormpath-shiro.ini)
+- Default configuration now disables Shiro's session tracking (using stateless JWTs in place)
+- Added JAX-RS example
+- Added Dropwizard + AngularJS example
 
 ### 0.7.2
 - Fixed validation problem in web-fragment.xml
