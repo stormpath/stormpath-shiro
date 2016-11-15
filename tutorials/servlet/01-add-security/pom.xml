@@ -20,7 +20,7 @@
     <parent>
         <groupId>com.stormpath.shiro</groupId>
         <artifactId>stormpath-shiro-root</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>0.8.0-RC1</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
 
