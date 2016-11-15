@@ -1,4 +1,7 @@
 [![Build Status](https://api.travis-ci.org/stormpath/stormpath-shiro.png?branch=master)](https://travis-ci.org/stormpath/stormpath-shiro)
+[![Maven Central](https://img.shields.io/maven-central/v/org.apache.shiro/shiro-core.svg)]()
+[![codecov](https://codecov.io/gh/stormpath/stormpath-shiro/branch/master/graph/badge.svg)](https://codecov.io/gh/stormpath/stormpath-shiro)
+[![license](https://img.shields.io/github/license/stormpath/stormpath-shiro.svg)]()
 
 # Apache Shiro plugin for Stormpath #
 
