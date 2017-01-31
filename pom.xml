@@ -101,10 +101,10 @@
         <!-- Standard Dependencies: -->
         <shiro.version>1.4.0-RC2</shiro.version>
         <slf4j.version>1.7.16</slf4j.version>
-        <stormpath.sdk.version>1.1.4</stormpath.sdk.version>
+        <stormpath.sdk.version>1.5.0</stormpath.sdk.version>
 
-        <spring.version>4.3.2.RELEASE</spring.version>
-        <spring-boot.version>1.4.0.RELEASE</spring-boot.version>
+        <spring.version>4.3.5.RELEASE</spring.version>
+        <spring-boot.version>1.4.3.RELEASE</spring-boot.version>
 
         <!-- Test Dependencies: -->
         <easymock.version>3.4</easymock.version>

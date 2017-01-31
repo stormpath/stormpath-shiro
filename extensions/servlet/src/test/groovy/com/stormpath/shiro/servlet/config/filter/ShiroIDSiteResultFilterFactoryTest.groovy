@@ -48,6 +48,8 @@ class ShiroIDSiteResultFilterFactoryTest extends ShiroTestSupport {
         expect(config.getProducedMediaTypes()).andReturn(Collections.emptyList())
         expect(config.getRegisterConfig()).andReturn(registerConfig)
         expect(registerConfig.getNextUri()).andReturn("register-nextUri")
+        expect(config.getRegisterPostHandler()).andReturn(null)
+        expect(config.getLoginPostHandler()).andReturn(null)
 
         replay config, logoutConfig, registerConfig
 
