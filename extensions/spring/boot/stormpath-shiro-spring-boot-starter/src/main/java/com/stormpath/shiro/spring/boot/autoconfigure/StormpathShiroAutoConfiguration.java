@@ -18,6 +18,7 @@ package com.stormpath.shiro.spring.boot.autoconfigure;
 import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.shiro.realm.ApplicationRealm;
+import com.stormpath.shiro.realm.ApplicationResolver;
 import com.stormpath.shiro.realm.DefaultGroupRoleResolver;
 import org.apache.shiro.realm.Realm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,13 @@ public class StormpathShiroAutoConfiguration {
         ApplicationRealm realm = new ApplicationRealm();
         realm.setApplicationRestUrl(application.getHref());
         realm.setClient(client);
+
+        realm.setApplicationResolver(new ApplicationResolver() {
+            @Override
+            public Application getApplication(Client client, String href) {
+                return application;
+            }
+        });
 
         DefaultGroupRoleResolver groupRoleResolver = new DefaultGroupRoleResolver();
         groupRoleResolver.setModeNames(groupRoleResolverModes);

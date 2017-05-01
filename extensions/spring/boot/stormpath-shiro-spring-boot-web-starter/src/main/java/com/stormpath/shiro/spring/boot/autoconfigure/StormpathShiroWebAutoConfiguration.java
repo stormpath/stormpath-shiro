@@ -19,6 +19,7 @@ import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.servlet.event.RequestEventListener;
 import com.stormpath.shiro.realm.ApplicationRealm;
+import com.stormpath.shiro.realm.ApplicationResolver;
 import com.stormpath.shiro.realm.DefaultGroupRoleResolver;
 import com.stormpath.shiro.realm.PassthroughApplicationRealm;
 import com.stormpath.shiro.servlet.event.LogoutEventListener;
@@ -73,6 +74,13 @@ public class StormpathShiroWebAutoConfiguration  {
         ApplicationRealm realm = new PassthroughApplicationRealm();
         realm.setApplicationRestUrl(application.getHref());
         realm.setClient(client);
+
+        realm.setApplicationResolver(new ApplicationResolver() {
+            @Override
+            public Application getApplication(Client client, String href) {
+                return application;
+            }
+        });
 
         DefaultGroupRoleResolver groupRoleResolver = new DefaultGroupRoleResolver();
         groupRoleResolver.setModeNames(groupRoleResolverModes);

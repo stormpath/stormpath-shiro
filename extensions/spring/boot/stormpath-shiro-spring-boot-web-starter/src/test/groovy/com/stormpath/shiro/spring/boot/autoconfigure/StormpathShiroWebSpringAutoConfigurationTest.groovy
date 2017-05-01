@@ -34,7 +34,10 @@ import static org.testng.Assert.assertNotNull
 /**
  * @since 0.7.0
  */
-@SpringBootTest(classes = [StormpathShiroWebAutoConfigurationTestApplication])
+@SpringBootTest(classes = [StormpathShiroWebAutoConfigurationTestApplication],
+        properties = ["okta.enabled=false",
+                      "okta.authorizationServer.id=testAppId"
+        ])
 public class StormpathShiroWebSpringAutoConfigurationTest extends AbstractTestNGSpringContextTests {
 
     @Autowired

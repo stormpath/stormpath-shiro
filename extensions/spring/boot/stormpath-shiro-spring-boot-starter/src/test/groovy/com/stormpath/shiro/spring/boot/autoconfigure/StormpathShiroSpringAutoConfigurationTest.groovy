@@ -15,12 +15,15 @@
  */
 package com.stormpath.shiro.spring.boot.autoconfigure
 
+import com.stormpath.sdk.api.ApiKey
 import com.stormpath.sdk.application.Application
 import com.stormpath.sdk.client.Client
 import com.stormpath.shiro.realm.ApplicationRealm
 import org.apache.shiro.mgt.SecurityManager
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Bean
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests
 import org.testng.annotations.Test
 
@@ -31,7 +34,10 @@ import static org.testng.Assert.assertNotNull
 /**
  * @since 0.7.0
  */
-@SpringBootTest(classes = [StormpathShiroAutoConfigurationTestApplication])
+@SpringBootTest(classes = [StormpathShiroAutoConfigurationTestApplication],
+        properties = ["okta.enabled=false",
+                      "okta.authorizationServer.id=testAppId"
+        ])
 public class StormpathShiroSpringAutoConfigurationTest extends AbstractTestNGSpringContextTests {
 
     @Autowired

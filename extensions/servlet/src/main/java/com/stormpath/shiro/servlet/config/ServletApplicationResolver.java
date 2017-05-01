@@ -13,25 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stormpath.shiro.stubs;
+package com.stormpath.shiro.servlet.config;
 
 
 import com.stormpath.sdk.application.Application;
 import com.stormpath.sdk.client.Client;
+import com.stormpath.sdk.servlet.application.ApplicationLoader;
+import com.stormpath.sdk.servlet.client.ClientLoader;
 import com.stormpath.shiro.realm.ApplicationResolver;
-import org.easymock.EasyMock;
 
 import javax.servlet.ServletContext;
 
-public class StubApplicationResolver implements ApplicationResolver {
+public class ServletApplicationResolver implements ApplicationResolver {
 
-    public void setServletContext(ServletContext context){}
+    private ServletContext servletContext = null;
 
     @Override
     public Application getApplication(Client client, String href) {
 
-        Application application = EasyMock.createNiceMock(Application.class);
-        EasyMock.replay(application);
+        servletContext.setAttribute(ClientLoader.CLIENT_ATTRIBUTE_KEY, client);
+        Application application = com.stormpath.sdk.servlet.application.ApplicationResolver.INSTANCE.getApplication(servletContext);
+        servletContext.setAttribute(ApplicationLoader.APP_ATTRIBUTE_NAME, application);
         return application;
+    }
+
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
     }
 }

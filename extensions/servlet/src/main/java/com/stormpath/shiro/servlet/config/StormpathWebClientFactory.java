@@ -20,6 +20,9 @@ import com.stormpath.sdk.api.ApiKeyBuilder;
 import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.client.Client;
 import com.stormpath.sdk.client.ClientBuilder;
+import com.stormpath.sdk.client.DefaultPairedApiKey;
+import com.stormpath.sdk.impl.api.ClientApiKey;
+import com.stormpath.sdk.lang.Assert;
 import com.stormpath.sdk.lang.Strings;
 import com.stormpath.sdk.servlet.client.DefaultServletContextClientFactory;
 import com.stormpath.sdk.servlet.config.Config;
@@ -141,20 +144,27 @@ public class StormpathWebClientFactory extends AbstractFactory<Client> implement
             ApiKeyBuilder apiKeyBuilder = ApiKeys.builder();
             Config config = getConfig();
 
-            String value = Strings.hasText(apiKeyId) ? apiKeyId : config.get("stormpath.client.apiKey.id");
-            if (Strings.hasText(value)) {
-                apiKeyBuilder.setId(value);
+            if (isOktaEnabled()) {
+                String oktaToken = config.get("okta.api.token");
+                Assert.hasText(oktaToken, "'okta.api.token' is required when 'okta.enable' is true"); // TODO: duplicate code from spring config
+                return new DefaultPairedApiKey(new ClientApiKey("okta_api_token", oktaToken));
             }
+            else {
+                String value = Strings.hasText(apiKeyId) ? apiKeyId : config.get("stormpath.client.apiKey.id");
+                if (Strings.hasText(value)) {
+                    apiKeyBuilder.setId(value);
+                }
 
-            //check for API Key ID embedded in the properties configuration
-            value = Strings.hasText(apiKeySecret) ? apiKeySecret : config.get("stormpath.client.apiKey.secret");
-            if (Strings.hasText(value)) {
-                apiKeyBuilder.setSecret(value);
-            }
+                //check for API Key ID embedded in the properties configuration
+                value = Strings.hasText(apiKeySecret) ? apiKeySecret : config.get("stormpath.client.apiKey.secret");
+                if (Strings.hasText(value)) {
+                    apiKeyBuilder.setSecret(value);
+                }
 
-            value = Strings.hasText(apiKeyFileLocation) ? apiKeyFileLocation : config.get(STORMPATH_API_KEY_FILE);
-            if (Strings.hasText(value)) {
-                apiKeyBuilder.setFileLocation(value);
+                value = Strings.hasText(apiKeyFileLocation) ? apiKeyFileLocation : config.get(STORMPATH_API_KEY_FILE);
+                if (Strings.hasText(value)) {
+                    apiKeyBuilder.setFileLocation(value);
+                }
             }
 
             return apiKeyBuilder.build();
@@ -170,6 +180,16 @@ public class StormpathWebClientFactory extends AbstractFactory<Client> implement
                 com.stormpath.sdk.cache.CacheManager stormpathCacheManager = new ShiroCacheManager(cacheManager);
                 builder.setCacheManager(stormpathCacheManager);
             }
+        }
+
+        private boolean isOktaEnabled() {
+
+            boolean oktaEnabled = false;
+            String oktaEnabledString = getConfig().get("okta.enabled");
+            if (Strings.hasText(oktaEnabledString)) {
+                oktaEnabled = Boolean.valueOf(oktaEnabledString);
+            }
+            return oktaEnabled;
         }
     }
 }

@@ -253,8 +253,7 @@ class StormpathShiroIniEnvironmentTest extends ShiroTestSupportWithSystemPropert
 
     private void addStubApplicationResolvertoIni(Ini ini, String sectionName = "main") {
         assertNotNull ini
-        ini.setSectionProperty(sectionName, "stubApplicationResolver", StubApplicationResolver.getName())
-        ini.setSectionProperty(sectionName, "stormpathRealm.applicationResolver", "\$stubApplicationResolver")
+        ini.setSectionProperty(sectionName, "applicationResolver", StubApplicationResolver.getName())
     }
 
     private IExpectationSetters<ServletContext> expectConfigFromServletContext(ServletContext servletContext, final Map<String, ?> delayedInitMap, String configKey = "config") {
