@@ -23,7 +23,7 @@
     <parent>
         <groupId>com.stormpath.shiro</groupId>
         <artifactId>stormpath-shiro-examples</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>1.0.0-okta-SNAPSHOT</version>
     </parent>
 
     <artifactId>samples-jaxrs</artifactId>
